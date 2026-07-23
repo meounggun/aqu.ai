@@ -76,7 +76,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`absolute left-0 top-0 z-20 h-full border-r border-sidebar-stroke bg-bg transition-[width] duration-300 ${
+      className={`app-sidebar-in absolute left-0 top-0 z-20 h-full border-r border-sidebar-stroke bg-bg transition-[width] duration-300 ${
         sidebarOpen ? "w-[220px]" : "w-[60px]"
       }`}
     >

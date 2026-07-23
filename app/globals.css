@@ -23,13 +23,15 @@
   --font-serif-kr: var(--font-myeongjo), "Sandoll MyeongjoNeo1", serif;
 }
 
-html,
+html {
+  overflow-x: hidden;
+}
 body {
-  height: 100%;
-  background: #141618;
+  min-height: 100dvh;
+  background: #1b1d1f;
   color: #fff;
   font-family: var(--font-sans);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 ::selection {
@@ -45,6 +47,18 @@ body {
   border-radius: 4px;
 }
 .chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 프롬프트 도우미 선택 태그 — 한 줄 유지 + 가로 슬라이드용 얇은 스크롤바 */
+.chat-scroll-x::-webkit-scrollbar {
+  height: 3px;
+}
+.chat-scroll-x::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+.chat-scroll-x::-webkit-scrollbar-track {
   background: transparent;
 }
 
@@ -64,6 +78,246 @@ textarea:focus {
 }
 .fade-up {
   animation: fade-up 0.35s ease both;
+}
+
+/* 모바일 바텀시트 — 아래에서 슬라이드 업 */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.slide-up {
+  animation: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 모바일 드로어 — 왼쪽에서 슬라이드 인 */
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.slide-in-left {
+  animation: slide-in-left 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- 앱 진입(첫 로드) 모션 — 화면이 한번에 뜨는 대신 살짝 확대되며 페이드인,
+   사이드바/헤더가 뒤이어 밀려 들어와 입장감을 준다 ---------- */
+@keyframes app-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.app-enter {
+  animation: app-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes app-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.app-sidebar-in {
+  animation: app-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+@keyframes app-drop-down {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.app-header-in {
+  animation: app-drop-down 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* ---------- 온보딩 애니메이션 ---------- */
+
+/* 물방울 부유(위아래) */
+@keyframes ob-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+.ob-float {
+  animation: ob-float 3.6s ease-in-out infinite;
+}
+
+/* 물방울 첫 등장 — 튀어 오르듯 나타난 뒤 그대로 둥실거림(ob-float)으로 이어진다.
+   둘 다 transform을 쓰지만 시간대가 겹치지 않아(0.15~1s 등장, 1s부터 부유) 서로를 덮어쓰지 않는다 */
+@keyframes ob-drop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.7);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.ob-drop-enter {
+  animation:
+    ob-drop-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both,
+    ob-float 3.6s ease-in-out 1s infinite;
+}
+
+@keyframes ob-intro-text {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ob-intro-text {
+  animation: ob-intro-text 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.75s both;
+}
+
+/* 은은한 글로우 맥동 — radial-gradient는 중앙에서 바깥으로 서서히 옅어지므로
+   box-shadow처럼 아이콘 경계에 딱 걸리는 원형 테두리가 생기지 않는다.
+   글로우를 담는 박스 자체가 레이아웃으로 아이콘을 감싸 중앙 정렬되므로
+   별도 요소의 위치 계산도 필요 없다 */
+.ob-glow {
+  background: radial-gradient(
+    circle,
+    rgba(117, 167, 255, 0.4) 0%,
+    rgba(117, 167, 255, 0.18) 38%,
+    rgba(117, 167, 255, 0) 70%
+  );
+  animation: ob-glow 3.8s ease-in-out infinite;
+}
+@keyframes ob-glow {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 아이콘 호흡(살짝 확대/축소) */
+@keyframes ob-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+.ob-breathe {
+  animation: ob-breathe 4s ease-in-out infinite;
+}
+
+/* CTA 버튼 글로우 맥동 */
+@keyframes ob-cta {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(73, 138, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 26px 2px rgba(73, 138, 255, 0.4);
+  }
+}
+.ob-cta {
+  animation: ob-cta 2.8s ease-in-out infinite;
+}
+
+/* 스크롤로 섹션이 보일 때 콘텐츠가 아래에서 떠오름 */
+@keyframes ob-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ob-ready .ob-reveal {
+  opacity: 0;
+}
+.ob-ready [data-inview="true"] .ob-reveal {
+  animation: ob-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ob-d1 {
+  animation-delay: 0.08s;
+}
+.ob-d2 {
+  animation-delay: 0.18s;
+}
+.ob-d3 {
+  animation-delay: 0.28s;
+}
+.ob-d4 {
+  animation-delay: 0.38s;
+}
+
+/* MORE FAST 채팅 말풍선 — 위에서 아래로 하나씩 순서대로 내려오며 채워짐 */
+@keyframes ob-bubble {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ob-ready .ob-bubble {
+  opacity: 0;
+}
+.ob-ready [data-inview="true"] .ob-bubble {
+  animation: ob-bubble 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 접근성 — 모션 최소화 설정 시 애니메이션 비활성화 */
+@media (prefers-reduced-motion: reduce) {
+  .ob-float,
+  .ob-glow,
+  .ob-breathe,
+  .ob-cta,
+  .ob-drop-enter,
+  .app-enter,
+  .app-sidebar-in,
+  .app-header-in {
+    animation: none;
+  }
+  .ob-ready .ob-reveal,
+  .ob-ready .ob-bubble,
+  .ob-intro-text {
+    opacity: 1;
+  }
 }
 
 @keyframes dot-pulse {

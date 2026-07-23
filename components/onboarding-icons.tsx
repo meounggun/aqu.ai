@@ -5,7 +5,7 @@ const S = { fill: "none", stroke: "#fff", strokeWidth: 2, strokeLinecap: "round"
 /** Prompt — 겹친 말풍선 두 개 */
 export function PromptIcon() {
   return (
-    <svg width="66" height="58" viewBox="0 0 66 58">
+    <svg width="109" height="96" viewBox="0 0 66 58">
       <path {...S} d="M6 4h40a4 4 0 0 1 4 4v22a4 4 0 0 1-4 4H24l-9 8v-8H6a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4Z" />
       <path {...S} fill="#1b1d1f" d="M28 20h32a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4h-7v7l-8-7H28a4 4 0 0 1-4-4V24a4 4 0 0 1 4-4Z" />
     </svg>
@@ -59,8 +59,8 @@ export function ThermoIcon() {
         strokeWidth="2.5"
         d="M16 16a7 7 0 0 1 14 0v54a15 15 0 1 1-14 0V16Z"
       />
-      <rect x="19" y="24" width="8" height="52" rx="4" fill="#e44a40" />
-      <circle cx="23" cy="90" r="12" fill="#e44a40" />
+      <rect x="19" y="24" width="8" height="50" rx="4" fill="#e44a40" />
+      <circle cx="23" cy="83" r="10" fill="#e44a40" />
     </svg>
   );
 }
@@ -108,7 +108,7 @@ export function EvaporateIcon() {
 export function HeadCircuitIcon() {
   return (
     <svg width="112" height="112" viewBox="0 0 256 256" fill="#fff">
-      <path d="M190.37,170.62A86.27,86.27,0,0,0,222,102c-1-44.68-36.76-81.51-81.34-83.86A86,86,0,0,0,50,102.51l-22.69,43.6c-.07.13-.13.26-.19.4a14,14,0,0,0,6.61,18l.18.09,24.08,11V208a14,14,0,0,0,14,14h48a6,6,0,0,0,0-12H72a2,2,0,0,1-2-2V171.81a6,6,0,0,0-3.5-5.46L39,153.78a2,2,0,0,1-.93-2.4l23.21-44.61A6,6,0,0,0,62,104a74.05,74.05,0,0,1,60-72.68V50.84a22,22,0,1,0,12,0V30.05c2-.05,4-.05,6,.06A74.29,74.29,0,0,1,206.63,82H184a6,6,0,0,0-4.61,2.16L152.94,115.9a22.06,22.06,0,1,0,9.21,7.69L186.81,94h22.5a72.44,72.44,0,0,1,.67,8.26A74.24,74.24,0,0,1,180.4,163.2a6,6,0,0,0-2.35,5.54l8,64A6,6,0,0,0,192,238a6.3,6.3,0,0,0,.75-.05,6,6,0,0,0,5.21-6.7ZM138,72a10,10,0,1,1-10-10A10,10,0,0,1,138,72Zm6,74a10,10,0,1,1,10-10A10,10,0,0,1,144,146Z" />
+      <path d="M188.25,169.77A84.3,84.3,0,0,0,220,102c-1-43.64-35.9-79.62-79.45-81.91A84,84,0,0,0,52,103L29.1,147c-.05.09-.09.18-.13.27a12,12,0,0,0,5.66,15.46l.13.06L60,174.38V208a12,12,0,0,0,12,12h48a4,4,0,0,0,0-8H72a4,4,0,0,1-4-4V171.81a4,4,0,0,0-2.34-3.64l-27.5-12.59a4,4,0,0,1-1.88-5l23.27-44.72A4.11,4.11,0,0,0,60,104a76,76,0,0,1,64-75V52.4a20,20,0,1,0,8,0V28.11a78.35,78.35,0,0,1,8.11,0c33.13,1.74,60.72,25,69.2,55.89H184a4,4,0,0,0-3.07,1.44l-27.46,33a20.12,20.12,0,1,0,6.13,5.13L185.87,92H211a75.9,75.9,0,0,1-29.44,72.8,4,4,0,0,0-1.57,3.7l8,64a4,4,0,0,0,4,3.5l.5,0A4,4,0,0,0,196,231.5ZM140,72a12,12,0,1,1-12-12A12,12,0,0,1,140,72Zm4,76a12,12,0,1,1,12-12A12,12,0,0,1,144,148Z" />
     </svg>
   );
 }
@@ -122,10 +122,10 @@ export function CaretDown({ className = "" }: { className?: string }) {
   );
 }
 
-/** ArrowRight — CTA 버튼 화살표 (Figma ArrowRight, 36px) */
-export function ArrowRightIcon() {
+/** ArrowRight — CTA 버튼 화살표 (Figma ArrowRight, 기본 36px) */
+export function ArrowRightIcon({ className = "size-[36px]" }: { className?: string }) {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36">
+    <svg className={className} viewBox="0 0 36 36">
       <path fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M7 18h22M20 8l10 10-10 10" />
     </svg>
   );

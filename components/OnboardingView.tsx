@@ -4,7 +4,7 @@
    1. 물방울 인트로 → 2. AI USE WATER 순환도 → 3. HeadCircuit 질문
    → 4. MORE FAST, LESS ENERGY(BEFORE/AFTER) → 5. 함께하러 가기(CTA) */
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRightIcon,
   CaretDown,
@@ -65,25 +65,40 @@ function WaterCycle() {
           const p = pos(mid, R);
           return (
             <g key={n.key} transform={`translate(${p.x} ${p.y}) rotate(${mid})`}>
-              <path d="M0 -7 L-6 6 L6 6 Z" fill="rgba(255,255,255,0.45)" />
+              <path d="M0 5 L-6 -4 L6 -4 Z" fill="rgba(255,255,255,0.45)" />
             </g>
           );
         })}
+        {/* 순환의 흐름을 나타내는 빛나는 점 — 원을 따라 시계방향으로 계속 돈다 */}
+        <g>
+          <circle cx={C} cy={C - R} r="12" fill="#8ff3e6" opacity="0.25" />
+          <circle cx={C} cy={C - R} r="5.5" fill="#c8faf2" />
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            from={`0 ${C} ${C}`}
+            to={`360 ${C} ${C}`}
+            dur="9s"
+            repeatCount="indefinite"
+          />
+        </g>
       </svg>
       {nodes.map((n) => {
         const p = pos(n.angle);
         return (
+          // 아이콘 박스 자체(라벨 제외)를 원 위의 좌표에 정확히 중앙 정렬 — 아이콘 중심이 원의 선을 통과한다
           <div
             key={n.key}
-            className="absolute flex flex-col items-center gap-[10px]"
+            className="absolute flex h-[112px] w-[130px] items-center justify-center"
             style={{ left: p.x, top: p.y, transform: "translate(-50%, -50%)" }}
           >
-            <div className="relative flex h-[112px] w-[130px] items-center justify-center">
-              {/* 배경 마스크 — 아이콘 뒤로 원이 비치지 않도록 */}
-              <div className="absolute left-1/2 top-1/2 size-[128px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bg blur-[10px]" />
-              <div className="relative flex items-center justify-center">{n.icon}</div>
-            </div>
-            <span className="text-[16px] tracking-[-0.8px] text-white">{n.key}</span>
+            {/* 배경 마스크 — 아이콘 뒤로 원이 비치지 않도록 */}
+            <div className="absolute left-1/2 top-1/2 size-[128px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bg blur-[10px]" />
+            <div className="relative flex items-center justify-center">{n.icon}</div>
+            <span className="absolute left-1/2 top-full mt-[10px] -translate-x-1/2 whitespace-nowrap text-[16px] tracking-[-0.8px] text-white">
+              {n.key}
+            </span>
           </div>
         );
       })}
@@ -93,6 +108,7 @@ function WaterCycle() {
 
 export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
 
   const goTo = (index: number) => {
     scrollRef.current?.scrollTo({
@@ -102,13 +118,34 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
   };
   const nextFrom = (i: number) => () => goTo(i + 1);
 
+  // 스크롤-스냅이 거의 다 정착했을 때(섹션이 화면 대부분을 채웠을 때) 리빌 애니메이션을 재생한다.
+  // threshold를 낮게 잡으면 스크롤이 아직 진행 중일 때 애니메이션이 시작해버려 눈에 안 띄게 끝나버린다.
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+    setReady(true);
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.setAttribute("data-inview", "true");
+          else e.target.removeAttribute("data-inview");
+        });
+      },
+      { root, threshold: 0.92 },
+    );
+    root.querySelectorAll("section").forEach((s) => io.observe(s));
+    return () => io.disconnect();
+  }, []);
+
   const sectionClass =
     "relative flex h-[1080px] w-full snap-start flex-col items-center justify-center px-[60px] text-center";
 
   return (
     <div
       ref={scrollRef}
-      className="chat-scroll absolute left-[60px] top-0 h-[1080px] w-[1860px] snap-y snap-mandatory overflow-y-auto scroll-smooth"
+      className={`chat-scroll absolute left-[60px] top-0 h-[1080px] w-[1860px] snap-y snap-mandatory overflow-y-auto scroll-smooth ${
+        ready ? "ob-ready" : ""
+      }`}
     >
       {/* 1. 물방울 인트로 */}
       <section className={sectionClass}>
@@ -116,9 +153,9 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
           type="button"
           onClick={nextFrom(0)}
           aria-label="시작하기"
-          className="group flex cursor-pointer flex-col items-center"
+          className="group relative flex cursor-pointer flex-col items-center ob-drop-enter"
         >
-          <svg width="98" height="146" viewBox="0 0 98 146" className="drop-shadow-[0_0_24px_rgba(73,138,255,0.25)] transition-transform duration-300 group-hover:-translate-y-[6px]">
+          <svg width="98" height="146" viewBox="0 0 98 146" className="relative drop-shadow-[0_0_24px_rgba(73,138,255,0.25)] transition-transform duration-300 group-hover:-translate-y-[6px]">
             <path
               d="M49 6 C49 6 93 82 93 96 A44 44 0 1 1 5 96 C5 82 49 6 49 6 Z"
               stroke="#ffffff"
@@ -133,32 +170,37 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
             click here!
           </span>
         </button>
-        <p className="mt-[52px] text-[20px] tracking-[-1px] text-label-2">
+        <p className="ob-intro-text mt-[52px] text-[20px] tracking-[-1px] text-label-2">
           일상의 편리함이 되어준 인공지능은 보이지 않는 곳에서 수자원을 위협하고 있습니다.
         </p>
       </section>
 
       {/* 2. AI USE WATER */}
       <section className={sectionClass}>
-        <h2 className="text-[50px] font-bold tracking-[-2.5px]">
+        <h2 className="ob-reveal text-[50px] font-bold tracking-[-2.5px]">
           <span className="text-main">AI</span> <span className="text-white/90">USE WATER</span>
         </h2>
-        <p className="mt-[28px] max-w-[1267px] text-[20px] leading-[1.5] tracking-[-1px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[28px] max-w-[1267px] text-[20px] leading-[1.5] tracking-[-1px] text-white/90">
           AI 작동에 필수적인 인프라 AI데이터센터는 장비의 부식을 막기 위해, 인간의 생존에 필요한
-          한정된 자원인 담수만을 고집하며 우리가 마실 물까지 빼앗고 있습니다. 챗봇이 답변을 생성할
-          때마다 데이터 센터에 막대한 양의 열이 발생하고 열을 식히기 위해 많은 양의 담수가 냉각수로
-          사용되어 증발됩니다.
+          한정된 자원인 담수만을 고집하며 우리가 마실 물까지 빼앗고 있습니다.
+          <br />
+          챗봇이 답변을 생성할 때마다 데이터 센터에 막대한 양의 열이 발생하고 열을 식히기 위해 많은
+          양의 담수가 냉각수로 사용되어 증발됩니다.
         </p>
-        <div className="mt-[36px]">
+        <div className="ob-reveal ob-d2 mt-[36px]">
           <WaterCycle />
         </div>
         <ScrollHint onClick={nextFrom(1)} />
       </section>
 
-      {/* 3. HeadCircuit 질문 */}
+      {/* 3. HeadCircuit 질문 — 글로우는 아이콘 박스 자체의 box-shadow라 항상 정확히 중앙에 맞는다 */}
       <section className={sectionClass}>
-        <HeadCircuitIcon />
-        <p className="mt-[77px] text-[20px] leading-[1.6] tracking-[-1px] text-white/90">
+        <div className="ob-glow flex size-[240px] items-center justify-center rounded-full">
+          <div className="ob-breathe relative">
+            <HeadCircuitIcon />
+          </div>
+        </div>
+        <p className="ob-reveal ob-d1 mt-[24px] text-[20px] leading-[1.6] tracking-[-1px] text-white/90">
           늘어나는 AI 기술과 인프라, 빠른 발전 속에서 우리는{" "}
           <span className="text-[#75a7ff]">어떤 태도</span>로 마주해야 할까요?
           <br />
@@ -170,36 +212,34 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
 
       {/* 4. MORE FAST, LESS ENERGY */}
       <section className={sectionClass}>
-        <h2 className="text-[50px] font-bold tracking-[-2.5px] text-main">MORE FAST, LESS ENERGY</h2>
-        <p className="mt-[20px] max-w-[1180px] text-[20px] leading-[1.5] tracking-[-0.9px] text-white/90">
+        <h2 className="ob-reveal text-[50px] font-bold tracking-[-2.5px] text-main">MORE FAST, LESS ENERGY</h2>
+        <p className="ob-reveal ob-d1 mt-[20px] max-w-[1180px] text-[20px] leading-[1.5] tracking-[-0.9px] text-white/90">
           우리는 인공지능의 빠른 발전 뒤에 존재하는 막대한 양의 담수 소모를 정제된 대화 방식을 통해
           제어합니다. 정제된 대화방식은 우리가 더 빠르게 목적을 얻을 수 있게 만들고, 적은 소모 방식을
           통해 자연의 시간 가속을 늦춰 메말라가는 담수를 보호하고자 합니다.
         </p>
 
         <div className="mt-[52px] flex items-start gap-[70px]">
-          {/* BEFORE */}
+          {/* BEFORE — 말풍선이 위에서 아래로 순서대로 내려오며 채워지는 애니메이션.
+              바깥 컨테이너는 ob-reveal로 감싸지 않는다 — 감싸면 컨테이너 자체의 페이드와
+              말풍선 개별 애니메이션이 겹쳐 opacity가 곱연산되어 잘 안 보이게 된다 */}
           <div className="flex flex-col items-center gap-[14px]">
             <span className="text-[16px] tracking-[-0.8px] text-label-2">BEFORE</span>
-            <div className="relative h-[483px] w-[330px] rounded-[16px] bg-stroke">
-              <Bubble tone="blue" left={161.58} top={17.45} w={155.5} h={44} />
-              <Bubble tone="gray" left={15.93} top={69.79} w={182} h={104} />
-              <Tail left={12.14} top={154.75} />
-              <Bubble tone="blue" left={119.1} top={188.13} w={198} h={20} />
-              <Bubble tone="gray" left={15.93} top={216.95} w={160} h={79} />
-              <Tail left={12.14} top={278.4} />
-              <Bubble tone="blue" left={161.58} top={310.26} w={155.5} h={42} />
-              <Bubble tone="gray" left={16.69} top={361.08} w={222} h={97} />
-              <Tail left={12.14} top={440.74} />
+            <div className="relative h-[483px] w-[330px] overflow-hidden rounded-[16px] bg-stroke">
+              <Bubble tone="blue" left={161.58} top={17.45} w={155.5} h={44} order={0} />
+              <Bubble tone="gray" left={15.93} top={69.79} w={182} h={104} order={1} />
+              <Bubble tone="blue" left={119.1} top={188.13} w={198} h={20} order={2} />
+              <Bubble tone="gray" left={15.93} top={216.95} w={160} h={79} order={3} />
+              <Bubble tone="blue" left={161.58} top={310.26} w={155.5} h={42} order={4} />
+              <Bubble tone="gray" left={16.69} top={361.08} w={222} h={97} order={5} />
             </div>
           </div>
           {/* AFTER */}
           <div className="flex flex-col items-center gap-[14px]">
             <span className="text-[16px] tracking-[-0.8px] text-label-2">AFTER</span>
-            <div className="relative h-[221px] w-[330px] rounded-[16px] bg-stroke">
-              <Bubble tone="blue" left={160.06} top={15.17} w={155.5} h={64.5} />
-              <Bubble tone="gray" left={14.41} top={89.51} w={182} h={104} />
-              <Tail left={10} top={174.68} />
+            <div className="relative h-[221px] w-[330px] overflow-hidden rounded-[16px] bg-stroke">
+              <Bubble tone="blue" left={160.06} top={15.17} w={155.5} h={64.5} order={0} />
+              <Bubble tone="gray" left={14.41} top={89.51} w={182} h={104} order={1} />
             </div>
           </div>
         </div>
@@ -208,57 +248,47 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
 
       {/* 5. CTA */}
       <section className={sectionClass}>
-        <p className="max-w-[1259px] text-[32px] font-medium leading-[1.7] tracking-[-1.6px] text-white/90">
+        <p className="ob-reveal max-w-[1259px] text-[32px] font-normal leading-[1.7] tracking-[-1.6px] text-white/90">
           당신의 작은 움직임 하나가 모여 고갈되어 가는 수자원의 시간을 늦추는 위대한 힘이 됩니다.
           <br />
           함께 디지털 연산을 제어하는 한 걸음에 동참해 주세요.
         </p>
-        <button
-          type="button"
-          onClick={onFinish}
-          className="mt-[52px] flex h-[69px] cursor-pointer items-center gap-[16px] rounded-[19px] border-[2.7px] border-white pl-[29px] pr-[30px] text-[29px] font-medium tracking-[-1.45px] text-white transition-colors hover:bg-white hover:text-bg"
-        >
-          함께하러 가기
-          <ArrowRightIcon />
-        </button>
+        <div className="ob-reveal ob-d1 mt-[52px]">
+          <button
+            type="button"
+            onClick={onFinish}
+            className="ob-cta flex h-[54px] cursor-pointer items-center gap-[12px] rounded-full border-2 border-white pl-[24px] pr-[26px] text-[20px] font-medium tracking-[-1px] text-white transition-colors hover:bg-white hover:text-bg"
+          >
+            함께하러 가기
+            <ArrowRightIcon className="size-[24px]" />
+          </button>
+        </div>
       </section>
     </div>
   );
 }
 
-/* MORE FAST 슬라이드 말풍선 — Figma 절대좌표 그대로 재현 */
+/* MORE FAST 슬라이드 말풍선 — Figma 절대좌표 그대로 재현. 꼬리 없는 둥근 사각형.
+   order로 순서를 매겨 위→아래로 하나씩 내려오며 채워지는 애니메이션을 준다 */
 function Bubble({
   tone,
   left,
   top,
   w,
   h,
+  order,
 }: {
   tone: "blue" | "gray";
   left: number;
   top: number;
   w: number;
   h: number;
+  order: number;
 }) {
   return (
     <div
-      className={`absolute rounded-[13px] ${tone === "blue" ? "bg-main" : "bg-label"}`}
-      style={{ left, top, width: w, height: h }}
+      className={`ob-bubble absolute rounded-[13px] ${tone === "blue" ? "bg-main" : "bg-label"}`}
+      style={{ left, top, width: w, height: h, animationDelay: `${order * 110}ms` }}
     />
-  );
-}
-
-/* 회색(수신) 말풍선의 꼬리 장식 — 실제 채팅 말풍선 꼬리 형태(둥근 몸통 + 뾰족한 끝) */
-function Tail({ left, top }: { left: number; top: number }) {
-  return (
-    <svg
-      className="absolute"
-      style={{ left, top }}
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-    >
-      <path d="M16 0C16 8.5 11 14.5 0 16C7.5 13 9 7 9 0Z" className="fill-label" />
-    </svg>
   );
 }

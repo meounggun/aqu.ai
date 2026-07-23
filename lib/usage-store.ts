@@ -72,11 +72,14 @@ export function recordSend(store: UsageStore, usedMl: number, usedHelper: boolea
 
 /* ---------- 프로필 통계 ---------- */
 
-export function totals(store: UsageStore) {
+/** year를 주면 해당 연도만, 생략하면 전체 기간 누적을 반환 */
+export function totals(store: UsageStore, year?: number) {
   let used = 0;
   let chats = 0;
   let helperUses = 0;
-  for (const day of Object.values(store.history)) {
+  const prefix = year != null ? `${year}-` : null;
+  for (const [key, day] of Object.entries(store.history)) {
+    if (prefix && !key.startsWith(prefix)) continue;
     used += day.used;
     chats += day.chats;
     helperUses += day.helperUses;
@@ -89,6 +92,15 @@ export function totals(store: UsageStore) {
   };
 }
 
+/** 사용 기록이 존재하는 연도 목록(최신순) — 기록이 없어도 올해는 항상 포함 */
+export function availableYears(store: UsageStore): number[] {
+  const years = new Set<number>([new Date().getFullYear()]);
+  for (const key of Object.keys(store.history)) {
+    years.add(Number(key.slice(0, 4)));
+  }
+  return Array.from(years).sort((a, b) => b - a);
+}
+
 /** 최근 n일 (오늘 포함, 과거→오늘 순) */
 export function lastDays(store: UsageStore, n: number): { key: string; used: number }[] {
   const out: { key: string; used: number }[] = [];
@@ -99,6 +111,15 @@ export function lastDays(store: UsageStore, n: number): { key: string; used: num
     out.push({ key, used: getDay(store, key).used });
   }
   return out;
+}
+
+/** 날짜별 사용 기록 — 최신 날짜가 먼저 오도록 정렬 */
+export function historyList(
+  store: UsageStore,
+): { key: string; used: number; chats: number; helperUses: number }[] {
+  return Object.entries(store.history)
+    .map(([key, d]) => ({ key, ...d }))
+    .sort((a, b) => (a.key < b.key ? 1 : -1));
 }
 
 /** 이번 달 총 사용량 (mL) */
