@@ -84,15 +84,18 @@ function MiniWaterCycle() {
         return (
           <div
             key={n.key}
-            className="absolute flex items-center justify-center"
+            className="absolute"
             style={{ left: p.x, top: p.y, transform: "translate(-50%, -50%)" }}
           >
             <div className="absolute left-1/2 top-1/2 size-[62px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bg blur-[8px]" />
-            {/* 아이콘을 폰 크기에 맞춰 축소 */}
-            <div className="relative flex scale-[0.5] items-center justify-center">{n.icon}</div>
-            <span className="absolute left-1/2 top-[26px] -translate-x-1/2 whitespace-nowrap text-[10px] tracking-[-0.5px] text-white">
-              {n.key}
-            </span>
+            {/* 아이콘 원본 크기가 제각각이라(46~112px) scale로만 축소하면 레이아웃 박스는 그대로 남아
+                라벨 위치가 아이콘과 겹친다 — 고정 크기 박스를 기준으로 라벨을 아이콘 바로 아래 붙인다 */}
+            <div className="relative flex h-[60px] w-[60px] items-center justify-center">
+              <div className="scale-[0.5]">{n.icon}</div>
+              <span className="absolute left-1/2 top-full mt-[4px] -translate-x-1/2 whitespace-nowrap text-[10px] tracking-[-0.5px] text-white">
+                {n.key}
+              </span>
+            </div>
           </div>
         );
       })}
