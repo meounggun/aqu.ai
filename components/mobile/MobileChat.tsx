@@ -7,7 +7,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import SendCupLottie, { type SendCupLottieHandle } from "@/components/SendCupLottie";
-import { HELPER_CATEGORIES, stageTime, DAILY_LIMIT } from "@/lib/water";
+import { stageTime, DAILY_LIMIT } from "@/lib/water";
+import { downloadCard } from "@/lib/card-export";
 import type { AquState } from "@/lib/useAquState";
 
 export default function MobileChat({ app }: { app: AquState }) {
@@ -27,6 +28,12 @@ export default function MobileChat({ app }: { app: AquState }) {
     send,
     removeHelperOption,
     toggleHelperOption,
+    activeDecks,
+    deckSavingPercent,
+    toggleDeck,
+    activeCustomHelpers,
+    toggleCustomHelper,
+    effectiveHelperCategories,
   } = app;
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -41,7 +48,7 @@ export default function MobileChat({ app }: { app: AquState }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
-  const categories = HELPER_CATEGORIES.filter((c) => visibleCategories.has(c.key));
+  const categories = effectiveHelperCategories.filter((c) => visibleCategories.has(c.key));
   const sheetCat = categories.find((c) => c.key === sheetKey) ?? null;
 
   return (
@@ -49,7 +56,7 @@ export default function MobileChat({ app }: { app: AquState }) {
       {/* ---------- 메시지 / 히어로 ---------- */}
       <div ref={scrollRef} className="chat-scroll flex-1 overflow-y-auto px-[18px] pt-[16px]">
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center pt-[8px]">
+          <div className="flex flex-col items-center pt-[64px]">
             <h1 className="text-center text-[24px] font-semibold leading-[1.3] tracking-[-1.2px] text-white">
               짧고 명확한 질문은
               <br />
@@ -58,15 +65,18 @@ export default function MobileChat({ app }: { app: AquState }) {
             <p className="mt-[10px] text-center text-[13px] tracking-[-0.65px] text-[#bbb]">
               프롬프트 도우미로 효율적인 대화를 시작해보세요
             </p>
-            <div className="relative mt-[8px] size-[240px]">
+            <div className="mt-[20px] size-[240px]">
               <SendCupLottie ref={cupRef} />
             </div>
-            <div className="flex items-center gap-[8px] rounded-full border border-label px-[14px] py-[6px]">
+            {/* 컵 로띠 캔버스 하단에 여백이 내장돼 있어 음수 마진으로 시간 배지를 끌어당긴다.
+                로띠 내부 svg가 transform(GPU 가속)을 쓰는 탓에 항상 위 레이어로 그려지므로
+                relative + z-10으로 배지를 명시적으로 그 위에 올린다 */}
+            <div className="relative z-10 mt-[-56px] flex items-center gap-[8px] rounded-full border border-label bg-bg px-[14px] py-[6px]">
               <span className="text-[12px] tracking-[-0.6px] text-label">
                 현재 시간 {stageTime(stage)}
               </span>
             </div>
-            <p className="mt-[8px] text-[11px] tracking-[-0.55px] text-label">
+            <p className="relative z-10 mt-[8px] text-[11px] tracking-[-0.55px] text-label">
               물의 하루가 지나면 사용이 중지됩니다.
             </p>
           </div>
@@ -87,11 +97,29 @@ export default function MobileChat({ app }: { app: AquState }) {
                   <p className="whitespace-pre-wrap text-[14px] leading-[1.55] tracking-[-0.7px] text-white/90">
                     {msg.text}
                   </p>
-                  <img
-                    src="/assets/response-actions.svg"
-                    alt="응답 액션"
-                    className="h-[14px] w-[92px] opacity-80"
-                  />
+                  <div className="flex flex-wrap items-center gap-[10px]">
+                    <img
+                      src="/assets/response-actions.svg"
+                      alt="응답 액션"
+                      className="h-[14px] w-[92px] opacity-80"
+                    />
+                    {/* 결과물 이미지 카드 내보내기 (PRD §8-1-3) — AI 답변 텍스트만 담는다 */}
+                    <button
+                      type="button"
+                      onClick={() => downloadCard({ text: msg.text })}
+                      className="rounded-full border border-stroke px-[11px] py-[5px] text-[11px] tracking-[-0.55px] text-white/80"
+                    >
+                      🖼️ 카드 내보내기
+                    </button>
+                  </div>
+                  {msg.deckNames && msg.deckNames.length > 0 && (
+                    <p className="text-[11px] tracking-[-0.55px] text-label">
+                      덱 {msg.deckNames.join(" · ")} · 절약{" "}
+                      <span className="font-semibold text-main">
+                        {(msg.savedMl ?? 0).toLocaleString()}mL
+                      </span>
+                    </p>
+                  )}
                 </div>
               ),
             )}
@@ -127,8 +155,39 @@ export default function MobileChat({ app }: { app: AquState }) {
           </span>
         </div>
 
-        {/* 도우미 칩 (가로 스크롤) */}
-        <div className="chat-scroll-x -mx-[16px] mb-[10px] flex gap-[8px] overflow-x-auto px-[16px]">
+        {/* 장착된 커스텀 덱 + 나만의 프롬프트 도우미 (PRD §8-1-1) — 탭하면 즉시 해제 */}
+        {(activeDecks.length > 0 || activeCustomHelpers.length > 0) && (
+          <div className="chat-scroll-x -mx-[16px] mb-[8px] flex items-center gap-[6px] overflow-x-auto px-[16px]">
+            <span className="shrink-0 text-[11px] font-semibold tracking-[-0.55px] text-main">
+              -{deckSavingPercent}%
+            </span>
+            {activeDecks.map((deck) => (
+              <button
+                key={deck.id}
+                type="button"
+                onClick={() => toggleDeck(deck.id)}
+                className="flex h-[26px] shrink-0 items-center gap-[5px] rounded-full border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+              >
+                {deck.name}
+                <span className="text-white/60">×</span>
+              </button>
+            ))}
+            {activeCustomHelpers.map((helper) => (
+              <button
+                key={helper.id}
+                type="button"
+                onClick={() => toggleCustomHelper(helper.id)}
+                className="flex h-[26px] shrink-0 items-center gap-[5px] rounded-full border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+              >
+                {helper.name}
+                <span className="text-white/60">×</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* 도우미 칩 (가로 스크롤) — 스크롤바가 칩 바로 밑에 붙어 보이지 않도록 pb로 살짝 띄운다 */}
+        <div className="chat-scroll-x -mx-[16px] mb-[6px] flex gap-[8px] overflow-x-auto px-[16px] pb-[6px]">
           {categories.map((cat) => {
             const active = selected.some((s) => s.category.key === cat.key);
             return (
@@ -219,7 +278,7 @@ export default function MobileChat({ app }: { app: AquState }) {
               {sheetCat.label}
             </p>
             <div className="flex flex-col gap-[8px]">
-              {sheetCat.options.map((opt) => {
+              {sheetCat.options.map((opt, i) => {
                 const active = selected.some(
                   (s) => s.category.key === sheetCat.key && s.option.label === opt.label,
                 );
@@ -231,9 +290,10 @@ export default function MobileChat({ app }: { app: AquState }) {
                       toggleHelperOption(sheetCat, opt);
                       setSheetKey(null);
                     }}
-                    className={`flex items-center justify-between rounded-[12px] border px-[16px] py-[13px] text-left transition-colors ${
+                    className={`fade-up flex items-center justify-between rounded-[12px] border px-[16px] py-[13px] text-left transition-colors ${
                       active ? "border-main bg-main/20" : "border-stroke"
                     }`}
+                    style={{ animationDuration: "0.22s", animationDelay: `${i * 45}ms` }}
                   >
                     <span className="text-[14px] tracking-[-0.7px] text-white">{opt.label}</span>
                     <span className="text-[13px] font-semibold text-main">

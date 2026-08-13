@@ -7,29 +7,65 @@
 import { useState } from "react";
 import type { AquState, AppView } from "@/lib/useAquState";
 import MobileOnboarding from "./MobileOnboarding";
+import MobileLanding from "./MobileLanding";
 import MobileChat from "./MobileChat";
 import MobileProfile from "./MobileProfile";
 import MobileNews from "./MobileNews";
+import MobileMarket from "./MobileMarket";
 
-const NAV: { key: AppView; label: string; icon: string; iconClass: string; action?: "newChat" }[] = [
+/** "도움" 메뉴 — 원래 뉴스로 연결되던 자리를 외부 후원 사이트 링크로 바꾼다.
+   TODO: 후원 사이트 주소가 정해지면 여기에 채워 넣는다. 비어 있는 동안은 눌러도 아무 일도 하지 않는다. */
+const SPONSOR_URL = "";
+
+const NAV: { key: AppView; label: string; icon: string; iconClass: string; action?: "newChat" | "external" }[] = [
   { key: "chat", label: "새 채팅", icon: "/assets/icon-newchat.svg", iconClass: "size-[18px]", action: "newChat" },
+  { key: "market", label: "프롬프트 도우미 편집", icon: "/assets/icon-helper-edit.svg", iconClass: "w-[20px]" },
   { key: "about", label: "우리에 대하여", icon: "/assets/icon-about.svg", iconClass: "size-[30px]" },
-  { key: "news", label: "뉴스", icon: "/assets/icon-news.svg", iconClass: "w-[18px]" },
+  { key: "news", label: "도움", icon: "/assets/icon-sponsor.svg", iconClass: "w-[18px]", action: "external" },
   { key: "profile", label: "프로필", icon: "/assets/icon-profile.svg", iconClass: "w-[17px]" },
 ];
 
 export default function MobileApp({ app }: { app: AquState }) {
-  const { view, setView, store, finishOnboarding, newChat } = app;
+  const {
+    view,
+    setView,
+    store,
+    enterApp,
+    newChat,
+    chatSessions,
+    loadChatSession,
+    deleteChatSession,
+    deckStore,
+    toggleDeck,
+    createDeck,
+    removeDeck,
+    snapDeck,
+    toggleShareDeck,
+    customHelperStore,
+    toggleCustomHelper,
+    createCustomHelper,
+    updateCustomHelper,
+    removeCustomHelper,
+    visibleCategories,
+    toggleCategoryVisibility,
+    effectiveHelperCategories,
+    addBuiltinHelperOption,
+    removeBuiltinHelperOption,
+  } = app;
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // 온보딩(최초)·소개는 전체화면
-  if (view === "onboarding") return <MobileOnboarding onFinish={finishOnboarding} />;
+  // 랜딩(항상 먼저)·소개는 전체화면
+  if (view === "landing") {
+    return <MobileLanding onStart={enterApp} onAbout={() => setView("about")} />;
+  }
   if (view === "about") return <MobileOnboarding onFinish={() => setView("chat")} showBack />;
 
   const handleNav = (item: (typeof NAV)[number]) => {
     setDrawerOpen(false);
     if (item.action === "newChat") newChat();
-    else setView(item.key);
+    else if (item.action === "external") {
+      if (SPONSOR_URL) window.open(SPONSOR_URL, "_blank", "noopener,noreferrer");
+    } else setView(item.key);
   };
 
   return (
@@ -68,6 +104,29 @@ export default function MobileApp({ app }: { app: AquState }) {
             <MobileProfile store={store} />
           </div>
         )}
+        {view === "market" && (
+          <div className="chat-scroll h-full overflow-y-auto">
+            <MobileMarket
+              deckStore={deckStore}
+              activeDeckIds={deckStore.activeIds}
+              onToggleDeck={toggleDeck}
+              onCreateDeck={createDeck}
+              onRemoveDeck={removeDeck}
+              onSnapDeck={snapDeck}
+              onToggleShare={toggleShareDeck}
+              customHelperStore={customHelperStore}
+              onToggleCustomHelper={toggleCustomHelper}
+              onCreateCustomHelper={createCustomHelper}
+              onUpdateCustomHelper={updateCustomHelper}
+              onRemoveCustomHelper={removeCustomHelper}
+              visibleCategories={visibleCategories}
+              onToggleCategory={toggleCategoryVisibility}
+              allHelperCategories={effectiveHelperCategories}
+              onAddBuiltinOption={addBuiltinHelperOption}
+              onRemoveBuiltinOption={removeBuiltinHelperOption}
+            />
+          </div>
+        )}
       </main>
 
       {/* 드로어 */}
@@ -94,7 +153,7 @@ export default function MobileApp({ app }: { app: AquState }) {
 
             <div className="mt-[14px] flex flex-col gap-[4px]">
               {NAV.map((item) => {
-                const active = item.action !== "newChat" && view === item.key;
+                const active = !item.action && view === item.key;
                 return (
                   <button
                     key={item.label}
@@ -111,6 +170,45 @@ export default function MobileApp({ app }: { app: AquState }) {
                   </button>
                 );
               })}
+            </div>
+
+            {/* 최근 항목 — 새 채팅을 누르면 이전 대화가 여기 쌓인다 */}
+            <div className="mt-[14px] flex min-h-0 flex-1 flex-col border-t border-white/[0.08] pt-[14px]">
+              <p className="mb-[6px] px-[6px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+                최근 항목
+              </p>
+              <div className="chat-scroll flex min-h-0 flex-1 flex-col gap-[2px] overflow-y-auto pb-[8px]">
+                {chatSessions.length === 0 && (
+                  <p className="px-[6px] text-[12px] leading-[1.6] tracking-[-0.6px] text-label/70">
+                    새 채팅을 시작하면 여기에 대화가 저장돼요.
+                  </p>
+                )}
+                {chatSessions.map((s) => (
+                  <div
+                    key={s.id}
+                    className="group flex items-center gap-[4px] rounded-[10px] px-[6px] py-[9px] active:bg-white/10"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDrawerOpen(false);
+                        loadChatSession(s.id);
+                      }}
+                      className="min-w-0 flex-1 truncate text-left text-[14px] tracking-[-0.7px] text-white/85"
+                    >
+                      {s.title}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteChatSession(s.id)}
+                      aria-label="대화 삭제"
+                      className="shrink-0 text-[14px] leading-none text-label"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </nav>
         </div>

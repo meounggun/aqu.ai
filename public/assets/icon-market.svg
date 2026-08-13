@@ -1,0 +1,7 @@
+<svg overflow="visible" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group market">
+<path id="awning" d="M1.4 0.75H15.1C15.35 0.75 15.56 0.93 15.6 1.18L16.1 4.2C16.25 5.1 15.55 5.9 14.65 5.9C13.9 5.9 13.26 5.35 13.16 4.6C13.06 5.35 12.42 5.9 11.66 5.9C10.9 5.9 10.26 5.35 10.16 4.6C10.06 5.35 9.42 5.9 8.66 5.9C7.9 5.9 7.26 5.35 7.16 4.6C7.06 5.35 6.42 5.9 5.66 5.9C4.9 5.9 4.26 5.35 4.16 4.6C4.06 5.35 3.42 5.9 2.66 5.9C1.76 5.9 1.06 5.1 1.21 4.2L1.71 1.18C1.75 0.93 1.96 0.75 2.21 0.75" stroke="var(--stroke-0, white)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="body" d="M2.5 6.6V14.45C2.5 14.89 2.86 15.25 3.3 15.25H14C14.44 15.25 14.8 14.89 14.8 14.45V6.6" stroke="var(--stroke-0, white)" stroke-width="1.5" stroke-linecap="round"/>
+<path id="door" d="M6.6 15.25V10.4C6.6 10.07 6.87 9.8 7.2 9.8H10.1C10.43 9.8 10.7 10.07 10.7 10.4V15.25" stroke="var(--stroke-0, white)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

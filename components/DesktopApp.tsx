@@ -12,8 +12,11 @@ import StatsBar from "@/components/StatsBar";
 import PromptHelper from "@/components/PromptHelper";
 import ProfileView from "@/components/ProfileView";
 import NewsView from "@/components/NewsView";
+import MarketView from "@/components/MarketView";
 import OnboardingView from "@/components/OnboardingView";
+import LandingView from "@/components/LandingView";
 import { stageTime } from "@/lib/water";
+import { copyCard, downloadCard } from "@/lib/card-export";
 import type { AquState } from "@/lib/useAquState";
 
 /** 1920×1080 캔버스를 뷰포트 너비에 반응형으로 맞춘다(항상 너비를 채우고 세로 중앙 정렬). */
@@ -53,10 +56,29 @@ export default function DesktopApp({ app }: { app: AquState }) {
     sendTick,
     send,
     newChat,
-    finishOnboarding,
+    enterApp,
+    chatSessions,
+    loadChatSession,
+    deleteChatSession,
     toggleHelperOption,
     removeHelperOption,
     toggleCategoryVisibility,
+    effectiveHelperCategories,
+    addBuiltinHelperOption,
+    removeBuiltinHelperOption,
+    deckStore,
+    activeDecks,
+    toggleDeck,
+    createDeck,
+    removeDeck,
+    snapDeck,
+    toggleShareDeck,
+    customHelperStore,
+    activeCustomHelpers,
+    createCustomHelper,
+    updateCustomHelper,
+    removeCustomHelper,
+    toggleCustomHelper,
   } = app;
 
   const scale = useCanvasScale();
@@ -66,6 +88,10 @@ export default function DesktopApp({ app }: { app: AquState }) {
   const [helperOpen, setHelperOpen] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [copied, setCopied] = useState<number | null>(null);
+  // 사이드바 설정(톱니바퀴) 버튼으로 마켓에 진입했을 때만 "내 덱" 카드를 흔들어 알려준다.
+  // 매번 값을 바꿔야 같은 화면에서 다시 눌러도 애니메이션이 재생된다.
+  const [deckNudge, setDeckNudge] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const sendCupRef = useRef<SendCupLottieHandle>(null);
@@ -88,6 +114,25 @@ export default function DesktopApp({ app }: { app: AquState }) {
     setHelperOpen(null);
   };
 
+  // 랜딩은 사이드바 없이 전체 화면으로 — 접속할 때마다 항상 먼저 보인다
+  if (view === "landing") {
+    return (
+      <main className="grid min-h-[100dvh] w-full place-items-center overflow-x-hidden bg-bg">
+        <div
+          className="app-enter relative overflow-hidden bg-bg"
+          style={{ width: scaledW, height: scaledH }}
+        >
+          <div
+            className="absolute left-0 top-0 h-[1080px] w-[1920px] origin-top-left"
+            style={{ transform: `scale(${scale})` }}
+          >
+            <LandingView onStart={enterApp} onAbout={() => setView("about")} />
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="grid min-h-[100dvh] w-full place-items-center overflow-x-hidden bg-bg">
       <div
@@ -105,37 +150,61 @@ export default function DesktopApp({ app }: { app: AquState }) {
         >
           <Sidebar
             view={view}
-            onNavigate={setView}
+            onNavigate={(v) => {
+              setView(v);
+              setPanelOpen(false);
+            }}
             onNewChat={newChat}
             panelOpen={panelOpen}
-            onTogglePanel={() =>
-              setPanelOpen((v) => {
-                if (!v) setSidebarOpen(false);
-                return !v;
-              })
-            }
+            onTogglePanel={() => setPanelOpen((v) => !v)}
             visibleCategories={visibleCategories}
             onToggleCategory={toggleCategoryVisibility}
             sidebarOpen={sidebarOpen}
-            onToggleSidebar={() =>
-              setSidebarOpen((v) => {
-                if (!v) setPanelOpen(false);
-                return !v;
-              })
-            }
+            onToggleSidebar={() => setSidebarOpen((v) => !v)}
+            decks={deckStore.installed}
+            activeDeckIds={deckStore.activeIds}
+            onToggleDeck={toggleDeck}
+            onOpenDeckSettings={() => {
+              setView("market");
+              setPanelOpen(false);
+              setDeckNudge((n) => n + 1);
+            }}
+            sessions={chatSessions}
+            onLoadSession={loadChatSession}
+            onDeleteSession={deleteChatSession}
           />
-
-          {view === "onboarding" && <OnboardingView onFinish={finishOnboarding} />}
 
           {/* 사이드바가 열리면 메인 콘텐츠가 가려지지 않도록 오른쪽으로 살짝 밀려난다 */}
           <div
             className="transition-transform duration-300"
             style={{
-              transform: sidebarOpen && view !== "onboarding" ? "translateX(120px)" : "none",
+              transform: sidebarOpen ? "translateX(120px)" : "none",
             }}
           >
             {view === "profile" && <ProfileView store={store} />}
             {view === "news" && <NewsView />}
+            {view === "market" && (
+              <MarketView
+                deckStore={deckStore}
+                activeDeckIds={deckStore.activeIds}
+                onToggleDeck={toggleDeck}
+                onCreateDeck={createDeck}
+                onRemoveDeck={removeDeck}
+                onSnapDeck={snapDeck}
+                onToggleShare={toggleShareDeck}
+                nudgeMyDecks={deckNudge}
+                customHelperStore={customHelperStore}
+                onToggleCustomHelper={toggleCustomHelper}
+                onCreateCustomHelper={createCustomHelper}
+                onUpdateCustomHelper={updateCustomHelper}
+                onRemoveCustomHelper={removeCustomHelper}
+                visibleCategories={visibleCategories}
+                onToggleCategory={toggleCategoryVisibility}
+                allHelperCategories={effectiveHelperCategories}
+                onAddBuiltinOption={addBuiltinHelperOption}
+                onRemoveBuiltinOption={removeBuiltinHelperOption}
+              />
+            )}
             {view === "about" && <OnboardingView onFinish={() => setView("chat")} />}
 
             {view === "chat" && (
@@ -180,11 +249,42 @@ export default function DesktopApp({ app }: { app: AquState }) {
                           <p className="whitespace-pre-wrap text-[15px] leading-[1.5] tracking-[-0.75px] text-white/90">
                             {msg.text}
                           </p>
-                          <img
-                            src="/assets/response-actions.svg"
-                            alt="응답 액션"
-                            className="h-[15px] w-[98px] opacity-80"
-                          />
+                          <div className="flex items-center gap-[14px]">
+                            <img
+                              src="/assets/response-actions.svg"
+                              alt="응답 액션"
+                              className="h-[15px] w-[98px] opacity-80"
+                            />
+                            {/* 결과물 이미지 카드 내보내기 (PRD §8-1-3) — AI 답변 텍스트만 담는다 */}
+                            <button
+                              type="button"
+                              onClick={() => downloadCard({ text: msg.text })}
+                              className="flex cursor-pointer items-center gap-[6px] rounded-full border border-stroke px-[12px] py-[5px] text-[12px] tracking-[-0.6px] text-white/80 transition-colors hover:border-main hover:text-white"
+                            >
+                              🖼️ 카드 내보내기
+                            </button>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const ok = await copyCard({ text: msg.text });
+                                if (ok) {
+                                  setCopied(msg.id);
+                                  setTimeout(() => setCopied(null), 1600);
+                                }
+                              }}
+                              className="cursor-pointer text-[12px] tracking-[-0.6px] text-label transition-colors hover:text-white"
+                            >
+                              {copied === msg.id ? "복사됨!" : "이미지 복사"}
+                            </button>
+                            {msg.deckNames && msg.deckNames.length > 0 && (
+                              <span className="text-[11px] tracking-[-0.55px] text-label">
+                                덱 {msg.deckNames.join(" · ")} · 절약{" "}
+                                <span className="font-semibold text-main">
+                                  {(msg.savedMl ?? 0).toLocaleString()}mL
+                                </span>
+                              </span>
+                            )}
+                          </div>
                         </div>
                       ),
                     )}
@@ -221,6 +321,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                 {/* ---------- 프롬프트 도우미 ---------- */}
                 <div onClick={(e) => e.stopPropagation()}>
                   <PromptHelper
+                    allCategories={effectiveHelperCategories}
                     openKey={helperOpen}
                     selected={selected}
                     onToggle={setHelperOpen}
@@ -254,8 +355,42 @@ export default function DesktopApp({ app }: { app: AquState }) {
                       alt="첨부"
                       className="w-[12px] shrink-0 cursor-pointer opacity-90"
                     />
-                    {selected.length > 0 && (
+                    {(selected.length > 0 ||
+                      activeDecks.length > 0 ||
+                      activeCustomHelpers.length > 0) && (
                       <div className="chat-scroll-x flex min-w-0 flex-1 items-center gap-[6px] overflow-x-auto">
+                        {/* 장착된 커스텀 덱 — 클릭하면 즉시 해제 */}
+                        {activeDecks.map((deck) => (
+                          <button
+                            key={deck.id}
+                            type="button"
+                            onClick={() => toggleDeck(deck.id)}
+                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                            title="클릭하여 덱 해제"
+                          >
+                            {deck.name}
+                            <span className="font-semibold text-main">
+                              -{Math.round(deck.saving * 100)}%
+                            </span>
+                            <span className="text-white/60">×</span>
+                          </button>
+                        ))}
+                        {/* 나만의 프롬프트 도우미 — 클릭하면 즉시 해제 */}
+                        {activeCustomHelpers.map((helper) => (
+                          <button
+                            key={helper.id}
+                            type="button"
+                            onClick={() => toggleCustomHelper(helper.id)}
+                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                            title="클릭하여 해제"
+                          >
+                            {helper.name}
+                            <span className="font-semibold text-main">
+                              -{Math.round(helper.saving * 100)}%
+                            </span>
+                            <span className="text-white/60">×</span>
+                          </button>
+                        ))}
                         {selected.map((s) => (
                           <button
                             key={s.category.key}
@@ -273,7 +408,9 @@ export default function DesktopApp({ app }: { app: AquState }) {
                         ))}
                       </div>
                     )}
-                    {selected.length === 0 && <div className="flex-1" />}
+                    {selected.length === 0 &&
+                      activeDecks.length === 0 &&
+                      activeCustomHelpers.length === 0 && <div className="flex-1" />}
                     <button
                       type="button"
                       aria-label="보내기"
@@ -304,6 +441,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                   flags={exhausted ? [] : breakdown.flags}
                   savingPercent={exhausted ? 0 : savingPercent}
                 />
+
               </>
             )}
           </div>

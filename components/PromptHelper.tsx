@@ -5,7 +5,7 @@
    각 선택은 입력창 위의 태그에서 개별적으로 자유롭게 제거할 수 있다. */
 /* eslint-disable @next/next/no-img-element */
 
-import { HELPER_CATEGORIES, type HelperCategory, type HelperOption } from "@/lib/water";
+import type { HelperCategory, HelperOption } from "@/lib/water";
 
 export interface SelectedHelper {
   category: HelperCategory;
@@ -13,19 +13,22 @@ export interface SelectedHelper {
 }
 
 export default function PromptHelper({
+  allCategories,
   openKey,
   selected,
   onToggle,
   onSelectOption,
   visibleCategories,
 }: {
+  /** 기본 도우미 + 사용자가 옵션을 추가/삭제한 결과가 반영된 전체 카테고리 목록 */
+  allCategories: HelperCategory[];
   openKey: string | null;
   selected: SelectedHelper[];
   onToggle: (key: string | null) => void;
   onSelectOption: (category: HelperCategory, option: HelperOption) => void;
   visibleCategories: Set<string>;
 }) {
-  const categories = HELPER_CATEGORIES.filter((c) => visibleCategories.has(c.key));
+  const categories = allCategories.filter((c) => visibleCategories.has(c.key));
 
   return (
     <div className="absolute left-[172px] top-[838px] flex h-[47px] w-[560px] items-center gap-[21px]">
@@ -65,16 +68,17 @@ export default function PromptHelper({
                   className="fade-up absolute bottom-[36px] left-0 z-30 w-[128px] rounded-[10px] bg-main py-[6px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                   style={{ animationDuration: "0.2s" }}
                 >
-                  {cat.options.map((opt) => {
+                  {cat.options.map((opt, i) => {
                     const optSelected = activeSel?.option.label === opt.label;
                     return (
                       <button
                         key={opt.label}
                         type="button"
                         onClick={() => onSelectOption(cat, opt)}
-                        className={`flex w-full cursor-pointer items-center justify-between px-[12px] py-[8px] text-left text-[13px] tracking-[-0.65px] text-white transition-colors hover:bg-white/15 ${
+                        className={`fade-up flex w-full cursor-pointer items-center justify-between px-[12px] py-[8px] text-left text-[13px] tracking-[-0.65px] text-white transition-colors hover:bg-white/15 ${
                           optSelected ? "bg-white/20 font-semibold" : ""
                         }`}
+                        style={{ animationDuration: "0.2s", animationDelay: `${i * 40}ms` }}
                       >
                         <span className="whitespace-nowrap">{opt.label}</span>
                         <span className="ml-[8px] shrink-0 text-[11px] font-semibold text-white/75">
