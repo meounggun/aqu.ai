@@ -124,6 +124,38 @@ export const MARKET_DECKS: Deck[] = [
     shared: true,
     createdAt: Date.now() - 1000 * 60 * 60 * 24 * 8,
   },
+  {
+    id: "market-plan",
+    name: "기획서 3단 구조 덱",
+    category: "planning",
+    author: "물방울요정",
+    description: "두서없는 초안을 문제 / 해결 / 기대효과 구조로 정리합니다.",
+    cards: [
+      { kind: "persona", text: "10년 차 기획자 관점에서 답변해줘." },
+      { kind: "format", text: "문제 정의 / 해결 방향 / 기대 효과 3단 구조로 정리해줘." },
+      { kind: "constraint", text: "근거 없는 추측성 수치는 넣지 마." },
+    ],
+    saving: 0.55,
+    snaps: 734,
+    shared: true,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 27,
+  },
+  {
+    id: "market-etc",
+    name: "이메일 정중한 톤 덱",
+    category: "etc",
+    author: "펑치 유",
+    description: "격식 있는 존댓말로 자동 변환해 어색한 표현 실수를 줄여줍니다.",
+    cards: [
+      { kind: "persona", text: "비즈니스 이메일 첨삭자로서 답변해줘." },
+      { kind: "format", text: "인사말 / 본문 / 맺음말 구조를 지켜서 정리해줘." },
+      { kind: "constraint", text: "반말이나 줄임말은 모두 정중한 표현으로 바꿔줘." },
+    ],
+    saving: 0.49,
+    snaps: 398,
+    shared: true,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5,
+  },
 ];
 
 /* ---------- 저장소 ---------- */

@@ -19,48 +19,11 @@ import { CaretDown } from "@/components/onboarding-icons";
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS = Array.from({ length: 12 }, (_, i) => i);
 const PHOTO_KEY = "aqu-profile-photo";
-const TIPS_KEY = "aqu-prompt-tips";
 
 function formatDateLabel(key: string): string {
   const [, m, d] = key.split("-").map(Number);
   const weekday = WEEKDAYS[new Date(key).getDay()];
   return `${m}월 ${d}일 (${weekday})`;
-}
-
-/* 프롬프트 팁 공유 — 다른 사용자와 가볍게 노하우를 나누는 커뮤니티 요소 (데스크탑과 동일한 예시 데이터) */
-interface Tip {
-  id: string;
-  author: string;
-  text: string;
-  createdAt: number;
-}
-const SEED_TIPS: Tip[] = [
-  {
-    id: "seed-1",
-    author: "물방울요정",
-    text: "'이거 요약해줘' 대신 '한 문장으로 요약해줘'처럼 구체적으로 요청하면 재질문이 줄어서 물도 아낄 수 있어요!",
-    createdAt: Date.now() - 1000 * 60 * 60 * 26,
-  },
-  {
-    id: "seed-2",
-    author: "냉각수마스터",
-    text: "원하는 답변 형식(표, 목록 등)을 미리 알려주면 AI가 한 번에 맞춰줘서 훨씬 효율적이에요.",
-    createdAt: Date.now() - 1000 * 60 * 60 * 50,
-  },
-  {
-    id: "seed-3",
-    author: "그린유저",
-    text: "'더 자세히', '전부 다' 같은 모호한 표현 대신 원하는 범위를 정확히 적어주면 도배성 답변을 줄일 수 있어요.",
-    createdAt: Date.now() - 1000 * 60 * 60 * 100,
-  },
-];
-function tipTimeAgo(ts: number): string {
-  const min = Math.floor((Date.now() - ts) / 60000);
-  if (min < 1) return "방금 전";
-  if (min < 60) return `${min}분 전`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}시간 전`;
-  return `${Math.floor(hr / 24)}일 전`;
 }
 
 function encouragement(lessThanYesterday: boolean, diffPercent: number): string {
@@ -91,33 +54,13 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
   const [photo, setPhoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [myTips, setMyTips] = useState<Tip[]>([]);
-  const [tipText, setTipText] = useState("");
-
   useEffect(() => {
     try {
       setPhoto(localStorage.getItem(PHOTO_KEY));
-      const raw = localStorage.getItem(TIPS_KEY);
-      if (raw) setMyTips(JSON.parse(raw));
     } catch {
       /* 접근 불가/손상된 데이터는 무시 */
     }
   }, []);
-
-  const submitTip = () => {
-    const trimmed = tipText.trim();
-    if (!trimmed) return;
-    const tip: Tip = { id: `mine-${Date.now()}`, author: "나", text: trimmed, createdAt: Date.now() };
-    const next = [tip, ...myTips];
-    setMyTips(next);
-    setTipText("");
-    try {
-      localStorage.setItem(TIPS_KEY, JSON.stringify(next));
-    } catch {
-      /* 저장 공간 부족 등은 무시 */
-    }
-  };
-  const tips = [...myTips, ...SEED_TIPS];
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -304,45 +247,6 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
               ? "오늘 하루 더 쓸 수 있는 냉각수량이에요"
               : `채팅 ${selected.chats}회 · 도우미 ${selected.helperUses}회`}
           </p>
-        </div>
-      </Card>
-
-      {/* 프롬프트 팁 공유 — 남은 냉각수량 게이지 바로 아래, 다른 사용자와 노하우를 가볍게 나눈다 */}
-      <Card>
-        <div className="flex items-center justify-between">
-          <p className="text-[15px] font-medium tracking-[-0.75px] text-white">프롬프트 팁 공유</p>
-        </div>
-        <div className="mt-[12px] flex gap-[8px]">
-          <input
-            value={tipText}
-            onChange={(e) => setTipText(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submitTip()}
-            placeholder="나만의 팁을 공유해보세요..."
-            className="flex-1 rounded-[10px] bg-white/[0.05] px-[12px] py-[9px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
-          />
-          <button
-            type="button"
-            onClick={submitTip}
-            disabled={!tipText.trim()}
-            className="shrink-0 rounded-full bg-main px-[16px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-40"
-          >
-            공유
-          </button>
-        </div>
-        <div className="mt-[12px] flex flex-col gap-[8px]">
-          {tips.map((tip) => (
-            <div key={tip.id} className="rounded-[10px] bg-white/[0.03] px-[12px] py-[9px]">
-              <div className="flex items-center justify-between">
-                <span className="text-[12px] font-semibold tracking-[-0.6px] text-white">
-                  💡 {tip.author}
-                </span>
-                <span className="text-[10px] tracking-[-0.5px] text-label">{tipTimeAgo(tip.createdAt)}</span>
-              </div>
-              <p className="mt-[4px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white/80">
-                {tip.text}
-              </p>
-            </div>
-          ))}
         </div>
       </Card>
 

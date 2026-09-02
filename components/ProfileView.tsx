@@ -3,7 +3,7 @@
 /* MY PROFILE — 기획서 프로필 화면 스펙:
    일일 냉각수 게이지 / 누적 사용량·비워낸 컵·누적 채팅·도우미 횟수 / 월 달력 / 어제 대비 그래프
    + 날짜 선택(달력 ↔ 기록 리스트 연동) / 연도별 누적 통계 필터 / 프로필 사진 설정
-   + 프롬프트 팁 공유(커뮤니티 요소) / 진입 애니메이션
+   + 진입 애니메이션
    여백 스케일: 16px(카드 간·섹션 내 기본 간격) / 12px(캡션류 보조 간격) / 4~6px(칩·리스트 촘촘한 간격) */
 
 import { useEffect, useRef, useState } from "react";
@@ -23,44 +23,6 @@ import { CaretDown } from "./onboarding-icons";
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS = Array.from({ length: 12 }, (_, i) => i);
 const PHOTO_KEY = "aqu-profile-photo";
-const TIPS_KEY = "aqu-prompt-tips";
-
-/* 프롬프트 팁 공유 — 다른 사용자와 가볍게 노하우를 나누는 커뮤니티 요소.
-   서버가 없는 프로토타입이라 예시 팁을 시드로 두고, 내가 올린 팁은 로컬에 저장해 다음 방문에도 보인다 */
-interface Tip {
-  id: string;
-  author: string;
-  text: string;
-  createdAt: number;
-}
-const SEED_TIPS: Tip[] = [
-  {
-    id: "seed-1",
-    author: "물방울요정",
-    text: "'이거 요약해줘' 대신 '한 문장으로 요약해줘'처럼 구체적으로 요청하면 재질문이 줄어서 물도 아낄 수 있어요!",
-    createdAt: Date.now() - 1000 * 60 * 60 * 26,
-  },
-  {
-    id: "seed-2",
-    author: "냉각수마스터",
-    text: "원하는 답변 형식(표, 목록 등)을 미리 알려주면 AI가 한 번에 맞춰줘서 훨씬 효율적이에요.",
-    createdAt: Date.now() - 1000 * 60 * 60 * 50,
-  },
-  {
-    id: "seed-3",
-    author: "그린유저",
-    text: "'더 자세히', '전부 다' 같은 모호한 표현 대신 원하는 범위를 정확히 적어주면 도배성 답변을 줄일 수 있어요.",
-    createdAt: Date.now() - 1000 * 60 * 60 * 100,
-  },
-];
-function tipTimeAgo(ts: number): string {
-  const min = Math.floor((Date.now() - ts) / 60000);
-  if (min < 1) return "방금 전";
-  if (min < 60) return `${min}분 전`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}시간 전`;
-  return `${Math.floor(hr / 24)}일 전`;
-}
 
 function formatDateLabel(key: string): string {
   const [, m, d] = key.split("-").map(Number);
@@ -117,34 +79,13 @@ export default function ProfileView({ store }: { store: UsageStore }) {
   const [photo, setPhoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 프롬프트 팁 공유 — 내가 올린 팁은 로컬에 저장, 예시 팁과 함께 보여준다
-  const [myTips, setMyTips] = useState<Tip[]>([]);
-  const [tipText, setTipText] = useState("");
-
   useEffect(() => {
     try {
       setPhoto(localStorage.getItem(PHOTO_KEY));
-      const raw = localStorage.getItem(TIPS_KEY);
-      if (raw) setMyTips(JSON.parse(raw));
     } catch {
       /* 접근 불가/손상된 데이터는 무시 */
     }
   }, []);
-
-  const submitTip = () => {
-    const trimmed = tipText.trim();
-    if (!trimmed) return;
-    const tip: Tip = { id: `mine-${Date.now()}`, author: "나", text: trimmed, createdAt: Date.now() };
-    const next = [tip, ...myTips];
-    setMyTips(next);
-    setTipText("");
-    try {
-      localStorage.setItem(TIPS_KEY, JSON.stringify(next));
-    } catch {
-      /* 저장 공간 부족 등은 무시 — 화면에는 이미 반영됨 */
-    }
-  };
-  const tips = [...myTips, ...SEED_TIPS];
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -406,48 +347,6 @@ export default function ProfileView({ store }: { store: UsageStore }) {
 
           {/* ---------- 우측 ---------- */}
           <div className="flex min-h-0 flex-col gap-[16px]">
-            {/* 프롬프트 팁 공유 — 남은 냉각수량 게이지 바로 아래, 다른 사용자와 노하우를 가볍게 나눈다 */}
-            <Card className="shrink-0" delay={120}>
-              <div className="flex items-center justify-between">
-                <p className="text-[15px] font-medium tracking-[-0.75px] text-white">프롬프트 팁 공유</p>
-                <span className="text-[12px] tracking-[-0.6px] text-label">다른 사람들과 노하우를 나눠보세요</span>
-              </div>
-              <div className="mt-[12px] flex gap-[8px]">
-                <input
-                  value={tipText}
-                  onChange={(e) => setTipText(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && submitTip()}
-                  placeholder="나만의 프롬프트 팁을 공유해보세요..."
-                  className="flex-1 rounded-[10px] bg-white/[0.05] px-[12px] py-[9px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={submitTip}
-                  disabled={!tipText.trim()}
-                  className="shrink-0 cursor-pointer rounded-full bg-main px-[16px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  공유
-                </button>
-              </div>
-              <div className="chat-scroll mt-[12px] flex max-h-[88px] flex-col gap-[8px] overflow-y-auto pr-[10px]">
-                {tips.map((tip) => (
-                  <div key={tip.id} className="rounded-[10px] bg-white/[0.03] px-[12px] py-[9px]">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[12px] font-semibold tracking-[-0.6px] text-white">
-                        💡 {tip.author}
-                      </span>
-                      <span className="text-[10px] tracking-[-0.5px] text-label">
-                        {tipTimeAgo(tip.createdAt)}
-                      </span>
-                    </div>
-                    <p className="mt-[4px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white/80">
-                      {tip.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
             <div className="grid min-h-0 flex-1 grid-cols-2 gap-[16px]">
               {/* 월 달력 — 연도/월을 각각 따로 선택할 수 있다 */}
               <Card className="flex flex-col" delay={180}>

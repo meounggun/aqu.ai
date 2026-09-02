@@ -1,4 +1,4 @@
-/* 하단 우측 통계 영역 — 실시간 물 사용량 / 오늘의 냉각수 잔여량 / 인용구 (Figma 228:327~349) */
+/* 하단 우측 통계 영역 — 실시간 물 사용량 / 오늘의 냉각수 잔여량 (Figma 228:327~349) */
 /* eslint-disable @next/next/no-img-element */
 
 import type { UsageFlag } from "@/lib/water";
@@ -59,34 +59,24 @@ export default function StatsBar({
         </div>
       )}
 
-      {/* 구분선 */}
-      <div className="absolute left-[1339px] top-[892px] h-[114px] w-px bg-stroke/60" />
-      <div className="absolute left-[1569px] top-[892px] h-[114px] w-px bg-stroke/60" />
+      {/* 구분선 — 두 항목 사이 정중앙 하나만 */}
+      <div className="absolute left-[1463px] top-[892px] h-[114px] w-px bg-stroke/60" />
 
       {/* 오늘의 냉각수 잔여량 */}
-      <p className="absolute left-[1385px] top-[893px] w-[130px] text-[14px] tracking-[-0.7px] text-label [text-shadow:0_4px_4px_rgba(0,0,0,0.25)]">
+      <p className="absolute left-[1509px] top-[893px] w-[160px] text-[14px] tracking-[-0.7px] text-label [text-shadow:0_4px_4px_rgba(0,0,0,0.25)]">
         오늘의 냉각수 잔여량
       </p>
-      <div className="absolute left-[1385px] top-[917px] flex items-end whitespace-nowrap">
+      <div className="absolute left-[1509px] top-[917px] flex items-end whitespace-nowrap">
         <span className="text-[45px] font-light leading-[1.21] tracking-[-2.25px] text-white">
           {remaining.toLocaleString()}
         </span>
         <span className="ml-[5px] pb-[7px] text-[24px] font-thin text-label">ml</span>
       </div>
-      <div className="absolute left-[1385px] top-[988px] flex items-center gap-[2.5px] whitespace-nowrap text-[12px] tracking-[-0.6px]">
+      <div className="absolute left-[1509px] top-[988px] flex items-center gap-[2.5px] whitespace-nowrap text-[12px] tracking-[-0.6px]">
         <span className="font-thin text-label">어제보다</span>
         <span className="font-bold text-main">18%</span>
         <span className="font-thin text-label">절약</span>
       </div>
-
-      {/* 인용구 */}
-      <img src="/assets/quote-icon.svg" alt="" className="absolute left-[1607px] top-[896px] w-[17px]" />
-      <p className="absolute left-[1606px] top-[923px] w-[179px] font-serif-kr text-[14px] leading-[1.4] tracking-[-0.7px] text-white/90">
-        같은 AI라도 필요한 물의 양은 기후, 기술, 에너지 구성에 따라 달라진다.”
-      </p>
-      <p className="absolute left-[1582px] top-[988px] w-[193px] text-right text-[12px] leading-[1.7] tracking-[-0.6px] text-label-2/90">
-        펑치 유
-      </p>
     </>
   );
 }

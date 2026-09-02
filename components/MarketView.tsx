@@ -53,7 +53,7 @@ function Card({
 function CategoryBadge({ category, size = 20 }: { category: DeckCategory; size?: number }) {
   return (
     <span
-      className="shrink-0 rounded-[8px]"
+      className="block shrink-0 rounded-[8px]"
       style={{ width: size, height: size, backgroundColor: `${CATEGORY_COLOR[category]}30` }}
     >
       <span
@@ -270,15 +270,10 @@ export default function MarketView({
 
   return (
     <div className="absolute left-[140px] top-[60px] flex h-[960px] w-[1640px] flex-col p-[24px]">
-      <div className="fade-up flex shrink-0 items-end justify-between">
-        <div>
-          <h2 className="text-[18px] font-semibold tracking-[-0.9px] text-white">프롬프트 도우미 편집</h2>
-          <p className="mt-[4px] text-[13px] tracking-[-0.65px] text-label">
-            아낄수록 강해지는 나만의 프롬프트 워크스페이스
-          </p>
-        </div>
-        <p className="text-[12px] tracking-[-0.6px] text-label">
-          덱을 켜두면 반복 입력 없이 조건이 유지되고, 그만큼 냉각수가 절약됩니다
+      <div className="fade-up shrink-0">
+        <h2 className="text-[20px] font-semibold tracking-[-1px] text-white">덱 편집</h2>
+        <p className="mt-[4px] text-[13px] tracking-[-0.65px] text-label">
+          덱을 켜두면 반복 입력 없이 프롬프트가 유지됩니다
         </p>
       </div>
 
@@ -455,12 +450,25 @@ export default function MarketView({
           {/* 마켓 — 왼쪽 컬럼(내 덱) 전체 높이만큼 늘어난다 */}
           <Card className="flex flex-col" delay={240}>
             <div className="flex shrink-0 items-center justify-between">
-              <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
-                검증된 덱 가져오기
-              </p>
-              <span className="text-[11px] tracking-[-0.55px] text-label">
-                가져간 유저가 절감에 성공하면 창작자에게 크레딧이 분배돼요
-              </span>
+              <div>
+                <p className="text-[15px] font-medium tracking-[-0.75px] text-white">덱 공유하기</p>
+                <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
+                  가져간 유저가 절감에 성공하면 창작자에게 크레딧이 분배돼요
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setComposing((v) => !v)}
+                aria-label="새 덱 만들기"
+                title="새 덱 만들기"
+                className={`flex size-[28px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[16px] font-semibold transition-colors ${
+                  composing
+                    ? "border-main bg-main text-white"
+                    : "border-stroke text-label hover:border-main hover:text-white"
+                }`}
+              >
+                +
+              </button>
             </div>
 
             {/* 카테고리별 검색 */}
@@ -498,46 +506,25 @@ export default function MarketView({
               )}
               {marketList.map((deck) => {
                 const owned = installedIds.has(deck.id);
-                const snapCount = deck.snaps + (deckStore.marketSnaps[deck.id] ?? 0);
                 return (
                   <div
                     key={deck.id}
-                    className="flex flex-col rounded-[12px] border border-stroke bg-white/[0.02] p-[14px]"
+                    className="flex h-[168px] flex-col rounded-[14px] border border-stroke bg-white/[0.02] p-[18px]"
                   >
-                    <div className="flex items-start gap-[10px]">
-                      <CategoryBadge category={deck.category} size={22} />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
-                          {deck.name}
-                        </p>
-                        <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
-                          {CATEGORY_LABEL[deck.category]} · by {deck.author} · 스냅{" "}
-                          {snapCount.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <p className="mt-[10px] line-clamp-2 text-[11px] leading-[1.55] tracking-[-0.55px] text-white/60">
+                    <CategoryBadge category={deck.category} size={32} />
+                    <p className="mt-[14px] truncate text-[15px] font-semibold tracking-[-0.75px] text-white">
+                      {deck.name}
+                    </p>
+                    <p className="mt-[6px] line-clamp-2 text-[12px] leading-[1.55] tracking-[-0.6px] text-white/60">
                       {deck.description || "설명이 없는 덱이에요."}
                     </p>
 
-                    <div className="mt-[10px] flex flex-col gap-[4px]">
-                      {deck.cards.map((c, i) => (
-                        <span
-                          key={i}
-                          className="truncate rounded-[6px] bg-white/[0.05] px-[8px] py-[4px] text-[10px] tracking-[-0.5px] text-white/70"
-                        >
-                          {CARD_KIND_LABEL[c.kind]} · {c.text}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-auto flex items-center pt-[12px]">
+                    <div className="mt-auto flex shrink-0 items-center justify-end pt-[16px]">
                       <button
                         type="button"
                         onClick={() => onSnapDeck(deck)}
                         disabled={owned}
-                        className="ml-auto cursor-pointer rounded-full bg-main px-[14px] py-[6px] text-[12px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-label"
+                        className="cursor-pointer rounded-full bg-main px-[14px] py-[6px] text-[12px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-label"
                       >
                         {owned ? "보유 중" : "Snap"}
                       </button>
@@ -549,16 +536,21 @@ export default function MarketView({
           </Card>
         </div>
 
+        {/* 프롬프트 도우미 — 페이지 레벨 섹션 헤더. 아래 두 카드(기본 도우미 편집 / 팁 공유)를 함께 아우른다 */}
+        <div className="fade-up mt-[4px] shrink-0">
+          <h2 className="text-[20px] font-semibold tracking-[-1px] text-white">프롬프트 도우미</h2>
+          <p className="mt-[4px] text-[13px] tracking-[-0.65px] text-label">
+            동그라미를 눌러 기본 도우미를 편집하거나, +를 눌러 나만의 도우미를 만들어보세요
+          </p>
+        </div>
+
         {/* ---------- 스크롤하면 나오는 하단 행: 프롬프트 도우미 편집 / 프롬프트 팁·링크 공유 ---------- */}
         <div className="grid shrink-0 grid-cols-2 gap-[16px]">
           {/* 프롬프트 도우미 편집 — "내 덱"과 같은 방식으로 만들고, 켜고 끄고, 수정한다.
               내부 스크롤 없이 편집 패널이 한 번에 다 보이도록 높이를 내용에 맞춰 늘어나게 둔다 */}
           <Card className="flex flex-col" delay={0}>
-            <div className="flex shrink-0 items-center justify-between">
-              <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
-                프롬프트 도우미 편집
-              </p>
-              {helperComposing && (
+            {helperComposing && (
+              <div className="flex shrink-0 justify-end">
                 <button
                   type="button"
                   onClick={resetHelperForm}
@@ -566,11 +558,8 @@ export default function MarketView({
                 >
                   닫기
                 </button>
-              )}
-            </div>
-            <p className="mt-[4px] text-[11px] tracking-[-0.55px] text-label">
-              동그라미를 눌러 기본 도우미를 편집하거나, +를 눌러 나만의 도우미를 만들어보세요
-            </p>
+              </div>
+            )}
 
             {helperComposing && (
               <div className="fade-up mt-[10px] shrink-0 rounded-[12px] bg-white/[0.04] p-[12px]">
@@ -613,12 +602,8 @@ export default function MarketView({
               </div>
             )}
 
-            <div className="mt-[12px] flex flex-col gap-[8px]">
-              {/* 기존 요약/번역/코드 등 기본 도우미 — 동그라미를 눌러야 편집 패널이 나타난다 */}
-              <p className="px-[2px] text-[11px] font-semibold tracking-[-0.55px] text-label">
-                기본 도우미 · 눌러서 편집
-              </p>
-              <div className="chat-scroll-x -mx-[4px] flex shrink-0 gap-[8px] overflow-x-auto px-[4px]">
+            <div className="mt-[12px] flex flex-col gap-[10px]">
+              <div className="chat-scroll-x -mx-[4px] flex shrink-0 gap-[10px] overflow-x-auto px-[4px]">
                 {allHelperCategories.map((cat) => {
                   const selected = expandedCategory === cat.key;
                   return (
@@ -629,8 +614,7 @@ export default function MarketView({
                         setExpandedCategory(selected ? null : cat.key);
                         resetOptionForm();
                       }}
-                      title={cat.label}
-                      className={`relative flex h-[32px] w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-[14px] border text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+                      className={`shrink-0 cursor-pointer rounded-full border px-[18px] py-[10px] text-[13px] font-semibold tracking-[-0.65px] transition-colors ${
                         selected
                           ? "border-main bg-main text-white"
                           : "border-stroke bg-white/[0.03] text-label hover:border-main/60 hover:text-white"
@@ -649,7 +633,7 @@ export default function MarketView({
                   }}
                   aria-label="새 프롬프트 도우미 만들기"
                   title="새 프롬프트 도우미 만들기"
-                  className={`flex h-[32px] w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-[14px] border border-dashed text-[18px] font-semibold transition-colors ${
+                  className={`flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-dashed px-[16px] py-[10px] text-[16px] font-semibold transition-colors ${
                     helperComposing
                       ? "border-main bg-main text-white"
                       : "border-stroke text-label hover:border-main hover:text-white"
@@ -667,61 +651,56 @@ export default function MarketView({
                   const builtIns = builtInLabels(cat.key);
                   return (
                     <div
-                      className="fade-up rounded-[12px] border border-stroke bg-white/[0.02] p-[12px]"
+                      className="fade-up rounded-[14px] border border-stroke bg-white/[0.02] p-[18px]"
                       style={{ animationDuration: "0.2s" }}
                     >
                       <div className="flex items-center justify-between">
-                        <p className="text-[13px] font-semibold tracking-[-0.65px] text-white">
+                        <p className="text-[18px] font-semibold tracking-[-0.9px] text-white">
                           {cat.label}
                         </p>
                         <button
                           type="button"
                           onClick={() => onToggleCategory(cat.key)}
-                          className={`flex h-[22px] w-[40px] shrink-0 cursor-pointer items-center rounded-full px-[3px] transition-colors duration-200 ${
+                          className={`flex h-[26px] w-[46px] shrink-0 cursor-pointer items-center rounded-full px-[3px] transition-colors duration-200 ${
                             on ? "bg-main" : "bg-white/20"
                           }`}
                           aria-label={on ? "기본 도우미 끄기" : "기본 도우미 켜기"}
                         >
                           <span
-                            className="size-[16px] rounded-full bg-white transition-transform duration-200"
-                            style={{ transform: on ? "translateX(18px)" : "translateX(0)" }}
+                            className="size-[20px] rounded-full bg-white transition-transform duration-200"
+                            style={{ transform: on ? "translateX(20px)" : "translateX(0)" }}
                           />
                         </button>
                       </div>
 
-                      <div className="mt-[10px] flex flex-col gap-[6px]">
+                      <div className="mt-[14px] flex flex-col gap-[10px]">
                         {cat.options.map((opt) => {
                           const isBuiltIn = builtIns.has(opt.label);
                           return (
                             <div
                               key={opt.label}
-                              className="flex items-start justify-between gap-[8px] rounded-[8px] bg-white/[0.04] px-[10px] py-[8px]"
+                              className="rounded-[10px] bg-white/[0.04] px-[16px] py-[14px]"
                             >
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-[6px]">
-                                  <span className="text-[12px] font-semibold tracking-[-0.6px] text-white">
-                                    {opt.label}
-                                  </span>
-                                  <span className="text-[10px] font-semibold tracking-[-0.5px] text-main">
-                                    -{Math.round(opt.saving * 100)}%
-                                  </span>
-                                  {!isBuiltIn && (
-                                    <span className="rounded-full bg-main/20 px-[6px] py-[1px] text-[9px] font-semibold tracking-[-0.45px] text-main">
-                                      내가 추가함
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="mt-[3px] text-[11px] leading-[1.5] tracking-[-0.55px] text-white/60">
-                                  {opt.directive}
+                              <div className="flex items-center justify-between gap-[10px]">
+                                <p className="min-w-0 flex-1 truncate text-[14px] font-semibold tracking-[-0.7px] text-white">
+                                  {opt.label}
                                 </p>
+                                <button
+                                  type="button"
+                                  onClick={() => onRemoveBuiltinOption(cat.key, opt.label, isBuiltIn)}
+                                  aria-label="옵션 끄기"
+                                  title="옵션 끄기"
+                                  className="flex h-[22px] w-[40px] shrink-0 cursor-pointer items-center rounded-full bg-main px-[3px] transition-colors duration-200"
+                                >
+                                  <span
+                                    className="size-[16px] rounded-full bg-white transition-transform duration-200"
+                                    style={{ transform: "translateX(18px)" }}
+                                  />
+                                </button>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => onRemoveBuiltinOption(cat.key, opt.label, isBuiltIn)}
-                                className="shrink-0 cursor-pointer text-[11px] tracking-[-0.55px] text-label transition-colors hover:text-white"
-                              >
-                                제거
-                              </button>
+                              <p className="mt-[6px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white/60">
+                                {opt.directive}
+                              </p>
                             </div>
                           );
                         })}
@@ -733,41 +712,29 @@ export default function MarketView({
                       </div>
 
                       {/* 이 카테고리에 옵션 추가 */}
-                      <div className="mt-[10px] rounded-[8px] bg-white/[0.03] p-[10px]">
+                      <div className="mt-[14px] rounded-[10px] bg-white/[0.03] p-[14px]">
+                        <p className="text-[13px] font-semibold tracking-[-0.65px] text-white">옵션 추가</p>
                         <input
                           value={optLabel}
                           onChange={(e) => setOptLabel(e.target.value)}
-                          placeholder="옵션 이름 (예: 개조식 요약)"
-                          className="w-full rounded-[7px] bg-white/[0.06] px-[9px] py-[7px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
+                          placeholder="옵션이름 (예: 개조식 요약)"
+                          className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
                         />
                         <textarea
                           value={optDirective}
                           onChange={(e) => setOptDirective(e.target.value)}
-                          placeholder="프롬프트에 이어붙일 지시문"
+                          placeholder="지시문 작성"
                           rows={2}
-                          className="mt-[6px] w-full resize-none rounded-[7px] bg-white/[0.06] px-[9px] py-[7px] text-[11px] leading-[1.5] tracking-[-0.55px] text-white placeholder:text-white/30 focus:outline-none"
+                          className="mt-[6px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[11px] leading-[1.5] tracking-[-0.55px] text-white placeholder:text-white/30 focus:outline-none"
                         />
-                        <div className="mt-[6px] flex items-center gap-[6px]">
-                          <span className="text-[10px] tracking-[-0.5px] text-label">절감율</span>
-                          {HELPER_SAVING_PRESETS.map((p) => (
-                            <button
-                              key={p}
-                              type="button"
-                              onClick={() => setOptSaving(p)}
-                              className={`cursor-pointer rounded-full px-[8px] py-[3px] text-[10px] font-semibold tracking-[-0.5px] transition-colors ${
-                                optSaving === p ? "bg-main text-white" : "bg-white/[0.06] text-label"
-                              }`}
-                            >
-                              -{Math.round(p * 100)}%
-                            </button>
-                          ))}
+                        <div className="mt-[10px] flex justify-end">
                           <button
                             type="button"
                             onClick={() => submitOption(cat.key)}
                             disabled={!optLabel.trim() || !optDirective.trim()}
-                            className="ml-auto cursor-pointer rounded-full bg-main px-[12px] py-[5px] text-[11px] font-semibold tracking-[-0.55px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
+                            className="cursor-pointer rounded-full bg-main px-[18px] py-[8px] text-[12px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
                           >
-                            옵션 추가
+                            추가하기
                           </button>
                         </div>
                       </div>

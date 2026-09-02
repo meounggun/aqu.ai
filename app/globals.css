@@ -3,7 +3,7 @@
 :root {
   /* Figma tokens */
   --main: #498aff; /* 메인컬러 */
-  --bg: #1b1d1f; /* 배경 */
+  --bg: #1b1d1f; /* 배경 — 물컵 영상의 배경 매트와 같은 색 */
   --label: #c0c0c0; /* 색상 */
   --label-2: #e9e9e9; /* 색상-2 */
   --stroke: #6d6d6d; /* 스트로크 */

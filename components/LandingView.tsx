@@ -69,68 +69,116 @@ function DeckRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-[9px] rounded-[10px] border px-[10px] py-[8px] transition-colors duration-300 ${
+      className={`flex items-center gap-[12px] rounded-[13px] border px-[15px] py-[13px] transition-colors duration-300 ${
         on ? "border-main bg-main/20" : "border-stroke"
       }`}
     >
-      <span className="size-[8px] shrink-0 rounded-full" style={{ backgroundColor: color }} />
+      <span className="size-[9px] shrink-0 rounded-full" style={{ backgroundColor: color }} />
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+        <span className="block truncate text-[15px] font-semibold tracking-[-0.75px] text-white">
           {name}
         </span>
-        <span className="block text-[11px] tracking-[-0.55px] text-label">{meta}</span>
+        <span className="mt-[3px] block text-[12px] tracking-[-0.6px] text-label">{meta}</span>
       </span>
       <span
-        className={`flex h-[18px] w-[32px] shrink-0 items-center rounded-full px-[2px] transition-colors duration-300 ${
+        className={`flex h-[24px] w-[44px] shrink-0 items-center rounded-full px-[3px] transition-colors duration-300 ${
           on ? "bg-main" : "bg-white/20"
         }`}
       >
         <span
-          className="size-[14px] rounded-full bg-white transition-transform duration-300"
-          style={{ transform: on ? "translateX(14px)" : "translateX(0)" }}
+          className="size-[18px] rounded-full bg-white transition-transform duration-300"
+          style={{ transform: on ? "translateX(20px)" : "translateX(0)" }}
         />
       </span>
     </div>
   );
 }
 
-/* 섹션 2 데모 타임라인 — 700ms짜리 12스텝을 반복한다 */
-const BOARD_STEPS = 12;
+/* 섹션 2 데모 타임라인 — 650ms짜리 13스텝을 반복한다 */
+const BOARD_STEPS = 13;
 
-/** 섹션 2 비주얼 — 사이드바 커스텀 덱/도우미 패널 + 채팅 바 (Figma 930:1012).
-   덱을 켜고 끄는 것, 커스텀 덱이 추가·제거되는 것, 도우미 옵션이 하나씩 열리는 것을 자동 반복 재생한다. */
+/** 대화창 하단에 붙는 조건 태그 — 들어올 땐 fade-up, 빠질 땐 바깥 래퍼가 줄어들며 사라진다 */
+function InputTag({
+  label,
+  saving,
+  leaving,
+}: {
+  label: string;
+  saving: number;
+  leaving: boolean;
+}) {
+  return (
+    <span
+      className={`shrink-0 transition-all duration-300 ${leaving ? "scale-[0.9] opacity-0" : ""}`}
+    >
+      <span
+        className="fade-up flex h-[26px] items-center gap-[7px] rounded-[8px] border border-main/60 bg-main/15 px-[11px] text-[12.5px] tracking-[-0.62px] text-white"
+        style={{ animationDuration: "0.25s" }}
+      >
+        {label}
+        <span className="font-semibold text-main">-{saving}%</span>
+        <span className="text-white/60">×</span>
+      </span>
+    </span>
+  );
+}
+
+/** 섹션 2 비주얼 — 왼쪽 커스텀 덱 패널 + 오른쪽 도우미 바/대화창 (Figma 930:1012).
+   덱을 켜고 끄거나 도우미 옵션을 고르면, 그 결과가 대화창 하단 태그로 그대로 반영되는 흐름을 자동 반복 재생한다. */
 function BoardVisual() {
   const [step, setStep] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setStep((s) => (s + 1) % BOARD_STEPS), 700);
+    const t = setInterval(() => setStep((s) => (s + 1) % BOARD_STEPS), 650);
     return () => clearInterval(t);
   }, []);
 
-  // 켜고 끄고 → 옵션 열기 → 덱 추가 → 덱 제거 순으로 진행
-  const deck1On = step >= 1 && step < 10;
-  const deck2On = step >= 2 && step < 10;
-  const menuOpen = step >= 3 && step <= 6;
-  const picked = step >= 5 && step <= 6;
-  const extraVisible = step >= 7 && step <= 9;
-  const extraLeaving = step === 9;
+  // 덱 켜기 → 도우미 옵션 열어서 고르기 → 하나씩 다시 끄기
+  const deck1On = step >= 1 && step <= 10;
+  const deck2On = step >= 2 && step <= 7;
+  const menuOpen = step >= 3 && step <= 5;
+  const picked = step === 5;
+  const summaryActive = menuOpen || (step >= 6 && step <= 10);
 
-  const helperGrid = ["요약", "톤", "코드", "검토", "번역", "표", "예시", "쉽게"];
-  const chips = ["요약", "번역", "코드", "톤", "검토", "쉽게", "예시", "표"];
+  // 켜둔 덱·고른 옵션이 그대로 대화창 태그가 된다 (leaving 스텝에서 한 번 더 그려 빠지는 모습을 보여준다)
+  const tags = [
+    {
+      key: "deck1",
+      label: "10년 차 UI 디자이너 덱",
+      saving: 62,
+      show: step >= 1 && step <= 11,
+      leaving: step === 11,
+    },
+    {
+      key: "deck2",
+      label: "카피라이터 300자 덱",
+      saving: 58,
+      show: step >= 2 && step <= 8,
+      leaving: step === 8,
+    },
+    {
+      key: "helper",
+      label: "요약 · 한 줄 요약",
+      saving: 85,
+      show: step >= 6 && step <= 10,
+      leaving: step === 10,
+    },
+  ].filter((t) => t.show);
+
+  const chips = ["요약", "번역", "코드", "톤"];
   const options = [
     { label: "한 줄 요약", saving: 85 },
     { label: "3줄 요약", saving: 70 },
   ];
 
   return (
-    <div className="flex items-center gap-[76px]">
-      {/* 사이드바 패널 */}
-      <div className="w-[268px] shrink-0 rounded-[16px] bg-gray-box px-[15px] py-[16px] text-left">
+    <div className="flex items-center gap-[58px]">
+      {/* 왼쪽 — 커스텀 덱 패널 */}
+      <div className="w-[340px] shrink-0 rounded-[18px] bg-gray-box p-[18px] text-left">
         <div className="flex items-center justify-between">
-          <p className="text-[12px] font-semibold tracking-[-0.6px] text-label">커스텀 덱</p>
-          <GearGlyph className="size-[15px] text-label" />
+          <p className="text-[13px] font-semibold tracking-[-0.65px] text-label">커스텀 덱</p>
+          <GearGlyph className="size-[17px] text-label" />
         </div>
-
-        <div className="mt-[11px] flex flex-col gap-[7px]">
+        <div className="mt-[14px] flex flex-col gap-[10px]">
           <DeckRow
             name="10년 차 UI 디자이너 덱"
             meta="디자인 · -62%"
@@ -143,85 +191,78 @@ function BoardVisual() {
             color="#ffb648"
             on={deck2On}
           />
-          {/* 추가·제거 — 들어올 땐 fade-up, 빠질 땐 바깥 래퍼가 접히며 사라진다 */}
-          {extraVisible && (
-            <div
-              className={`transition-all duration-300 ${
-                extraLeaving ? "-translate-x-[8px] scale-[0.96] opacity-0" : ""
-              }`}
-            >
-              <div className="fade-up" style={{ animationDuration: "0.3s" }}>
-                <DeckRow name="회의록 정리 덱" meta="기획/문서 · -55%" color="#a78bfa" on />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-[14px] border-t border-white/[0.08] pt-[13px]">
-          <p className="mb-[10px] text-[12px] font-semibold tracking-[-0.6px] text-label">
-            프롬프트 도우미
-          </p>
-          <div className="grid grid-cols-2 gap-[9px]">
-            {helperGrid.map((label) => (
-              <span
-                key={label}
-                className="flex h-[32px] items-center justify-center rounded-[10px] bg-main text-[13px] font-semibold tracking-[-0.65px] text-white"
-              >
-                {label}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* 채팅 바 — 도우미 칩과, 하나씩 열리는 세부 옵션 */}
-      <div className="flex items-center gap-[20px]">
-        <div className="flex shrink-0 items-center gap-[9px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/helper-bar-icon.svg" alt="" className="w-[15px] opacity-90" />
-          <span className="whitespace-nowrap text-[17px] tracking-[-0.85px] text-white/90">
-            프롬프트 도우미
-          </span>
+      {/* 오른쪽 — 도우미 바 + 대화창 */}
+      <div className="flex w-[820px] shrink-0 flex-col gap-[14px]">
+        <div className="flex items-center gap-[18px] pl-[20px]">
+          <div className="flex shrink-0 items-center gap-[9px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/helper-bar-icon.svg" alt="" className="w-[15px] opacity-90" />
+            <span className="whitespace-nowrap text-[16px] tracking-[-0.8px] text-white/90">
+              프롬프트 도우미
+            </span>
+          </div>
+
+          <div className="flex items-center gap-[10px]">
+            {chips.map((label) => {
+              const isSummary = label === "요약";
+              const active = isSummary && summaryActive;
+              return (
+                <div key={label} className="relative">
+                  <span
+                    className={`flex h-[34px] w-[70px] items-center justify-center rounded-[10px] border text-[14px] font-semibold tracking-[-0.7px] text-white transition-colors duration-300 ${
+                      active ? "border-main bg-main" : "border-stroke"
+                    }`}
+                  >
+                    {label}
+                  </span>
+
+                  {isSummary && menuOpen && (
+                    <div
+                      className="fade-up absolute bottom-[44px] left-0 w-[152px] rounded-[10px] bg-main py-[6px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                      style={{ animationDuration: "0.2s" }}
+                    >
+                      {options.map((opt, i) => (
+                        <span
+                          key={opt.label}
+                          className={`fade-up flex items-center justify-between px-[13px] py-[8px] text-[13px] tracking-[-0.65px] text-white ${
+                            picked && i === 0 ? "bg-white/20 font-semibold" : ""
+                          }`}
+                          style={{ animationDuration: "0.22s", animationDelay: `${i * 110}ms` }}
+                        >
+                          <span className="whitespace-nowrap">{opt.label}</span>
+                          <span className="ml-[8px] shrink-0 text-[12px] font-semibold text-white/75">
+                            -{opt.saving}%
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="flex items-center gap-[10px]">
-          {chips.map((label) => {
-            const isSummary = label === "요약";
-            const active = isSummary && menuOpen;
-            return (
-              <div key={label} className="relative">
-                <span
-                  className={`flex h-[34px] w-[74px] items-center justify-center rounded-[10px] border text-[14px] font-semibold tracking-[-0.7px] text-white transition-colors duration-300 ${
-                    active ? "border-main bg-main" : "border-stroke"
-                  }`}
-                >
-                  {label}
-                </span>
-
-                {isSummary && menuOpen && (
-                  <div
-                    className="fade-up absolute bottom-[44px] left-0 w-[152px] rounded-[10px] bg-main py-[6px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
-                    style={{ animationDuration: "0.2s" }}
-                  >
-                    {options.map((opt, i) => (
-                      <span
-                        key={opt.label}
-                        className={`fade-up flex items-center justify-between px-[13px] py-[8px] text-[13px] tracking-[-0.65px] text-white ${
-                          picked && i === 0 ? "bg-white/20 font-semibold" : ""
-                        }`}
-                        style={{ animationDuration: "0.22s", animationDelay: `${i * 110}ms` }}
-                      >
-                        <span className="whitespace-nowrap">{opt.label}</span>
-                        <span className="ml-[8px] shrink-0 text-[12px] font-semibold text-white/75">
-                          -{opt.saving}%
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        {/* 대화창 — 켜둔 덱과 고른 옵션이 하단 태그로 그대로 붙는다 */}
+        <div className="relative h-[125px] w-full rounded-[17px] bg-gray-box text-left">
+          <p className="absolute left-[21px] top-[18px] text-[16px] tracking-[-0.8px] text-white/60">
+            무엇이든 물어보세요
+          </p>
+          <div className="absolute bottom-[13px] left-[21px] right-[21px] flex h-[33px] items-center gap-[10px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/icon-plus.svg" alt="" className="w-[12px] shrink-0 opacity-90" />
+            <div className="flex min-w-0 flex-1 items-center gap-[6px]">
+              {tags.map((t) => (
+                <InputTag key={t.key} label={t.label} saving={t.saving} leaving={t.leaving} />
+              ))}
+            </div>
+            <span className="flex size-[33px] shrink-0 items-center justify-center rounded-full bg-white/[0.14]">
+              <CaretDown className="size-[13px] rotate-180 text-white/70" />
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -241,17 +282,8 @@ function ShareVisual() {
     { name: "번역 · 자연스러운 톤", by: "냉각수마스터" },
     { name: "논문 리서치 정리 덱", by: "펑치 유" },
     { name: "장단점 표 정리", by: "물방울요정" },
-    { name: "SNS 카피 30자 덱", by: "그린유저" },
-    { name: "코드 리뷰 체크리스트", by: "냉각수마스터" },
-    { name: "면접 답변 다듬기", by: "펑치 유" },
-    { name: "이메일 정중한 톤 덱", by: "물방울요정" },
-    { name: "데이터 표 요약 도우미", by: "그린유저" },
-    { name: "블로그 서론 3안", by: "냉각수마스터" },
-    { name: "학습 계획 정리 덱", by: "펑치 유" },
-    { name: "제품 소개 카피 덱", by: "물방울요정" },
-    { name: "버그 리포트 정리", by: "그린유저" },
   ];
-  const rows = [cards.slice(0, 7), cards.slice(7, 13), cards.slice(13, 18)];
+  const rows = [cards.slice(0, 4), cards.slice(4, 7), cards.slice(7, 9)];
 
   return (
     <div className="relative">
@@ -376,8 +408,8 @@ export default function LandingView({
         <ScrollHint onClick={nextFrom(0)} />
       </section>
 
-      {/* 2. 하나의 보드에서 세팅 */}
-      <section className={sectionClass}>
+      {/* 2. 하나의 보드에서 세팅 — 제목·자막·그래픽 묶음을 화면 세로 중앙에 정렬한다 */}
+      <section className="relative flex h-[1080px] w-full snap-start flex-col items-center justify-center px-[60px] text-center">
         <h2 className="ob-reveal text-[46px] font-bold leading-[1.25] tracking-[-2.3px] text-white">
           세팅부터 아카이빙까지, <span className="text-main">하나의 보드</span>에서.
         </h2>
@@ -385,10 +417,7 @@ export default function LandingView({
           매 대화마다 조건을 타이핑할 필요 없이 프롬프트 도우미를 통해 나만의 작업 환경을 신속하게
           세팅합니다.
         </p>
-        <p className="ob-reveal ob-d1 mt-[6px] text-[16px] leading-[1.6] tracking-[-0.8px] text-white/60">
-          필요한 프롬프트 도우미를 선택만 하세요.
-        </p>
-        <div className="ob-reveal ob-d2 mt-[46px]">
+        <div className="ob-reveal ob-d2 mt-[80px] flex w-full justify-center">
           <BoardVisual />
         </div>
         <ScrollHint onClick={nextFrom(1)} />
@@ -402,7 +431,7 @@ export default function LandingView({
         <p className="ob-reveal ob-d1 mt-[24px] max-w-[900px] text-[19px] leading-[1.6] tracking-[-0.95px] text-white/80">
           나만의 프롬프트 도우미를 공유하고 발전시켜 더 똑똑하게 사용해요
         </p>
-        <div className="ob-reveal ob-d2 mt-[52px]">
+        <div className="ob-reveal ob-d2 mt-[36px]">
           <ShareVisual />
         </div>
         <ScrollHint onClick={nextFrom(2)} />
@@ -417,7 +446,7 @@ export default function LandingView({
           완성된 <span className="text-main">&lsquo;이미지 카드&rsquo;</span> 형태로 빠르게 복사하여
           붙여넣을 수 있습니다.
         </p>
-        <div className="ob-reveal ob-d2 mt-[52px]">
+        <div className="ob-reveal ob-d2 mt-[36px]">
           <CardExportVisual />
         </div>
         <ScrollHint onClick={nextFrom(3)} />

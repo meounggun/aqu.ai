@@ -10,14 +10,10 @@ import { HELPER_CATEGORIES } from "@/lib/water";
 import { CARD_KIND_LABEL, CATEGORY_COLOR, CATEGORY_LABEL, type Deck } from "@/lib/deck-store";
 import type { ChatSession } from "@/lib/chat-history-store";
 
-export type AppView = "landing" | "chat" | "about" | "news" | "profile" | "market";
+export type AppView = "landing" | "chat" | "about" | "news" | "sponsor" | "profile" | "market";
 
 /* Figma 패널의 2열×4행 고정 배치: [요약,톤] [코드,검토] [번역,표] [예시,쉽게] */
 const PANEL_ORDER = ["summary", "tone", "code", "review", "translate", "table", "example", "easy"];
-
-/** "도움" 메뉴 — 원래 뉴스로 연결되던 자리를 외부 후원 사이트 링크로 바꾼다.
-   TODO: 후원 사이트 주소가 정해지면 여기에 채워 넣는다. 비어 있는 동안은 클릭해도 아무 일도 하지 않는다. */
-const SPONSOR_URL = "";
 
 /** 커스텀 덱 섹션 옆의 설정(톱니바퀴) 버튼 — 덱 마켓으로 바로 연결한다.
    패널 배경색에 상관없이 안전하도록(구멍을 배경색으로 메우지 않도록) 다른 아이콘들과 같은
@@ -335,10 +331,8 @@ export default function Sidebar({
           alt="도움"
           label="도움"
           expanded={sidebarOpen}
-          onClick={() => {
-            if (SPONSOR_URL) window.open(SPONSOR_URL, "_blank", "noopener,noreferrer");
-          }}
-          active={view === "news"}
+          onClick={() => onNavigate("sponsor")}
+          active={view === "sponsor"}
           iconClassName="w-[17px]"
         />
       </div>

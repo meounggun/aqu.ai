@@ -11,17 +11,14 @@ import MobileLanding from "./MobileLanding";
 import MobileChat from "./MobileChat";
 import MobileProfile from "./MobileProfile";
 import MobileNews from "./MobileNews";
+import MobileSponsor from "./MobileSponsor";
 import MobileMarket from "./MobileMarket";
 
-/** "도움" 메뉴 — 원래 뉴스로 연결되던 자리를 외부 후원 사이트 링크로 바꾼다.
-   TODO: 후원 사이트 주소가 정해지면 여기에 채워 넣는다. 비어 있는 동안은 눌러도 아무 일도 하지 않는다. */
-const SPONSOR_URL = "";
-
-const NAV: { key: AppView; label: string; icon: string; iconClass: string; action?: "newChat" | "external" }[] = [
+const NAV: { key: AppView; label: string; icon: string; iconClass: string; action?: "newChat" }[] = [
   { key: "chat", label: "새 채팅", icon: "/assets/icon-newchat.svg", iconClass: "size-[18px]", action: "newChat" },
   { key: "market", label: "프롬프트 도우미 편집", icon: "/assets/icon-helper-edit.svg", iconClass: "w-[20px]" },
   { key: "about", label: "우리에 대하여", icon: "/assets/icon-about.svg", iconClass: "size-[30px]" },
-  { key: "news", label: "도움", icon: "/assets/icon-sponsor.svg", iconClass: "w-[18px]", action: "external" },
+  { key: "sponsor", label: "도움", icon: "/assets/icon-sponsor.svg", iconClass: "w-[18px]" },
   { key: "profile", label: "프로필", icon: "/assets/icon-profile.svg", iconClass: "w-[17px]" },
 ];
 
@@ -63,9 +60,7 @@ export default function MobileApp({ app }: { app: AquState }) {
   const handleNav = (item: (typeof NAV)[number]) => {
     setDrawerOpen(false);
     if (item.action === "newChat") newChat();
-    else if (item.action === "external") {
-      if (SPONSOR_URL) window.open(SPONSOR_URL, "_blank", "noopener,noreferrer");
-    } else setView(item.key);
+    else setView(item.key);
   };
 
   return (
@@ -97,6 +92,11 @@ export default function MobileApp({ app }: { app: AquState }) {
         {view === "news" && (
           <div className="chat-scroll h-full overflow-y-auto">
             <MobileNews />
+          </div>
+        )}
+        {view === "sponsor" && (
+          <div className="chat-scroll h-full overflow-y-auto">
+            <MobileSponsor />
           </div>
         )}
         {view === "profile" && (

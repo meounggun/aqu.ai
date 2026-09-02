@@ -7,11 +7,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import SendCupLottie, { type SendCupLottieHandle } from "@/components/SendCupLottie";
+import SendCupVideo from "@/components/SendCupVideo";
 import StatsBar from "@/components/StatsBar";
 import PromptHelper from "@/components/PromptHelper";
 import ProfileView from "@/components/ProfileView";
 import NewsView from "@/components/NewsView";
+import SponsorView from "@/components/SponsorView";
 import MarketView from "@/components/MarketView";
 import OnboardingView from "@/components/OnboardingView";
 import LandingView from "@/components/LandingView";
@@ -53,7 +54,6 @@ export default function DesktopApp({ app }: { app: AquState }) {
     breakdown,
     liveUsage,
     savingPercent,
-    sendTick,
     send,
     newChat,
     enterApp,
@@ -94,13 +94,6 @@ export default function DesktopApp({ app }: { app: AquState }) {
   const [deckNudge, setDeckNudge] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const sendCupRef = useRef<SendCupLottieHandle>(null);
-
-  // 전송 시 물컵 애니메이션 재생 (공유 상태의 sendTick 변화 감지)
-  useEffect(() => {
-    if (sendTick > 0) sendCupRef.current?.play();
-  }, [sendTick]);
-
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
@@ -183,6 +176,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
           >
             {view === "profile" && <ProfileView store={store} />}
             {view === "news" && <NewsView />}
+            {view === "sponsor" && <SponsorView />}
             {view === "market" && (
               <MarketView
                 deckStore={deckStore}
@@ -303,9 +297,9 @@ export default function DesktopApp({ app }: { app: AquState }) {
                   </div>
                 )}
 
-                {/* ---------- 물컵 오브제 (메인 비주얼) ---------- */}
-                <div className="absolute left-[1051px] top-[187px] size-[800px]">
-                  <SendCupLottie ref={sendCupRef} />
+                {/* ---------- 물컵 오브제 (메인 비주얼) — 중심(1451, 587)은 그대로 두고 크기만 키운다 ---------- */}
+                <div className="absolute left-[1001px] top-[137px] size-[900px]">
+                  <SendCupVideo stage={stage} />
                 </div>
 
                 {/* 현재 시간 배지 */}

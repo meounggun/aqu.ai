@@ -6,7 +6,7 @@
    메시지 스크롤 영역 + 하단 고정 입력바(도우미 칩 가로 스크롤, 선택 태그, 통계). */
 
 import { useEffect, useRef, useState } from "react";
-import SendCupLottie, { type SendCupLottieHandle } from "@/components/SendCupLottie";
+import SendCupVideo from "@/components/SendCupVideo";
 import { stageTime, DAILY_LIMIT } from "@/lib/water";
 import { downloadCard } from "@/lib/card-export";
 import type { AquState } from "@/lib/useAquState";
@@ -24,7 +24,6 @@ export default function MobileChat({ app }: { app: AquState }) {
     typing,
     liveUsage,
     savingPercent,
-    sendTick,
     send,
     removeHelperOption,
     toggleHelperOption,
@@ -37,12 +36,8 @@ export default function MobileChat({ app }: { app: AquState }) {
   } = app;
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const cupRef = useRef<SendCupLottieHandle>(null);
   const [sheetKey, setSheetKey] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (sendTick > 0) cupRef.current?.play();
-  }, [sendTick]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -66,11 +61,9 @@ export default function MobileChat({ app }: { app: AquState }) {
               프롬프트 도우미로 효율적인 대화를 시작해보세요
             </p>
             <div className="mt-[20px] size-[240px]">
-              <SendCupLottie ref={cupRef} />
+              <SendCupVideo stage={stage} />
             </div>
-            {/* 컵 로띠 캔버스 하단에 여백이 내장돼 있어 음수 마진으로 시간 배지를 끌어당긴다.
-                로띠 내부 svg가 transform(GPU 가속)을 쓰는 탓에 항상 위 레이어로 그려지므로
-                relative + z-10으로 배지를 명시적으로 그 위에 올린다 */}
+            {/* 컵 영상 프레임 하단에 여백이 들어 있어 음수 마진으로 시간 배지를 끌어당긴다 */}
             <div className="relative z-10 mt-[-56px] flex items-center gap-[8px] rounded-full border border-label bg-bg px-[14px] py-[6px]">
               <span className="text-[12px] tracking-[-0.6px] text-label">
                 현재 시간 {stageTime(stage)}
