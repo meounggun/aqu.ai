@@ -23,7 +23,7 @@ import {
   saveMarketTips,
   tipTimeAgo,
 } from "@/lib/market-tip-store";
-import { HELPER_CATEGORIES, type HelperCategory, type HelperOption } from "@/lib/water";
+import { type HelperCategory, type HelperOption } from "@/lib/water";
 
 const HELPER_SAVING_PRESETS = [0.3, 0.5, 0.7];
 
@@ -66,7 +66,7 @@ export default function MobileMarket({
   onToggleCategory,
   allHelperCategories,
   onAddBuiltinOption,
-  onRemoveBuiltinOption,
+  onToggleHelperOption,
 }: {
   deckStore: DeckStore;
   activeDeckIds: string[];
@@ -93,7 +93,8 @@ export default function MobileMarket({
   onToggleCategory: (key: string) => void;
   allHelperCategories: HelperCategory[];
   onAddBuiltinOption: (categoryKey: string, option: HelperOption) => void;
-  onRemoveBuiltinOption: (categoryKey: string, optionLabel: string, isBuiltIn: boolean) => void;
+  /** 옵션 하나를 껐다 켰다 — 목록에서 지우지 않는다 */
+  onToggleHelperOption: (categoryKey: string, optionLabel: string) => void;
 }) {
   const [composing, setComposing] = useState(false);
   const [name, setName] = useState("");
@@ -169,10 +170,7 @@ export default function MobileMarket({
     resetHelperForm();
   };
 
-  /* ---------- 기본 도우미(요약/번역/코드 등) 안의 옵션 보기 + 추가/삭제 ---------- */
-  const builtInLabels = (categoryKey: string) =>
-    new Set(HELPER_CATEGORIES.find((c) => c.key === categoryKey)?.options.map((o) => o.label) ?? []);
-
+  /* ---------- 기본 도우미(요약/번역/코드 등) 안의 옵션 보기 + 추가 / 켜고 끄기 ---------- */
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [optLabel, setOptLabel] = useState("");
   const [optDirective, setOptDirective] = useState("");
@@ -226,8 +224,8 @@ export default function MobileMarket({
   return (
     <div className="flex flex-col gap-[14px] px-[16px] pb-[28px] pt-[16px]">
       <div>
-        <h2 className="text-[19px] font-semibold tracking-[-0.95px] text-white">덱 편집</h2>
-        <p className="mt-[4px] text-[12px] tracking-[-0.6px] text-label">
+        <h2 className="text-[20px] font-semibold tracking-[-0.95px] text-white">덱 편집</h2>
+        <p className="mt-[4px] text-[15px] tracking-[-0.6px] text-label">
           덱을 켜두면 반복 입력 없이 프롬프트가 유지됩니다
         </p>
       </div>
@@ -235,13 +233,13 @@ export default function MobileMarket({
       {/* 내 덱 */}
       <Card>
         <div className="flex items-center justify-between">
-          <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
+          <p className="text-[17px] font-medium tracking-[-0.75px] text-white">
             내 덱 <span className="text-label">({deckStore.installed.length})</span>
           </p>
           <button
             type="button"
             onClick={() => setComposing((v) => !v)}
-            className="rounded-full border border-main px-[12px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] text-main"
+            className="rounded-full border border-main px-[12px] py-[5px] text-[15px] font-semibold tracking-[-0.6px] text-main"
           >
             {composing ? "닫기" : "+ 만들기"}
           </button>
@@ -256,7 +254,7 @@ export default function MobileMarket({
                   key={c.key}
                   type="button"
                   onClick={() => setCategory(c.key)}
-                  className={`flex items-center gap-[5px] rounded-full border px-[9px] py-[5px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+                  className={`flex items-center gap-[5px] rounded-full border px-[9px] py-[5px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
                     category === c.key ? "border-transparent text-white" : "border-stroke text-label"
                   }`}
                   style={category === c.key ? { backgroundColor: c.color } : undefined}
@@ -273,18 +271,18 @@ export default function MobileMarket({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="덱 이름"
-              className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[9px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
+              className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[9px] text-[15px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
             />
             {KIND_ORDER.map((k) => (
               <div key={k} className="mt-[8px]">
-                <p className="mb-[4px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+                <p className="mb-[4px] text-[14px] font-semibold tracking-[-0.55px] text-label">
                   {CARD_KIND_LABEL[k]}
                 </p>
                 <input
                   value={texts[k]}
                   onChange={(e) => setTexts((t) => ({ ...t, [k]: e.target.value }))}
                   placeholder={KIND_PLACEHOLDER[k]}
-                  className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
+                  className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
                 />
               </div>
             ))}
@@ -292,7 +290,7 @@ export default function MobileMarket({
               type="button"
               onClick={submit}
               disabled={!canSubmit}
-              className="mt-[12px] w-full rounded-[10px] bg-main py-[10px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-35"
+              className="mt-[12px] w-full rounded-[10px] bg-main py-[10px] text-[15px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-35"
             >
               덱 만들기 {cards.length > 0 && `(카드 ${cards.length}장)`}
             </button>
@@ -301,7 +299,7 @@ export default function MobileMarket({
 
         <div className="mt-[12px] flex flex-col gap-[8px]">
           {deckStore.installed.length === 0 && !composing && (
-            <p className="py-[8px] text-[12px] leading-[1.6] tracking-[-0.6px] text-label">
+            <p className="py-[8px] text-[15px] leading-[1.6] tracking-[-0.6px] text-label">
               아직 장착한 덱이 없어요. 아래 마켓에서 가져오거나 직접 만들어보세요.
             </p>
           )}
@@ -319,10 +317,10 @@ export default function MobileMarket({
                 <div className="flex items-start gap-[10px]">
                   <CategoryBadge category={deck.category} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+                    <p className="truncate text-[15px] font-semibold tracking-[-0.65px] text-white">
                       {deck.name}
                     </p>
-                    <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
+                    <p className="mt-[2px] text-[14px] tracking-[-0.55px] text-label">
                       {CATEGORY_LABEL[deck.category]} · by {deck.author} · -
                       {Math.round(deck.saving * 100)}%
                     </p>
@@ -345,7 +343,7 @@ export default function MobileMarket({
                   {deck.cards.map((c, i) => (
                     <span
                       key={i}
-                      className="truncate rounded-[6px] bg-white/[0.06] px-[8px] py-[4px] text-[10px] tracking-[-0.5px] text-white/70"
+                      className="truncate rounded-[6px] bg-white/[0.06] px-[8px] py-[4px] text-[13px] tracking-[-0.5px] text-white/70"
                     >
                       {CARD_KIND_LABEL[c.kind]} · {c.text}
                     </span>
@@ -356,7 +354,7 @@ export default function MobileMarket({
                     <button
                       type="button"
                       onClick={() => onToggleShare(deck.id)}
-                      className={`rounded-full px-[10px] py-[4px] text-[11px] font-semibold tracking-[-0.55px] ${
+                      className={`rounded-full px-[10px] py-[4px] text-[14px] font-semibold tracking-[-0.55px] ${
                         deck.shared ? "bg-main/25 text-main" : "bg-white/[0.06] text-label"
                       }`}
                     >
@@ -366,7 +364,7 @@ export default function MobileMarket({
                   <button
                     type="button"
                     onClick={() => requestRemoveDeck(deck.id)}
-                    className="ml-auto text-[11px] tracking-[-0.55px] text-label"
+                    className="ml-auto text-[14px] tracking-[-0.55px] text-label"
                   >
                     제거
                   </button>
@@ -381,8 +379,8 @@ export default function MobileMarket({
       <Card>
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-[15px] font-medium tracking-[-0.75px] text-white">덱 공유하기</p>
-            <p className="mt-[4px] text-[11px] leading-[1.5] tracking-[-0.55px] text-label">
+            <p className="text-[17px] font-medium tracking-[-0.75px] text-white">덱 공유하기</p>
+            <p className="mt-[4px] text-[14px] leading-[1.5] tracking-[-0.55px] text-label">
               가져간 유저가 절감에 성공하면 창작자에게 크레딧이 분배돼요
             </p>
           </div>
@@ -391,7 +389,7 @@ export default function MobileMarket({
             onClick={() => setComposing((v) => !v)}
             aria-label="새 덱 만들기"
             title="새 덱 만들기"
-            className={`flex size-[26px] shrink-0 items-center justify-center rounded-full border text-[15px] font-semibold transition-colors ${
+            className={`flex size-[26px] shrink-0 items-center justify-center rounded-full border text-[17px] font-semibold transition-colors ${
               composing ? "border-main bg-main text-white" : "border-stroke text-label"
             }`}
           >
@@ -404,7 +402,7 @@ export default function MobileMarket({
           <button
             type="button"
             onClick={() => setMarketFilter("all")}
-            className={`shrink-0 rounded-full px-[10px] py-[5px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+            className={`shrink-0 rounded-full px-[10px] py-[5px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
               marketFilter === "all" ? "bg-main text-white" : "text-label"
             }`}
           >
@@ -415,7 +413,7 @@ export default function MobileMarket({
               key={c.key}
               type="button"
               onClick={() => setMarketFilter(c.key)}
-              className={`flex shrink-0 items-center gap-[5px] rounded-full px-[10px] py-[5px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+              className={`flex shrink-0 items-center gap-[5px] rounded-full px-[10px] py-[5px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
                 marketFilter === c.key ? "text-white" : "text-label"
               }`}
               style={marketFilter === c.key ? { backgroundColor: c.color } : undefined}
@@ -428,7 +426,7 @@ export default function MobileMarket({
 
         <div className="mt-[12px] flex flex-col gap-[10px]">
           {marketList.length === 0 && (
-            <p className="py-[8px] text-[12px] tracking-[-0.6px] text-label">
+            <p className="py-[8px] text-[15px] tracking-[-0.6px] text-label">
               이 카테고리에는 아직 덱이 없어요.
             </p>
           )}
@@ -437,11 +435,11 @@ export default function MobileMarket({
             return (
               <div key={deck.id} className="rounded-[14px] border border-stroke bg-white/[0.02] p-[16px]">
                 <CategoryBadge category={deck.category} size={28} />
-                <p className="mt-[12px] truncate text-[14px] font-semibold tracking-[-0.7px] text-white">
+                <p className="mt-[12px] truncate text-[16px] font-semibold tracking-[-0.7px] text-white">
                   {deck.name}
                 </p>
                 {deck.description && (
-                  <p className="mt-[5px] text-[12px] leading-[1.55] tracking-[-0.6px] text-white/60">
+                  <p className="mt-[5px] text-[15px] leading-[1.55] tracking-[-0.6px] text-white/60">
                     {deck.description}
                   </p>
                 )}
@@ -449,7 +447,7 @@ export default function MobileMarket({
                   type="button"
                   onClick={() => onSnapDeck(deck)}
                   disabled={owned}
-                  className="mt-[12px] w-full rounded-[10px] bg-main py-[9px] text-[12px] font-semibold tracking-[-0.6px] text-white transition-opacity disabled:bg-white/[0.08] disabled:text-label"
+                  className="mt-[12px] w-full rounded-[10px] bg-main py-[9px] text-[15px] font-semibold tracking-[-0.6px] text-white transition-opacity disabled:bg-white/[0.08] disabled:text-label"
                 >
                   {owned ? "보유 중" : "Snap 해오기"}
                 </button>
@@ -461,8 +459,8 @@ export default function MobileMarket({
 
       {/* 프롬프트 도우미 — 페이지 레벨 섹션 헤더 */}
       <div className="mt-[4px]">
-        <h2 className="text-[19px] font-semibold tracking-[-0.95px] text-white">프롬프트 도우미</h2>
-        <p className="mt-[4px] text-[12px] tracking-[-0.6px] text-label">
+        <h2 className="text-[20px] font-semibold tracking-[-0.95px] text-white">프롬프트 도우미</h2>
+        <p className="mt-[4px] text-[15px] tracking-[-0.6px] text-label">
           동그라미를 눌러 기본 도우미를 편집하거나, +를 눌러 나만의 도우미를 만들어보세요
         </p>
       </div>
@@ -474,7 +472,7 @@ export default function MobileMarket({
             <button
               type="button"
               onClick={resetHelperForm}
-              className="rounded-full border border-main px-[12px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] text-main"
+              className="rounded-full border border-main px-[12px] py-[5px] text-[15px] font-semibold tracking-[-0.6px] text-main"
             >
               닫기
             </button>
@@ -487,23 +485,23 @@ export default function MobileMarket({
               value={helperName}
               onChange={(e) => setHelperName(e.target.value)}
               placeholder="도우미 이름 (예: 회의록 정리)"
-              className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
+              className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
             />
             <textarea
               value={helperDirective}
               onChange={(e) => setHelperDirective(e.target.value)}
               placeholder="프롬프트에 이어붙일 지시문"
               rows={2}
-              className="mt-[8px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
+              className="mt-[8px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] leading-[1.5] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
             />
             <div className="mt-[8px] flex items-center gap-[6px]">
-              <span className="text-[11px] tracking-[-0.55px] text-label">예상 절감율</span>
+              <span className="text-[14px] tracking-[-0.55px] text-label">예상 절감율</span>
               {HELPER_SAVING_PRESETS.map((p) => (
                 <button
                   key={p}
                   type="button"
                   onClick={() => setHelperSaving(p)}
-                  className={`rounded-full px-[10px] py-[4px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+                  className={`rounded-full px-[10px] py-[4px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
                     helperSaving === p ? "bg-main text-white" : "bg-white/[0.06] text-label"
                   }`}
                 >
@@ -515,7 +513,7 @@ export default function MobileMarket({
               type="button"
               onClick={submitHelper}
               disabled={!canSubmitHelper}
-              className="mt-[10px] w-full rounded-[10px] bg-main py-[9px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-35"
+              className="mt-[10px] w-full rounded-[10px] bg-main py-[9px] text-[15px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-35"
             >
               {editingHelperId ? "수정 완료" : "도우미 만들기"}
             </button>
@@ -534,7 +532,7 @@ export default function MobileMarket({
                     setExpandedCategory(selected ? null : cat.key);
                     resetOptionForm();
                   }}
-                  className={`shrink-0 rounded-full border px-[16px] py-[9px] text-[13px] font-semibold tracking-[-0.65px] transition-colors ${
+                  className={`shrink-0 rounded-full border px-[16px] py-[9px] text-[15px] font-semibold tracking-[-0.65px] transition-colors ${
                     selected
                       ? "border-main bg-main text-white"
                       : "border-stroke bg-white/[0.03] text-label"
@@ -553,7 +551,7 @@ export default function MobileMarket({
               }}
               aria-label="새 프롬프트 도우미 만들기"
               title="새 프롬프트 도우미 만들기"
-              className={`flex shrink-0 items-center justify-center rounded-full border border-dashed px-[14px] py-[9px] text-[16px] font-semibold transition-colors ${
+              className={`flex shrink-0 items-center justify-center rounded-full border border-dashed px-[14px] py-[9px] text-[18px] font-semibold transition-colors ${
                 helperComposing ? "border-main bg-main text-white" : "border-stroke text-label"
               }`}
             >
@@ -566,14 +564,13 @@ export default function MobileMarket({
               const cat = allHelperCategories.find((c) => c.key === expandedCategory);
               if (!cat) return null;
               const on = visibleCategories.has(cat.key);
-              const builtIns = builtInLabels(cat.key);
               return (
                 <div
                   className="fade-up rounded-[14px] border border-stroke bg-white/[0.02] p-[16px]"
                   style={{ animationDuration: "0.2s" }}
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-[17px] font-semibold tracking-[-0.85px] text-white">
+                    <p className="text-[19px] font-semibold tracking-[-0.85px] text-white">
                       {cat.label}
                     </p>
                     <button
@@ -593,60 +590,67 @@ export default function MobileMarket({
 
                   <div className="mt-[12px] flex flex-col gap-[8px]">
                     {cat.options.map((opt) => {
-                      const isBuiltIn = builtIns.has(opt.label);
+                      const optOn = opt.enabled !== false;
                       return (
-                        <div key={opt.label} className="rounded-[10px] bg-white/[0.04] px-[14px] py-[12px]">
+                        <div
+                          key={opt.label}
+                          className={`rounded-[10px] bg-white/[0.04] px-[14px] py-[12px] transition-opacity duration-200 ${
+                            optOn ? "" : "opacity-45"
+                          }`}
+                        >
                           <div className="flex items-center justify-between gap-[10px]">
-                            <p className="min-w-0 flex-1 truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+                            <p className="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-[-0.65px] text-white">
                               {opt.label}
                             </p>
                             <button
                               type="button"
-                              onClick={() => onRemoveBuiltinOption(cat.key, opt.label, isBuiltIn)}
-                              aria-label="옵션 끄기"
-                              title="옵션 끄기"
-                              className="flex h-[22px] w-[40px] shrink-0 items-center rounded-full bg-main px-[3px] transition-colors duration-200"
+                              onClick={() => onToggleHelperOption(cat.key, opt.label)}
+                              aria-label={optOn ? "옵션 끄기" : "옵션 켜기"}
+                              title={optOn ? "옵션 끄기" : "옵션 켜기"}
+                              className={`flex h-[22px] w-[40px] shrink-0 items-center rounded-full px-[3px] transition-colors duration-200 ${
+                                optOn ? "bg-main" : "bg-white/20"
+                              }`}
                             >
                               <span
                                 className="size-[16px] rounded-full bg-white transition-transform duration-200"
-                                style={{ transform: "translateX(18px)" }}
+                                style={{ transform: optOn ? "translateX(18px)" : "translateX(0)" }}
                               />
                             </button>
                           </div>
-                          <p className="mt-[5px] text-[11px] leading-[1.5] tracking-[-0.55px] text-white/60">
+                          <p className="mt-[5px] text-[14px] leading-[1.5] tracking-[-0.55px] text-white/60">
                             {opt.directive}
                           </p>
                         </div>
                       );
                     })}
                     {cat.options.length === 0 && (
-                      <p className="text-[11px] tracking-[-0.55px] text-label">
-                        옵션이 모두 제거됐어요. 아래에서 새로 추가해보세요.
+                      <p className="text-[14px] tracking-[-0.55px] text-label">
+                        아직 옵션이 없어요. 아래에서 새로 추가해보세요.
                       </p>
                     )}
                   </div>
 
                   <div className="mt-[12px] rounded-[10px] bg-white/[0.03] p-[12px]">
-                    <p className="text-[12px] font-semibold tracking-[-0.6px] text-white">옵션 추가</p>
+                    <p className="text-[15px] font-semibold tracking-[-0.6px] text-white">옵션 추가</p>
                     <input
                       value={optLabel}
                       onChange={(e) => setOptLabel(e.target.value)}
                       placeholder="옵션이름 (예: 개조식 요약)"
-                      className="mt-[7px] w-full rounded-[7px] bg-white/[0.06] px-[9px] py-[7px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
+                      className="mt-[7px] w-full rounded-[7px] bg-white/[0.06] px-[9px] py-[7px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
                     />
                     <textarea
                       value={optDirective}
                       onChange={(e) => setOptDirective(e.target.value)}
                       placeholder="지시문 작성"
                       rows={2}
-                      className="mt-[6px] w-full resize-none rounded-[7px] bg-white/[0.06] px-[9px] py-[7px] text-[11px] leading-[1.5] tracking-[-0.55px] text-white placeholder:text-white/30 focus:outline-none"
+                      className="mt-[6px] w-full resize-none rounded-[7px] bg-white/[0.06] px-[9px] py-[7px] text-[14px] leading-[1.5] tracking-[-0.55px] text-white placeholder:text-white/30 focus:outline-none"
                     />
                     <div className="mt-[8px] flex justify-end">
                       <button
                         type="button"
                         onClick={() => submitOption(cat.key)}
                         disabled={!optLabel.trim() || !optDirective.trim()}
-                        className="rounded-full bg-main px-[16px] py-[7px] text-[11px] font-semibold tracking-[-0.55px] text-white disabled:opacity-35"
+                        className="rounded-full bg-main px-[16px] py-[7px] text-[14px] font-semibold tracking-[-0.55px] text-white disabled:opacity-35"
                       >
                         추가하기
                       </button>
@@ -656,11 +660,11 @@ export default function MobileMarket({
               );
             })()}
 
-          <p className="mt-[6px] px-[2px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+          <p className="mt-[6px] px-[2px] text-[14px] font-semibold tracking-[-0.55px] text-label">
             나만의 도우미
           </p>
           {customHelperStore.items.length === 0 && !helperComposing && (
-            <p className="py-[4px] text-[12px] leading-[1.6] tracking-[-0.6px] text-label">
+            <p className="py-[4px] text-[15px] leading-[1.6] tracking-[-0.6px] text-label">
               아직 만든 프롬프트 도우미가 없어요. 자주 쓰는 지시문을 도우미로 등록해보세요.
             </p>
           )}
@@ -675,14 +679,14 @@ export default function MobileMarket({
               >
                 <div className="flex items-start gap-[10px]">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+                    <p className="truncate text-[15px] font-semibold tracking-[-0.65px] text-white">
                       {helper.name}
                     </p>
-                    <p className="mt-[2px] truncate text-[11px] tracking-[-0.55px] text-label">
+                    <p className="mt-[2px] truncate text-[14px] tracking-[-0.55px] text-label">
                       {helper.directive}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full bg-main/20 px-[8px] py-[3px] text-[11px] font-semibold tracking-[-0.55px] text-main">
+                  <span className="shrink-0 rounded-full bg-main/20 px-[8px] py-[3px] text-[14px] font-semibold tracking-[-0.55px] text-main">
                     -{Math.round(helper.saving * 100)}%
                   </span>
                   <button
@@ -703,14 +707,14 @@ export default function MobileMarket({
                   <button
                     type="button"
                     onClick={() => startEditHelper(helper)}
-                    className="text-[11px] tracking-[-0.55px] text-label"
+                    className="text-[14px] tracking-[-0.55px] text-label"
                   >
                     수정
                   </button>
                   <button
                     type="button"
                     onClick={() => onRemoveCustomHelper(helper.id)}
-                    className="ml-auto text-[11px] tracking-[-0.55px] text-label"
+                    className="ml-auto text-[14px] tracking-[-0.55px] text-label"
                   >
                     제거
                   </button>
@@ -723,10 +727,10 @@ export default function MobileMarket({
 
       {/* 프롬프트 팁 & 링크 공유 — 사람들이 여기저기서 찾은 꿀팁이나 링크를 나누는 게시판 */}
       <Card>
-        <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
+        <p className="text-[17px] font-medium tracking-[-0.75px] text-white">
           프롬프트 팁 & 링크 공유
         </p>
-        <p className="mt-[4px] text-[11px] tracking-[-0.55px] text-label">
+        <p className="mt-[4px] text-[14px] tracking-[-0.55px] text-label">
           다른 곳에서 발견한 꿀팁이나 링크를 여기서 같이 나눠보세요
         </p>
 
@@ -736,20 +740,20 @@ export default function MobileMarket({
             onChange={(e) => setTipText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submitTip()}
             placeholder="나만의 프롬프트 팁을 공유해보세요..."
-            className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[9px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
+            className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[9px] text-[15px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
           />
           <input
             value={tipUrl}
             onChange={(e) => setTipUrl(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submitTip()}
             placeholder="관련 링크 (선택)"
-            className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
+            className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[8px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
           />
           <button
             type="button"
             onClick={submitTip}
             disabled={!tipText.trim()}
-            className="w-full rounded-full bg-main px-[16px] py-[9px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-40"
+            className="w-full rounded-full bg-main px-[16px] py-[9px] text-[15px] font-semibold tracking-[-0.65px] text-white transition-opacity disabled:opacity-40"
           >
             공유
           </button>
@@ -759,14 +763,14 @@ export default function MobileMarket({
           {tipFeed.map((tip) => (
             <div key={tip.id} className="rounded-[10px] bg-white/[0.03] px-[12px] py-[9px]">
               <div className="flex items-center justify-between">
-                <span className="text-[12px] font-semibold tracking-[-0.6px] text-white">
-                  💡 {tip.author}
+                <span className="text-[15px] font-semibold tracking-[-0.6px] text-white">
+                  {tip.author}
                 </span>
-                <span className="text-[10px] tracking-[-0.5px] text-label">
+                <span className="text-[13px] tracking-[-0.5px] text-label">
                   {tipTimeAgo(tip.createdAt)}
                 </span>
               </div>
-              <p className="mt-[4px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white/80">
+              <p className="mt-[4px] text-[15px] leading-[1.5] tracking-[-0.6px] text-white/80">
                 {tip.text}
               </p>
               {tip.url && (
@@ -774,9 +778,10 @@ export default function MobileMarket({
                   href={tip.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-[4px] block truncate text-[11px] tracking-[-0.55px] text-main hover:underline"
+                  className="mt-[4px] flex items-center gap-[6px] text-[14px] tracking-[-0.55px] text-main hover:underline"
                 >
-                  🔗 {tip.url}
+                  <span className="shrink-0">🔗</span>
+                  <span className="truncate">{tip.url}</span>
                 </a>
               )}
             </div>

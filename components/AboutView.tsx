@@ -32,7 +32,7 @@ export default function AboutView() {
         <h2 className="text-[40px] font-medium tracking-[-2px] text-white">우리에 대하여</h2>
       </div>
 
-      <p className="mt-[28px] max-w-[820px] text-[17px] leading-[1.7] tracking-[-0.85px] text-white/85">
+      <p className="mt-[28px] max-w-[820px] text-[19px] leading-[1.7] tracking-[-0.85px] text-white/85">
         AQU.AI는 라틴어 <span className="text-main">AQUA(물)</span>와{" "}
         <span className="text-main">AI(인공지능)</span>를 결합한 이름입니다. 추상적인 냉각수
         사용량과 담수 문제를 친숙한 &lsquo;일상의 한 잔&rsquo;으로 연결해, 질문의 무게를 줄여
@@ -42,20 +42,20 @@ export default function AboutView() {
       <div className="mt-[56px] grid grid-cols-3 gap-[28px]">
         {STEPS.map((s) => (
           <div key={s.no} className="rounded-[16px] bg-[#242628] p-[28px]">
-            <span className="flex size-[40px] items-center justify-center rounded-full bg-main/20 text-[18px] font-semibold text-main">
+            <span className="flex size-[40px] items-center justify-center rounded-full bg-main/20 text-[20px] font-semibold text-main">
               {s.no}
             </span>
-            <h3 className="mt-[20px] text-[19px] font-semibold tracking-[-0.95px] text-white">
+            <h3 className="mt-[20px] text-[20px] font-semibold tracking-[-0.95px] text-white">
               {s.title}
             </h3>
-            <p className="mt-[12px] text-[14px] leading-[1.7] tracking-[-0.7px] text-label">
+            <p className="mt-[12px] text-[16px] leading-[1.7] tracking-[-0.7px] text-label">
               {s.body}
             </p>
           </div>
         ))}
       </div>
 
-      <blockquote className="mt-[64px] max-w-[640px] font-serif-kr text-[20px] leading-[1.7] tracking-[-1px] text-white/90">
+      <blockquote className="mt-[64px] max-w-[640px] font-serif-kr text-[22px] leading-[1.7] tracking-[-1px] text-white/90">
         &ldquo;우리가 AI에게 던지는 무심한 질문들은 결국 환경의 시간을 가속하는 행위와 같지
         않을까요?&rdquo;
       </blockquote>

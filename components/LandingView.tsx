@@ -18,7 +18,7 @@ function ScrollHint({ onClick }: { onClick: () => void }) {
       aria-label="다음"
       className="absolute bottom-[24px] left-1/2 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-[6px] opacity-[0.76] transition-opacity hover:opacity-100"
     >
-      <span className="text-[16px] tracking-[-0.8px] text-label-2">Scroll</span>
+      <span className="text-[18px] tracking-[-0.8px] text-label-2">Scroll</span>
       <span className="animate-bounce">
         <CaretDown />
       </span>
@@ -75,10 +75,10 @@ function DeckRow({
     >
       <span className="size-[9px] shrink-0 rounded-full" style={{ backgroundColor: color }} />
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[15px] font-semibold tracking-[-0.75px] text-white">
+        <span className="block truncate text-[17px] font-semibold tracking-[-0.75px] text-white">
           {name}
         </span>
-        <span className="mt-[3px] block text-[12px] tracking-[-0.6px] text-label">{meta}</span>
+        <span className="mt-[3px] block text-[15px] tracking-[-0.6px] text-label">{meta}</span>
       </span>
       <span
         className={`flex h-[24px] w-[44px] shrink-0 items-center rounded-full px-[3px] transition-colors duration-300 ${
@@ -112,7 +112,7 @@ function InputTag({
       className={`shrink-0 transition-all duration-300 ${leaving ? "scale-[0.9] opacity-0" : ""}`}
     >
       <span
-        className="fade-up flex h-[26px] items-center gap-[7px] rounded-[8px] border border-main/60 bg-main/15 px-[11px] text-[12.5px] tracking-[-0.62px] text-white"
+        className="fade-up flex h-[28px] items-center gap-[7px] rounded-[8px] border border-main/60 bg-main/15 px-[11px] text-[15px] tracking-[-0.62px] text-white"
         style={{ animationDuration: "0.25s" }}
       >
         {label}
@@ -175,7 +175,7 @@ function BoardVisual() {
       {/* 왼쪽 — 커스텀 덱 패널 */}
       <div className="w-[340px] shrink-0 rounded-[18px] bg-gray-box p-[18px] text-left">
         <div className="flex items-center justify-between">
-          <p className="text-[13px] font-semibold tracking-[-0.65px] text-label">커스텀 덱</p>
+          <p className="text-[15px] font-semibold tracking-[-0.65px] text-label">커스텀 덱</p>
           <GearGlyph className="size-[17px] text-label" />
         </div>
         <div className="mt-[14px] flex flex-col gap-[10px]">
@@ -200,7 +200,7 @@ function BoardVisual() {
           <div className="flex shrink-0 items-center gap-[9px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/assets/helper-bar-icon.svg" alt="" className="w-[15px] opacity-90" />
-            <span className="whitespace-nowrap text-[16px] tracking-[-0.8px] text-white/90">
+            <span className="whitespace-nowrap text-[18px] tracking-[-0.8px] text-white/90">
               프롬프트 도우미
             </span>
           </div>
@@ -212,7 +212,7 @@ function BoardVisual() {
               return (
                 <div key={label} className="relative">
                   <span
-                    className={`flex h-[34px] w-[70px] items-center justify-center rounded-[10px] border text-[14px] font-semibold tracking-[-0.7px] text-white transition-colors duration-300 ${
+                    className={`flex h-[34px] w-[70px] items-center justify-center rounded-[10px] border text-[16px] font-semibold tracking-[-0.7px] text-white transition-colors duration-300 ${
                       active ? "border-main bg-main" : "border-stroke"
                     }`}
                   >
@@ -227,13 +227,13 @@ function BoardVisual() {
                       {options.map((opt, i) => (
                         <span
                           key={opt.label}
-                          className={`fade-up flex items-center justify-between px-[13px] py-[8px] text-[13px] tracking-[-0.65px] text-white ${
+                          className={`fade-up flex items-center justify-between px-[13px] py-[8px] text-[15px] tracking-[-0.65px] text-white ${
                             picked && i === 0 ? "bg-white/20 font-semibold" : ""
                           }`}
                           style={{ animationDuration: "0.22s", animationDelay: `${i * 110}ms` }}
                         >
                           <span className="whitespace-nowrap">{opt.label}</span>
-                          <span className="ml-[8px] shrink-0 text-[12px] font-semibold text-white/75">
+                          <span className="ml-[8px] shrink-0 text-[15px] font-semibold text-white/75">
                             -{opt.saving}%
                           </span>
                         </span>
@@ -248,7 +248,7 @@ function BoardVisual() {
 
         {/* 대화창 — 켜둔 덱과 고른 옵션이 하단 태그로 그대로 붙는다 */}
         <div className="relative h-[125px] w-full rounded-[17px] bg-gray-box text-left">
-          <p className="absolute left-[21px] top-[18px] text-[16px] tracking-[-0.8px] text-white/60">
+          <p className="absolute left-[21px] top-[18px] text-[18px] tracking-[-0.8px] text-white/60">
             무엇이든 물어보세요
           </p>
           <div className="absolute bottom-[13px] left-[21px] right-[21px] flex h-[33px] items-center gap-[10px]">
@@ -278,12 +278,8 @@ function ShareVisual() {
     { name: "카피라이터 300자 덱", by: "그린유저" },
     { name: "회의록 정리 도우미", by: "펑치 유" },
     { name: "기획서 3단 구조 덱", by: "물방울요정" },
-    { name: "한 줄 요약 도우미", by: "그린유저" },
-    { name: "번역 · 자연스러운 톤", by: "냉각수마스터" },
-    { name: "논문 리서치 정리 덱", by: "펑치 유" },
-    { name: "장단점 표 정리", by: "물방울요정" },
   ];
-  const rows = [cards.slice(0, 4), cards.slice(4, 7), cards.slice(7, 9)];
+  const rows = [cards.slice(0, 3), cards.slice(3, 5)];
 
   return (
     <div className="relative">
@@ -300,12 +296,12 @@ function ShareVisual() {
                   style={{ backgroundColor: colors[(r * 7 + i) % colors.length] }}
                 />
                 <div className="text-center">
-                  <p className="truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+                  <p className="truncate text-[15px] font-semibold tracking-[-0.65px] text-white">
                     {c.name}
                   </p>
-                  <p className="mt-[3px] text-[11px] tracking-[-0.55px] text-label">by {c.by}</p>
+                  <p className="mt-[3px] text-[14px] tracking-[-0.55px] text-label">by {c.by}</p>
                 </div>
-                <span className="w-fit rounded-full bg-main px-[12px] py-[5px] text-[11px] font-semibold tracking-[-0.55px] text-white">
+                <span className="w-fit rounded-full bg-main px-[12px] py-[5px] text-[14px] font-semibold tracking-[-0.55px] text-white">
                   Snap
                 </span>
               </div>
@@ -319,19 +315,43 @@ function ShareVisual() {
   );
 }
 
-/** 섹션 4 비주얼 — 완성된 이미지 카드만 보여준다 (Figma 930:972) */
+/** 섹션 4 비주얼 — AI가 만들어준 표를 이미지 카드로 복사한 결과물 (3열 × 5행 표 형태).
+    열 너비를 고정해 행마다 칸이 어긋나지 않게 하고, 구분선은 표처럼 칸별로 끊어 그린다 */
+const CARD_TABLE_COLS = [116, 120, 228];
+const CARD_TABLE_ROWS: { h: number; bars: (number | null)[] }[] = [
+  { h: 14, bars: [50, 64, 93] },
+  { h: 17, bars: [93, 99, 228] },
+  { h: 17, bars: [93, 99, 148] },
+  { h: 17, bars: [93, 99, 98] },
+  { h: 14, bars: [93, 115, null] },
+];
+
 function CardExportVisual() {
   return (
-    <div className="flex w-[330px] flex-col gap-[10px] rounded-[16px] bg-[#242628] p-[20px] shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-      {[100, 78, 92, 64].map((w, i) => (
-        <span key={i} className="flex gap-[8px]">
-          <span className="h-[13px] w-[64px] rounded-[4px] bg-white/25" />
-          <span className="h-[13px] rounded-[4px] bg-white/18" style={{ width: w }} />
-        </span>
+    <div className="flex w-[560px] flex-col rounded-[24px] bg-[#242628] px-[28px] py-[18px] shadow-[0_16px_44px_rgba(0,0,0,0.5)]">
+      {CARD_TABLE_ROWS.map((row, r) => (
+        <div key={r} className="flex gap-[20px]">
+          {row.bars.map((w, c) => (
+            <span
+              key={c}
+              className={`flex h-[32px] shrink-0 items-center ${
+                r < CARD_TABLE_ROWS.length - 1 ? "border-b border-white/[0.14]" : ""
+              }`}
+              style={{ width: CARD_TABLE_COLS[c] }}
+            >
+              {w !== null && (
+                <span className="rounded-[5px] bg-white/25" style={{ height: row.h, width: w }} />
+              )}
+            </span>
+          ))}
+        </div>
       ))}
-      <span className="mt-[6px] w-fit rounded-full bg-main/20 px-[12px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] text-main">
+      <button
+        type="button"
+        className="mt-[14px] w-fit cursor-pointer self-end rounded-full bg-main px-[18px] py-[8px] text-[15px] font-semibold tracking-[-0.65px] text-white"
+      >
         이미지로 복사됨
-      </span>
+      </button>
     </div>
   );
 }
@@ -384,14 +404,14 @@ export default function LandingView({
     >
       {/* 1. 히어로 */}
       <section className={sectionClass}>
-        <p className="ob-reveal text-[22px] tracking-[-1.1px] text-label-2">
+        <p className="ob-reveal text-[24px] tracking-[-1.1px] text-label-2">
           AI에게 매번 같은 말을 입력하느라 지치셨나요?
         </p>
         <h1 className="ob-reveal ob-d1 mt-[22px] text-[62px] font-bold leading-[1.18] tracking-[-3.1px] text-white">
           나만의 <span className="text-main">AI 워크스페이스</span>를<br />
           만들어보세요
         </h1>
-        <p className="ob-reveal ob-d2 mt-[30px] max-w-[880px] text-[20px] leading-[1.6] tracking-[-1px] text-white/80">
+        <p className="ob-reveal ob-d2 mt-[30px] max-w-[880px] text-[22px] leading-[1.6] tracking-[-1px] text-white/80">
           매번 재입력하지 마세요. 내 작업 스타일에 맞춘 프롬프트 도우미를 통해 단 한 번의 대화로
           정밀한 답변이 완성됩니다.
         </p>
@@ -399,7 +419,7 @@ export default function LandingView({
           <button
             type="button"
             onClick={onStart}
-            className="flex h-[58px] cursor-pointer items-center gap-[12px] rounded-full bg-main pl-[30px] pr-[26px] text-[19px] font-semibold tracking-[-0.95px] text-white transition-opacity hover:opacity-90"
+            className="flex h-[58px] cursor-pointer items-center gap-[12px] rounded-full bg-main pl-[30px] pr-[26px] text-[20px] font-semibold tracking-[-0.95px] text-white transition-opacity hover:opacity-90"
           >
             워크스페이스 시작하기
             <ArrowRightIcon className="size-[22px]" />
@@ -413,7 +433,7 @@ export default function LandingView({
         <h2 className="ob-reveal text-[46px] font-bold leading-[1.25] tracking-[-2.3px] text-white">
           세팅부터 아카이빙까지, <span className="text-main">하나의 보드</span>에서.
         </h2>
-        <p className="ob-reveal ob-d1 mt-[24px] max-w-[900px] text-[19px] leading-[1.6] tracking-[-0.95px] text-white/80">
+        <p className="ob-reveal ob-d1 mt-[24px] max-w-[900px] text-[20px] leading-[1.6] tracking-[-0.95px] text-white/80">
           매 대화마다 조건을 타이핑할 필요 없이 프롬프트 도우미를 통해 나만의 작업 환경을 신속하게
           세팅합니다.
         </p>
@@ -428,7 +448,7 @@ export default function LandingView({
         <h2 className="ob-reveal text-[46px] font-bold leading-[1.25] tracking-[-2.3px] text-white">
           프롬프트 도우미 <span className="text-main">공유</span>
         </h2>
-        <p className="ob-reveal ob-d1 mt-[24px] max-w-[900px] text-[19px] leading-[1.6] tracking-[-0.95px] text-white/80">
+        <p className="ob-reveal ob-d1 mt-[24px] max-w-[900px] text-[20px] leading-[1.6] tracking-[-0.95px] text-white/80">
           나만의 프롬프트 도우미를 공유하고 발전시켜 더 똑똑하게 사용해요
         </p>
         <div className="ob-reveal ob-d2 mt-[36px]">
@@ -442,7 +462,7 @@ export default function LandingView({
         <h2 className="ob-reveal text-[40px] font-bold leading-[1.3] tracking-[-2px] text-white">
           AI가 만들어준 표, 한번에 복사하기 힘드셨나요?
         </h2>
-        <p className="ob-reveal ob-d1 mt-[22px] max-w-[860px] text-[19px] leading-[1.6] tracking-[-0.95px] text-white/80">
+        <p className="ob-reveal ob-d1 mt-[22px] max-w-[860px] text-[20px] leading-[1.6] tracking-[-0.95px] text-white/80">
           완성된 <span className="text-main">&lsquo;이미지 카드&rsquo;</span> 형태로 빠르게 복사하여
           붙여넣을 수 있습니다.
         </p>
@@ -463,27 +483,27 @@ export default function LandingView({
             className="absolute left-1/2 top-1/2 w-[620px] max-w-none -translate-x-1/2 -translate-y-1/2"
           />
         </div>
-        <p className="ob-reveal ob-d1 mt-[6px] max-w-[1000px] text-[20px] leading-[1.7] tracking-[-1px] text-label-2">
+        <p className="ob-reveal ob-d1 mt-[6px] max-w-[1000px] text-[22px] leading-[1.7] tracking-[-1px] text-label-2">
           AI를 효율적으로 쓴다는 것은 단순히 시간만 아끼는 것이 아닙니다.
         </p>
         <p className="ob-reveal ob-d2 mt-[8px] max-w-[1100px] text-[46px] font-bold leading-[1.4] tracking-[-2.3px] text-white">
           내 시간과 지구의 자원을 동시에 아껴보세요.
         </p>
-        <p className="ob-reveal ob-d3 mt-[38px] text-[23px] font-bold tracking-[-1.15px] text-main">
+        <p className="ob-reveal ob-d3 mt-[38px] text-[24px] font-bold tracking-[-1.15px] text-main">
           지금, 당신만의 AI 워크스페이스를 만들어보세요.
         </p>
         <div className="ob-reveal ob-d3 mt-[26px] flex items-center gap-[16px]">
           <button
             type="button"
             onClick={onAbout}
-            className="flex h-[56px] cursor-pointer items-center rounded-full border-2 border-white/70 px-[28px] text-[18px] font-medium tracking-[-0.9px] text-white transition-colors hover:bg-white hover:text-bg"
+            className="flex h-[56px] cursor-pointer items-center rounded-full border-2 border-white/70 px-[28px] text-[20px] font-medium tracking-[-0.9px] text-white transition-colors hover:bg-white hover:text-bg"
           >
             우리에 대하여
           </button>
           <button
             type="button"
             onClick={onStart}
-            className="ob-cta flex h-[56px] cursor-pointer items-center gap-[12px] rounded-full bg-main pl-[30px] pr-[26px] text-[18px] font-semibold tracking-[-0.9px] text-white transition-opacity hover:opacity-90"
+            className="ob-cta flex h-[56px] cursor-pointer items-center gap-[12px] rounded-full bg-main pl-[30px] pr-[26px] text-[20px] font-semibold tracking-[-0.9px] text-white transition-opacity hover:opacity-90"
           >
             메인 화면으로
             <ArrowRightIcon className="size-[22px]" />

@@ -31,15 +31,15 @@ export default function PromptHelper({
   const categories = allCategories.filter((c) => visibleCategories.has(c.key));
 
   return (
-    <div className="absolute left-[172px] top-[838px] flex h-[47px] w-[560px] items-center gap-[21px]">
+    <div className="absolute left-[172px] top-[838px] flex h-[47px] w-[800px] items-center gap-[21px]">
       <div className="flex items-center gap-[8px]">
         <img src="/assets/helper-bar-icon.svg" alt="" className="w-[14px] opacity-90" />
-        <span className="whitespace-nowrap text-[16px] tracking-[-0.8px] text-white/90">프롬프트 도우미</span>
+        <span className="whitespace-nowrap text-[18px] tracking-[-0.8px] text-white/90">프롬프트 도우미</span>
       </div>
 
       <div className="flex items-center gap-[13px] pl-[10px]">
         {categories.length === 0 && (
-          <span className="whitespace-nowrap text-[13px] text-label">
+          <span className="whitespace-nowrap text-[15px] text-label">
             사이드바에서 도우미 항목을 추가해보세요
           </span>
         )}
@@ -53,7 +53,7 @@ export default function PromptHelper({
                 type="button"
                 onClick={() => onToggle(isOpen ? null : cat.key)}
                 style={{ width: cat.chipWidth }}
-                className={`h-[30px] cursor-pointer rounded-[10px] border text-[13px] font-semibold tracking-[-0.65px] text-white transition-colors ${
+                className={`h-[30px] cursor-pointer rounded-[10px] border text-[15px] font-semibold tracking-[-0.65px] text-white transition-colors ${
                   active
                     ? "border-main bg-main"
                     : "border-stroke bg-transparent hover:border-main hover:bg-main"
@@ -68,20 +68,20 @@ export default function PromptHelper({
                   className="fade-up absolute bottom-[36px] left-0 z-30 w-[128px] rounded-[10px] bg-main py-[6px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
                   style={{ animationDuration: "0.2s" }}
                 >
-                  {cat.options.map((opt, i) => {
+                  {cat.options.filter((opt) => opt.enabled !== false).map((opt, i) => {
                     const optSelected = activeSel?.option.label === opt.label;
                     return (
                       <button
                         key={opt.label}
                         type="button"
                         onClick={() => onSelectOption(cat, opt)}
-                        className={`fade-up flex w-full cursor-pointer items-center justify-between px-[12px] py-[8px] text-left text-[13px] tracking-[-0.65px] text-white transition-colors hover:bg-white/15 ${
+                        className={`fade-up flex w-full cursor-pointer items-center justify-between px-[12px] py-[8px] text-left text-[15px] tracking-[-0.65px] text-white transition-colors hover:bg-white/15 ${
                           optSelected ? "bg-white/20 font-semibold" : ""
                         }`}
                         style={{ animationDuration: "0.2s", animationDelay: `${i * 40}ms` }}
                       >
                         <span className="whitespace-nowrap">{opt.label}</span>
-                        <span className="ml-[8px] shrink-0 text-[11px] font-semibold text-white/75">
+                        <span className="ml-[8px] shrink-0 text-[14px] font-semibold text-white/75">
                           -{Math.round(opt.saving * 100)}%
                         </span>
                       </button>

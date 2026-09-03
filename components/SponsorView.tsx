@@ -74,7 +74,7 @@ function SideCard({ sponsor }: { sponsor: Sponsor }) {
       <p className="relative text-[30px] font-semibold tracking-[-0.9px] text-white/60">
         {sponsor.name}
       </p>
-      <p className="relative w-[200px] break-keep text-[20px] font-medium leading-[1.35] tracking-[-0.6px] text-white/60">
+      <p className="relative w-[200px] break-keep text-[22px] font-medium leading-[1.35] tracking-[-0.6px] text-white/60">
         {sponsor.description}
       </p>
     </a>
@@ -99,7 +99,7 @@ function FeaturedCard({ sponsor }: { sponsor: Sponsor }) {
       <p className="relative text-[36px] font-semibold tracking-[-1.08px] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]">
         {sponsor.name}
       </p>
-      <p className="relative w-[240px] break-keep text-[24px] font-medium leading-[1.35] tracking-[-0.72px] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]">
+      <p className="relative w-[240px] break-keep text-[26px] font-medium leading-[1.35] tracking-[-0.72px] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]">
         {sponsor.description}
       </p>
     </a>
@@ -152,7 +152,7 @@ export default function SponsorView() {
       <h2 className="absolute left-1/2 top-[165px] -translate-x-1/2 whitespace-nowrap text-center text-[64px] font-bold leading-[94px] tracking-[-1.92px] text-white">
         소중한 한 모금을 전해주세요
       </h2>
-      <p className="absolute left-1/2 top-[269px] -translate-x-1/2 whitespace-nowrap text-center text-[24px] leading-[1.5] tracking-[-0.72px] text-white/90">
+      <p className="absolute left-1/2 top-[269px] -translate-x-1/2 whitespace-nowrap text-center text-[26px] leading-[1.5] tracking-[-0.72px] text-white/90">
         수자원 고갈과 환경 변화로 기본권을 위협받는 이웃들에게 깨끗한 물과 안전한 내일을 위해
       </p>
 

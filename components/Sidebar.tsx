@@ -86,7 +86,7 @@ function RailButton({
         <img src={src} alt="" className={iconClassName} />
       </span>
       {expanded && (
-        <span className="whitespace-nowrap text-[14px] tracking-[-0.7px] text-white/90">{label}</span>
+        <span className="whitespace-nowrap text-[16px] tracking-[-0.7px] text-white/90">{label}</span>
       )}
     </button>
   );
@@ -203,7 +203,7 @@ export default function Sidebar({
           >
             {/* 1) 커스텀 덱 — 옆의 설정 버튼으로 덱 마켓에 바로 연결 (PRD §8-1-1) */}
             <div className="flex items-center justify-between">
-              <p className="px-[2px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+              <p className="px-[2px] text-[14px] font-semibold tracking-[-0.55px] text-label">
                 커스텀 덱
               </p>
               <button
@@ -218,7 +218,7 @@ export default function Sidebar({
             </div>
             <div className="mt-[10px]">
               {decks.length === 0 ? (
-                <p className="px-[2px] pb-[4px] text-[11px] leading-[1.6] tracking-[-0.55px] text-label/80">
+                <p className="px-[2px] pb-[4px] text-[14px] leading-[1.6] tracking-[-0.55px] text-label/80">
                   아직 덱이 없어요.
                   <br />
                   설정 버튼을 눌러 덱 마켓에서 가져오거나 만들어보세요.
@@ -247,10 +247,10 @@ export default function Sidebar({
                           style={{ backgroundColor: CATEGORY_COLOR[deck.category] }}
                         />
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[12px] font-semibold tracking-[-0.6px] text-white">
+                          <span className="block truncate text-[15px] font-semibold tracking-[-0.6px] text-white">
                             {deck.name}
                           </span>
-                          <span className="block text-[10px] tracking-[-0.5px] text-label">
+                          <span className="block text-[13px] tracking-[-0.5px] text-label">
                             {CATEGORY_LABEL[deck.category]} · -{Math.round(deck.saving * 100)}%
                           </span>
                         </span>
@@ -273,7 +273,7 @@ export default function Sidebar({
 
             {/* 2) 프롬프트 도우미 바에 노출할 카테고리 선택 — 같은 패널에 이어서 */}
             <div className="mt-[14px] border-t border-white/[0.08] pt-[12px]">
-              <p className="mb-[10px] px-[2px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+              <p className="mb-[10px] px-[2px] text-[14px] font-semibold tracking-[-0.55px] text-label">
                 프롬프트 도우미
               </p>
               <div className="grid grid-cols-2 gap-x-[10px] gap-y-[8px]">
@@ -287,7 +287,7 @@ export default function Sidebar({
                       type="button"
                       onClick={() => onToggleCategory(cat.key)}
                       title={isVisible ? "프롬프트 도우미 바에서 빼기" : "프롬프트 도우미 바에 추가"}
-                      className={`flex h-[30px] cursor-pointer items-center justify-center rounded-[10px] border text-[13px] font-semibold tracking-[-0.65px] text-white transition-colors ${
+                      className={`flex h-[30px] cursor-pointer items-center justify-center rounded-[10px] border text-[15px] font-semibold tracking-[-0.65px] text-white transition-colors ${
                         isVisible
                           ? "border-main bg-main"
                           : "border-stroke bg-transparent hover:border-main hover:bg-main/40"
@@ -343,12 +343,12 @@ export default function Sidebar({
           style={{ top: 335 + pushDown, bottom: 70 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <p className="mb-[8px] px-[8px] text-[11px] font-semibold tracking-[-0.55px] text-label opacity-65">
+          <p className="mb-[8px] px-[8px] text-[14px] font-semibold tracking-[-0.55px] text-label opacity-65">
             최근 항목
           </p>
           <div className="chat-scroll flex min-h-0 flex-1 flex-col gap-[2px] overflow-y-auto pr-[2px]">
             {sessions.length === 0 && (
-              <p className="px-[8px] text-[11px] leading-[1.6] tracking-[-0.55px] text-label/70">
+              <p className="px-[8px] text-[14px] leading-[1.6] tracking-[-0.55px] text-label/70">
                 새 채팅을 시작하면 여기에 대화가 저장돼요.
               </p>
             )}
@@ -361,7 +361,7 @@ export default function Sidebar({
                   type="button"
                   onClick={() => onLoadSession(s.id)}
                   title={s.title}
-                  className="min-w-0 flex-1 cursor-pointer truncate text-left text-[13px] tracking-[-0.65px] text-white/85"
+                  className="min-w-0 flex-1 cursor-pointer truncate text-left text-[15px] tracking-[-0.65px] text-white/85"
                 >
                   {s.title}
                 </button>
@@ -370,7 +370,7 @@ export default function Sidebar({
                   onClick={() => onDeleteSession(s.id)}
                   aria-label="대화 삭제"
                   title="대화 삭제"
-                  className="hidden shrink-0 cursor-pointer text-[13px] leading-none text-label transition-colors hover:text-white group-hover:block"
+                  className="hidden shrink-0 cursor-pointer text-[15px] leading-none text-label transition-colors hover:text-white group-hover:block"
                 >
                   ×
                 </button>

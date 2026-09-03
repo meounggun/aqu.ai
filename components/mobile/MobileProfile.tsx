@@ -163,8 +163,8 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </div>
         <div>
-          <p className="text-[18px] font-semibold tracking-[-0.9px] text-white">김망고</p>
-          <p className="mt-[2px] text-[12px] text-label">sjlkd9972@naver.com</p>
+          <p className="text-[20px] font-semibold tracking-[-0.9px] text-white">김망고</p>
+          <p className="mt-[2px] text-[15px] text-label">sjlkd9972@naver.com</p>
         </div>
       </Card>
 
@@ -173,7 +173,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
         <button
           type="button"
           onClick={() => setStatsYear("all")}
-          className={`shrink-0 rounded-full px-[12px] py-[5px] text-[12px] tracking-[-0.6px] transition-colors ${
+          className={`shrink-0 rounded-full px-[12px] py-[5px] text-[15px] tracking-[-0.6px] transition-colors ${
             statsYear === "all" ? "bg-main text-white" : "bg-[#242628] text-label"
           }`}
         >
@@ -184,7 +184,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
             key={y}
             type="button"
             onClick={() => setStatsYear(y)}
-            className={`shrink-0 rounded-full px-[12px] py-[5px] text-[12px] tracking-[-0.6px] transition-colors ${
+            className={`shrink-0 rounded-full px-[12px] py-[5px] text-[15px] tracking-[-0.6px] transition-colors ${
               statsYear === y ? "bg-main text-white" : "bg-[#242628] text-label"
             }`}
           >
@@ -202,9 +202,9 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
           { label: "프롬프트 도우미", value: `${sum.helperUses.toLocaleString()} 회` },
         ].map((row) => (
           <Card key={row.label} className="flex flex-col gap-[6px]">
-            <span className="text-[12px] tracking-[-0.6px] text-label">{row.label}</span>
+            <span className="text-[15px] tracking-[-0.6px] text-label">{row.label}</span>
             <span
-              className={`text-[17px] font-semibold tracking-[-0.85px] ${
+              className={`text-[19px] font-semibold tracking-[-0.85px] ${
                 row.highlight ? "text-main" : "text-white"
               }`}
             >
@@ -218,17 +218,17 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
       <Card>
         <div key={selectedKey} className="fade-up">
           <div className="flex items-center justify-between">
-            <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
+            <p className="text-[17px] font-medium tracking-[-0.75px] text-white">
               {isSelectedToday ? "오늘 남은 냉각수량" : `${formatDateLabel(selectedKey)} 남은 냉각수량`}
             </p>
-            <p className="text-[12px] text-label">한도 {DAILY_LIMIT.toLocaleString()}ml</p>
+            <p className="text-[15px] text-label">한도 {DAILY_LIMIT.toLocaleString()}ml</p>
           </div>
           <div className="mt-[16px] flex items-end gap-[6px]">
             <span className="text-[38px] font-bold leading-none tracking-[-1.5px] text-white">
               {remaining.toLocaleString()}
             </span>
-            <span className="pb-[4px] text-[15px] tracking-[-0.75px] text-label">ml 남음</span>
-            <span className="ml-auto pb-[6px] text-[14px] font-semibold tracking-[-0.7px] text-main">
+            <span className="pb-[4px] text-[17px] tracking-[-0.75px] text-label">ml 남음</span>
+            <span className="ml-auto pb-[6px] text-[16px] font-semibold tracking-[-0.7px] text-main">
               {remainingPercent}%
             </span>
           </div>
@@ -242,7 +242,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
               style={{ left: `calc(${remainingPercent}% - 8.5px)` }}
             />
           </div>
-          <p className="mt-[12px] text-[12px] tracking-[-0.6px] text-label">
+          <p className="mt-[12px] text-[15px] tracking-[-0.6px] text-label">
             {isSelectedToday
               ? "오늘 하루 더 쓸 수 있는 냉각수량이에요"
               : `채팅 ${selected.chats}회 · 도우미 ${selected.helperUses}회`}
@@ -252,7 +252,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
 
       {/* 달력 */}
       <Card>
-        <p className="text-[14px] leading-[1.6] tracking-[-0.7px] text-white">
+        <p className="text-[16px] leading-[1.6] tracking-[-0.7px] text-white">
           {viewMonth + 1}월에는 <span className="font-semibold text-main">2L 생수병 {bottles}번</span>을
           사용했어요
         </p>
@@ -271,7 +271,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
             <button
               type="button"
               onClick={() => setOpenPicker((p) => (p === "year" ? null : "year"))}
-              className={`rounded-[6px] px-[6px] py-[3px] text-[14px] font-medium active:bg-white/10 ${
+              className={`rounded-[6px] px-[6px] py-[3px] text-[16px] font-medium active:bg-white/10 ${
                 openPicker === "year" ? "bg-white/10 text-white" : "text-white"
               }`}
             >
@@ -287,7 +287,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
                       setViewYear(y);
                       setOpenPicker(null);
                     }}
-                    className={`block w-full rounded-[6px] px-[8px] py-[6px] text-center text-[12px] ${
+                    className={`block w-full rounded-[6px] px-[8px] py-[6px] text-center text-[15px] ${
                       y === viewYear ? "bg-main font-semibold text-white" : "text-white/80 active:bg-white/10"
                     }`}
                   >
@@ -303,7 +303,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
             <button
               type="button"
               onClick={() => setOpenPicker((p) => (p === "month" ? null : "month"))}
-              className={`rounded-[6px] px-[6px] py-[3px] text-[14px] font-medium active:bg-white/10 ${
+              className={`rounded-[6px] px-[6px] py-[3px] text-[16px] font-medium active:bg-white/10 ${
                 openPicker === "month" ? "bg-white/10 text-white" : "text-white"
               }`}
             >
@@ -320,7 +320,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
                         setViewMonth(m);
                         setOpenPicker(null);
                       }}
-                      className={`rounded-[6px] py-[7px] text-[12px] ${
+                      className={`rounded-[6px] py-[7px] text-[15px] ${
                         m === viewMonth ? "bg-main font-semibold text-white" : "text-white/80 active:bg-white/10"
                       }`}
                     >
@@ -343,7 +343,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
         </div>
         <div className="grid grid-cols-7 gap-y-[8px] text-center">
           {WEEKDAYS.map((d) => (
-            <span key={d} className="text-[11px] text-label/70">
+            <span key={d} className="text-[14px] text-label/70">
               {d}
             </span>
           ))}
@@ -361,7 +361,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
                 className="flex flex-col items-center gap-[2px]"
               >
                 <span
-                  className={`flex size-[28px] items-center justify-center rounded-full text-[12px] ${
+                  className={`flex size-[28px] items-center justify-center rounded-full text-[15px] ${
                     isSelected
                       ? "bg-main font-semibold text-white"
                       : isToday
@@ -371,7 +371,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
                 >
                   {day}
                 </span>
-                <span className="h-[10px] text-[8px] text-main">
+                <span className="h-[13px] text-[11px] leading-[13px] text-main">
                   {used > 0 ? used.toLocaleString() : ""}
                 </span>
               </button>
@@ -382,7 +382,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
 
       {/* 주간 그래프 */}
       <Card>
-        <p className="text-[14px] tracking-[-0.7px] text-white">
+        <p className="text-[16px] tracking-[-0.7px] text-white">
           어제보다 약{" "}
           <span className="font-semibold text-main">
             {diffPercent}% {lessThanYesterday ? "덜" : "더"}
@@ -401,30 +401,30 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
                 onClick={() => setSelectedKey(d.key)}
                 className="flex flex-1 flex-col items-center gap-[6px]"
               >
-                <span className="text-[10px] text-label">{d.used.toLocaleString()}</span>
+                <span className="text-[13px] text-label">{d.used.toLocaleString()}</span>
                 <div
                   className={`w-full max-w-[34px] rounded-[5px] transition-all duration-300 ${
                     isSelected ? "bg-main" : isToday ? "bg-main/70" : "bg-[#4a4d50]"
                   }`}
                   style={{ height: h }}
                 />
-                <span className={`text-[10px] ${isSelected ? "text-main" : "text-label/70"}`}>
+                <span className={`text-[13px] ${isSelected ? "text-main" : "text-label/70"}`}>
                   {isToday ? "오늘" : d.key.slice(8)}
                 </span>
               </button>
             );
           })}
         </div>
-        <p className="mt-[12px] rounded-[10px] bg-white/[0.04] px-[12px] py-[10px] text-[11px] leading-[1.5] tracking-[-0.55px] text-label">
+        <p className="mt-[12px] rounded-[10px] bg-white/[0.04] px-[12px] py-[10px] text-[14px] leading-[1.5] tracking-[-0.55px] text-label">
           {encouragement(lessThanYesterday, diffPercent)}
         </p>
       </Card>
 
       {/* 날짜별 기록 */}
       <Card>
-        <p className="text-[14px] font-medium tracking-[-0.7px] text-white">날짜별 사용 기록</p>
+        <p className="text-[16px] font-medium tracking-[-0.7px] text-white">날짜별 사용 기록</p>
         <div className="mt-[16px] flex flex-col gap-[4px]">
-          {history.length === 0 && <p className="py-[6px] text-[13px] text-label">아직 기록이 없어요</p>}
+          {history.length === 0 && <p className="py-[6px] text-[15px] text-label">아직 기록이 없어요</p>}
           {history.map((d) => {
             const isSelected = d.key === selectedKey;
             return (
@@ -437,12 +437,12 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
                 }`}
               >
                 <div>
-                  <p className="text-[13px] tracking-[-0.65px] text-white/90">{formatDateLabel(d.key)}</p>
-                  <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
+                  <p className="text-[15px] tracking-[-0.65px] text-white/90">{formatDateLabel(d.key)}</p>
+                  <p className="mt-[2px] text-[14px] tracking-[-0.55px] text-label">
                     채팅 {d.chats}회 · 도우미 {d.helperUses}회
                   </p>
                 </div>
-                <span className={`text-[14px] font-semibold tracking-[-0.7px] ${isSelected ? "text-white" : "text-main"}`}>
+                <span className={`text-[16px] font-semibold tracking-[-0.7px] ${isSelected ? "text-white" : "text-main"}`}>
                   {d.used.toLocaleString()}ml
                 </span>
               </button>

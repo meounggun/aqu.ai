@@ -27,7 +27,7 @@ function ScrollHint({ onClick }: { onClick: () => void }) {
       aria-label="다음"
       className="absolute bottom-[24px] left-1/2 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-[6px] opacity-[0.76] transition-opacity hover:opacity-100"
     >
-      <span className="text-[16px] tracking-[-0.8px] text-label-2">Scroll</span>
+      <span className="text-[18px] tracking-[-0.8px] text-label-2">Scroll</span>
       <span className="animate-bounce">
         <CaretDown />
       </span>
@@ -96,7 +96,7 @@ function WaterCycle() {
             {/* 배경 마스크 — 아이콘 뒤로 원이 비치지 않도록 */}
             <div className="absolute left-1/2 top-1/2 size-[128px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bg blur-[10px]" />
             <div className="relative flex items-center justify-center">{n.icon}</div>
-            <span className="absolute left-1/2 top-full mt-[10px] -translate-x-1/2 whitespace-nowrap text-[16px] tracking-[-0.8px] text-white">
+            <span className="absolute left-1/2 top-full mt-[10px] -translate-x-1/2 whitespace-nowrap text-[18px] tracking-[-0.8px] text-white">
               {n.key}
             </span>
           </div>
@@ -166,11 +166,11 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
               AI
             </text>
           </svg>
-          <span className="mt-[6px] text-[16px] tracking-[-0.8px] text-label transition-colors group-hover:text-white">
+          <span className="mt-[6px] text-[18px] tracking-[-0.8px] text-label transition-colors group-hover:text-white">
             click here!
           </span>
         </button>
-        <p className="ob-intro-text mt-[52px] text-[20px] tracking-[-1px] text-label-2">
+        <p className="ob-intro-text mt-[52px] text-[22px] tracking-[-1px] text-label-2">
           일상의 편리함이 되어준 인공지능은 보이지 않는 곳에서 수자원을 위협하고 있습니다.
         </p>
       </section>
@@ -180,7 +180,7 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
         <h2 className="ob-reveal text-[50px] font-bold tracking-[-2.5px]">
           <span className="text-main">AI</span> <span className="text-white/90">USE WATER</span>
         </h2>
-        <p className="ob-reveal ob-d1 mt-[28px] max-w-[1267px] text-[20px] leading-[1.5] tracking-[-1px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[28px] max-w-[1267px] text-[22px] leading-[1.5] tracking-[-1px] text-white/90">
           AI 작동에 필수적인 인프라 AI데이터센터는 장비의 부식을 막기 위해, 인간의 생존에 필요한
           한정된 자원인 담수만을 고집하며 우리가 마실 물까지 빼앗고 있습니다.
           <br />
@@ -200,7 +200,7 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
             <HeadCircuitIcon />
           </div>
         </div>
-        <p className="ob-reveal ob-d1 mt-[24px] text-[20px] leading-[1.6] tracking-[-1px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[24px] text-[22px] leading-[1.6] tracking-[-1px] text-white/90">
           늘어나는 AI 기술과 인프라, 빠른 발전 속에서 우리는{" "}
           <span className="text-[#75a7ff]">어떤 태도</span>로 마주해야 할까요?
           <br />
@@ -213,7 +213,7 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
       {/* 4. MORE FAST, LESS ENERGY */}
       <section className={sectionClass}>
         <h2 className="ob-reveal text-[50px] font-bold tracking-[-2.5px] text-main">MORE FAST, LESS ENERGY</h2>
-        <p className="ob-reveal ob-d1 mt-[20px] max-w-[1180px] text-[20px] leading-[1.5] tracking-[-0.9px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[20px] max-w-[1180px] text-[22px] leading-[1.5] tracking-[-0.9px] text-white/90">
           우리는 인공지능의 빠른 발전 뒤에 존재하는 막대한 양의 담수 소모를 정제된 대화 방식을 통해
           제어합니다. 정제된 대화방식은 우리가 더 빠르게 목적을 얻을 수 있게 만들고, 적은 소모 방식을
           통해 자연의 시간 가속을 늦춰 메말라가는 담수를 보호하고자 합니다.
@@ -224,7 +224,7 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
               바깥 컨테이너는 ob-reveal로 감싸지 않는다 — 감싸면 컨테이너 자체의 페이드와
               말풍선 개별 애니메이션이 겹쳐 opacity가 곱연산되어 잘 안 보이게 된다 */}
           <div className="flex flex-col items-center gap-[14px]">
-            <span className="text-[16px] tracking-[-0.8px] text-label-2">BEFORE</span>
+            <span className="text-[18px] tracking-[-0.8px] text-label-2">BEFORE</span>
             <div className="relative h-[483px] w-[330px] overflow-hidden rounded-[16px] bg-stroke">
               <Bubble tone="blue" left={161.58} top={17.45} w={155.5} h={44} order={0} />
               <Bubble tone="gray" left={15.93} top={69.79} w={182} h={104} order={1} />
@@ -236,7 +236,7 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
           </div>
           {/* AFTER */}
           <div className="flex flex-col items-center gap-[14px]">
-            <span className="text-[16px] tracking-[-0.8px] text-label-2">AFTER</span>
+            <span className="text-[18px] tracking-[-0.8px] text-label-2">AFTER</span>
             <div className="relative h-[221px] w-[330px] overflow-hidden rounded-[16px] bg-stroke">
               <Bubble tone="blue" left={160.06} top={15.17} w={155.5} h={64.5} order={0} />
               <Bubble tone="gray" left={14.41} top={89.51} w={182} h={104} order={1} />
@@ -257,7 +257,7 @@ export default function OnboardingView({ onFinish }: { onFinish: () => void }) {
           <button
             type="button"
             onClick={onFinish}
-            className="ob-cta flex h-[54px] cursor-pointer items-center gap-[12px] rounded-full border-2 border-white pl-[24px] pr-[26px] text-[20px] font-medium tracking-[-1px] text-white transition-colors hover:bg-white hover:text-bg"
+            className="ob-cta flex h-[54px] cursor-pointer items-center gap-[12px] rounded-full border-2 border-white pl-[24px] pr-[26px] text-[22px] font-medium tracking-[-1px] text-white transition-colors hover:bg-white hover:text-bg"
           >
             함께하러 가기
             <ArrowRightIcon className="size-[24px]" />

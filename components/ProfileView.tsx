@@ -167,7 +167,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
 
   return (
     <div className="absolute left-[140px] top-[60px] flex h-[960px] w-[1640px] flex-col p-[24px]">
-      <h2 className="fade-up shrink-0 text-[18px] font-semibold tracking-[-0.9px] text-white">
+      <h2 className="fade-up shrink-0 text-[20px] font-semibold tracking-[-0.9px] text-white">
         MY PROFILE
       </h2>
 
@@ -211,8 +211,8 @@ export default function ProfileView({ store }: { store: UsageStore }) {
               />
             </div>
             <div className="text-center">
-              <p className="text-[20px] font-semibold tracking-[-1px] text-white">김망고</p>
-              <p className="mt-[4px] text-[13px] text-label">sjlkd9972@naver.com</p>
+              <p className="text-[22px] font-semibold tracking-[-1px] text-white">김망고</p>
+              <p className="mt-[4px] text-[15px] text-label">sjlkd9972@naver.com</p>
             </div>
           </Card>
 
@@ -220,10 +220,10 @@ export default function ProfileView({ store }: { store: UsageStore }) {
           <Card delay={60}>
             <div key={selectedKey} className="fade-up">
               <div className="flex items-center justify-between">
-                <p className="text-[16px] font-medium tracking-[-0.8px] text-white">
+                <p className="text-[18px] font-medium tracking-[-0.8px] text-white">
                   {isSelectedToday ? "오늘 남은 냉각수량" : `${formatDateLabel(selectedKey)} 남은 냉각수량`}
                 </p>
-                <p className="text-[13px] text-label">
+                <p className="text-[15px] text-label">
                   일일 한도 {DAILY_LIMIT.toLocaleString()}ml
                 </p>
               </div>
@@ -231,8 +231,8 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                 <span className="text-[52px] font-bold leading-none tracking-[-2px] text-white">
                   {remaining.toLocaleString()}
                 </span>
-                <span className="pb-[6px] text-[18px] tracking-[-0.9px] text-label">ml 남음</span>
-                <span className="ml-auto pb-[8px] text-[15px] font-semibold tracking-[-0.75px] text-main">
+                <span className="pb-[6px] text-[20px] tracking-[-0.9px] text-label">ml 남음</span>
+                <span className="ml-auto pb-[8px] text-[17px] font-semibold tracking-[-0.75px] text-main">
                   {remainingPercent}%
                 </span>
               </div>
@@ -246,7 +246,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                   style={{ left: `calc(${remainingPercent}% - 10px)` }}
                 />
               </div>
-              <p className="mt-[12px] text-[13px] tracking-[-0.65px] text-label">
+              <p className="mt-[12px] text-[15px] tracking-[-0.65px] text-label">
                 {isSelectedToday
                   ? "오늘 하루 더 쓸 수 있는 냉각수량이에요"
                   : `채팅 ${selected.chats}회 · 프롬프트 도우미 ${selected.helperUses}회`}
@@ -265,7 +265,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                 <button
                   type="button"
                   onClick={() => setStatsYear("all")}
-                  className={`shrink-0 cursor-pointer rounded-full px-[11px] py-[4px] text-[12px] tracking-[-0.6px] transition-colors ${
+                  className={`shrink-0 cursor-pointer rounded-full px-[11px] py-[4px] text-[15px] tracking-[-0.6px] transition-colors ${
                     statsYear === "all" ? "bg-main text-white" : "text-label hover:bg-white/10"
                   }`}
                 >
@@ -276,7 +276,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                     key={y}
                     type="button"
                     onClick={() => setStatsYear(y)}
-                    className={`shrink-0 cursor-pointer rounded-full px-[11px] py-[4px] text-[12px] tracking-[-0.6px] transition-colors ${
+                    className={`shrink-0 cursor-pointer rounded-full px-[11px] py-[4px] text-[15px] tracking-[-0.6px] transition-colors ${
                       statsYear === y ? "bg-main text-white" : "text-label hover:bg-white/10"
                     }`}
                   >
@@ -291,9 +291,9 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                 { label: "프롬프트 도우미", value: `${sum.helperUses.toLocaleString()} 회` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between">
-                  <span className="text-[14px] tracking-[-0.7px] text-label">{row.label}</span>
+                  <span className="text-[16px] tracking-[-0.7px] text-label">{row.label}</span>
                   <span
-                    className={`text-[15px] font-semibold tracking-[-0.75px] ${
+                    className={`text-[17px] font-semibold tracking-[-0.75px] ${
                       row.highlight ? "text-main" : "text-white"
                     }`}
                   >
@@ -305,12 +305,12 @@ export default function ProfileView({ store }: { store: UsageStore }) {
 
             {/* 날짜별 사용 기록 — 클릭해서 날짜 선택 가능, 선택된 날짜는 달력과 연동 */}
             <Card className="flex min-h-0 flex-1 flex-col" delay={180}>
-              <p className="shrink-0 text-[15px] font-medium tracking-[-0.75px] text-white">
+              <p className="shrink-0 text-[17px] font-medium tracking-[-0.75px] text-white">
                 날짜별 사용 기록
               </p>
               <div className="chat-scroll mt-[16px] mr-[-8px] flex min-h-0 flex-1 flex-col gap-[4px] overflow-y-auto pr-[20px]">
                 {history.length === 0 && (
-                  <p className="py-[8px] text-[13px] text-label">아직 사용 기록이 없어요</p>
+                  <p className="py-[8px] text-[15px] text-label">아직 사용 기록이 없어요</p>
                 )}
                 {history.map((d) => {
                   const isSelected = d.key === selectedKey;
@@ -324,15 +324,15 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                       }`}
                     >
                       <div>
-                        <p className="text-[13px] tracking-[-0.65px] text-white/90">
+                        <p className="text-[15px] tracking-[-0.65px] text-white/90">
                           {formatDateLabel(d.key)}
                         </p>
-                        <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
+                        <p className="mt-[2px] text-[14px] tracking-[-0.55px] text-label">
                           채팅 {d.chats}회 · 도우미 {d.helperUses}회
                         </p>
                       </div>
                       <span
-                        className={`text-[14px] font-semibold tracking-[-0.7px] ${
+                        className={`text-[16px] font-semibold tracking-[-0.7px] ${
                           isSelected ? "text-white" : "text-main"
                         }`}
                       >
@@ -350,7 +350,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
             <div className="grid min-h-0 flex-1 grid-cols-2 gap-[16px]">
               {/* 월 달력 — 연도/월을 각각 따로 선택할 수 있다 */}
               <Card className="flex flex-col" delay={180}>
-                <p className="text-[15px] leading-[1.6] tracking-[-0.75px] text-white">
+                <p className="text-[17px] leading-[1.6] tracking-[-0.75px] text-white">
                   {viewMonth + 1}월에는{" "}
                   <span className="font-semibold text-main">2L 생수병 {bottles}번</span>을 사용했어요
                   <br />
@@ -372,7 +372,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                       <button
                         type="button"
                         onClick={() => setOpenPicker((p) => (p === "year" ? null : "year"))}
-                        className={`cursor-pointer rounded-[6px] px-[6px] py-[2px] text-[14px] font-medium transition-colors hover:bg-white/10 ${
+                        className={`cursor-pointer rounded-[6px] px-[6px] py-[2px] text-[16px] font-medium transition-colors hover:bg-white/10 ${
                           openPicker === "year" ? "bg-white/10 text-white" : "text-white"
                         }`}
                       >
@@ -388,7 +388,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                                 setViewYear(y);
                                 setOpenPicker(null);
                               }}
-                              className={`block w-full cursor-pointer rounded-[6px] px-[8px] py-[6px] text-center text-[12px] transition-colors ${
+                              className={`block w-full cursor-pointer rounded-[6px] px-[8px] py-[6px] text-center text-[15px] transition-colors ${
                                 y === viewYear ? "bg-main font-semibold text-white" : "text-white/80 hover:bg-white/10"
                               }`}
                             >
@@ -404,7 +404,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                       <button
                         type="button"
                         onClick={() => setOpenPicker((p) => (p === "month" ? null : "month"))}
-                        className={`cursor-pointer rounded-[6px] px-[6px] py-[2px] text-[14px] font-medium transition-colors hover:bg-white/10 ${
+                        className={`cursor-pointer rounded-[6px] px-[6px] py-[2px] text-[16px] font-medium transition-colors hover:bg-white/10 ${
                           openPicker === "month" ? "bg-white/10 text-white" : "text-white"
                         }`}
                       >
@@ -421,7 +421,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                                   setViewMonth(m);
                                   setOpenPicker(null);
                                 }}
-                                className={`cursor-pointer rounded-[6px] py-[6px] text-[11px] transition-colors ${
+                                className={`cursor-pointer rounded-[6px] py-[6px] text-[14px] transition-colors ${
                                   m === viewMonth
                                     ? "bg-main font-semibold text-white"
                                     : "text-white/80 hover:bg-white/10"
@@ -445,7 +445,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                     </button>
                   </div>
                   {WEEKDAYS.map((d) => (
-                    <span key={d} className="text-[11px] text-label/70">
+                    <span key={d} className="text-[14px] text-label/70">
                       {d}
                     </span>
                   ))}
@@ -466,7 +466,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                         className="flex cursor-pointer flex-col items-center gap-[2px]"
                       >
                         <span
-                          className={`flex size-[26px] items-center justify-center rounded-full text-[12px] transition-all duration-150 hover:scale-110 ${
+                          className={`flex size-[26px] items-center justify-center rounded-full text-[15px] transition-all duration-150 hover:scale-110 ${
                             isSelected
                               ? "bg-main font-semibold text-white"
                               : isToday
@@ -476,7 +476,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                         >
                           {day}
                         </span>
-                        <span className="h-[12px] text-[9px] text-main">
+                        <span className="h-[14px] text-[12px] leading-[14px] text-main">
                           {used > 0 ? used.toLocaleString() : ""}
                         </span>
                       </button>
@@ -487,7 +487,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
 
               {/* 주간 막대그래프 + 격려 메시지 */}
               <Card className="flex flex-col" delay={240}>
-                <p className="text-[15px] tracking-[-0.75px] text-white">
+                <p className="text-[17px] tracking-[-0.75px] text-white">
                   어제보다 약{" "}
                   <span className="font-semibold text-main">
                     {diffPercent}% {lessThanYesterday ? "덜" : "더"}
@@ -506,7 +506,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                         onClick={() => setSelectedKey(d.key)}
                         className="flex flex-1 cursor-pointer flex-col items-center gap-[8px]"
                       >
-                        <span className="text-[11px] text-label">{d.used.toLocaleString()}</span>
+                        <span className="text-[14px] text-label">{d.used.toLocaleString()}</span>
                         <div
                           className={`w-full max-w-[44px] rounded-[6px] transition-all duration-300 hover:opacity-80 ${
                             isSelected ? "bg-main" : isToday ? "bg-main/70" : "bg-[#4a4d50]"
@@ -514,7 +514,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                           style={{ height: h }}
                         />
                         <span
-                          className={`text-[11px] ${isSelected ? "text-main" : "text-label/70"}`}
+                          className={`text-[14px] ${isSelected ? "text-main" : "text-label/70"}`}
                         >
                           {isToday ? "오늘" : d.key.slice(8)}
                         </span>
@@ -522,7 +522,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                     );
                   })}
                 </div>
-                <p className="mt-[16px] shrink-0 rounded-[10px] bg-white/[0.04] px-[12px] py-[10px] text-[12px] leading-[1.5] tracking-[-0.6px] text-label">
+                <p className="mt-[16px] shrink-0 rounded-[10px] bg-white/[0.04] px-[12px] py-[10px] text-[15px] leading-[1.5] tracking-[-0.6px] text-label">
                   {encouragement(lessThanYesterday, diffPercent)}
                 </p>
               </Card>

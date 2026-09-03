@@ -21,7 +21,7 @@ import {
   MARKET_DECKS,
 } from "@/lib/deck-store";
 import type { CustomHelper, CustomHelperStore } from "@/lib/custom-helper-store";
-import { HELPER_CATEGORIES, type HelperCategory, type HelperOption } from "@/lib/water";
+import { type HelperCategory, type HelperOption } from "@/lib/water";
 import {
   type MarketTip,
   SEED_MARKET_TIPS,
@@ -91,7 +91,7 @@ export default function MarketView({
   onToggleCategory,
   allHelperCategories,
   onAddBuiltinOption,
-  onRemoveBuiltinOption,
+  onToggleHelperOption,
 }: {
   deckStore: DeckStore;
   activeDeckIds: string[];
@@ -118,10 +118,11 @@ export default function MarketView({
   /** 기존 요약/번역/코드 등 기본 도우미 — 채팅 바 노출 여부를 여기서도 함께 관리한다 */
   visibleCategories: Set<string>;
   onToggleCategory: (key: string) => void;
-  /** 사용자 추가/삭제가 반영된 기본 도우미 전체 목록 — 카테고리 안의 옵션을 펼쳐 보여줄 때 사용 */
+  /** 사용자 추가/on-off가 반영된 기본 도우미 전체 목록 — 카테고리 안의 옵션을 펼쳐 보여줄 때 사용 */
   allHelperCategories: HelperCategory[];
   onAddBuiltinOption: (categoryKey: string, option: HelperOption) => void;
-  onRemoveBuiltinOption: (categoryKey: string, optionLabel: string, isBuiltIn: boolean) => void;
+  /** 옵션 하나를 껐다 켰다 — 목록에서 지우지 않는다 */
+  onToggleHelperOption: (categoryKey: string, optionLabel: string) => void;
 }) {
   const [composing, setComposing] = useState(false);
   const [name, setName] = useState("");
@@ -213,10 +214,7 @@ export default function MarketView({
     resetHelperForm();
   };
 
-  /* ---------- 기본 도우미(요약/번역/코드 등) 안의 옵션 보기 + 추가/삭제 ---------- */
-  const builtInLabels = (categoryKey: string) =>
-    new Set(HELPER_CATEGORIES.find((c) => c.key === categoryKey)?.options.map((o) => o.label) ?? []);
-
+  /* ---------- 기본 도우미(요약/번역/코드 등) 안의 옵션 보기 + 추가 / 켜고 끄기 ---------- */
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [optLabel, setOptLabel] = useState("");
   const [optDirective, setOptDirective] = useState("");
@@ -271,14 +269,14 @@ export default function MarketView({
   return (
     <div className="absolute left-[140px] top-[60px] flex h-[960px] w-[1640px] flex-col p-[24px]">
       <div className="fade-up shrink-0">
-        <h2 className="text-[20px] font-semibold tracking-[-1px] text-white">덱 편집</h2>
-        <p className="mt-[4px] text-[13px] tracking-[-0.65px] text-label">
+        <h2 className="text-[22px] font-semibold tracking-[-1px] text-white">덱 편집</h2>
+        <p className="mt-[4px] text-[15px] tracking-[-0.65px] text-label">
           덱을 켜두면 반복 입력 없이 프롬프트가 유지됩니다
         </p>
       </div>
 
       {/* 스크롤하면 아래쪽에 프롬프트 도우미 편집 / 팁 공유가 나온다 */}
-      <div className="chat-scroll mt-[16px] mr-[-8px] flex min-h-0 flex-1 flex-col gap-[16px] overflow-y-auto pr-[8px]">
+      <div className="chat-scroll mt-[16px] mr-[-21px] flex min-h-0 flex-1 flex-col gap-[16px] overflow-y-auto pr-[21px]">
         {/* ---------- 상단 행: 왼쪽(내 덱) / 오른쪽(마켓, 왼쪽 컬럼 높이만큼 길게) ---------- */}
         <div className="grid shrink-0 grid-cols-[460px_1fr] items-stretch gap-[16px]">
           {/* 내 덱 — 설정 버튼으로 들어왔을 때 잠깐 흔들려 여기서 수정하면 된다는 걸 알려준다.
@@ -287,13 +285,13 @@ export default function MarketView({
           <div ref={myDeckRef} className={shaking ? "nudge-shake" : ""}>
             <Card className="flex h-full min-h-[460px] flex-col" delay={0}>
                 <div className="flex shrink-0 items-center justify-between">
-                  <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
+                  <p className="text-[17px] font-medium tracking-[-0.75px] text-white">
                     내 덱 <span className="text-label">({deckStore.installed.length})</span>
                   </p>
                   <button
                     type="button"
                     onClick={() => setComposing((v) => !v)}
-                    className="cursor-pointer rounded-full border border-main px-[12px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] text-main transition-colors hover:bg-main hover:text-white"
+                    className="cursor-pointer rounded-full border border-main px-[12px] py-[5px] text-[15px] font-semibold tracking-[-0.6px] text-main transition-colors hover:bg-main hover:text-white"
                   >
                     {composing ? "닫기" : "+ 덱 만들기"}
                   </button>
@@ -308,7 +306,7 @@ export default function MarketView({
                           key={c.key}
                           type="button"
                           onClick={() => setCategory(c.key)}
-                          className={`flex cursor-pointer items-center gap-[6px] rounded-full border px-[10px] py-[5px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+                          className={`flex cursor-pointer items-center gap-[6px] rounded-full border px-[10px] py-[5px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
                             category === c.key
                               ? "border-transparent text-white"
                               : "border-stroke text-label hover:border-white/30 hover:text-white"
@@ -327,25 +325,25 @@ export default function MarketView({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="덱 이름 (예: 내 기획서 덱)"
-                      className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
+                      className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
                     />
                     <input
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="한 줄 설명 (선택)"
-                      className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
+                      className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
                     />
                     <div className="mt-[10px] flex flex-col gap-[8px]">
                       {KIND_ORDER.map((k) => (
                         <div key={k}>
-                          <p className="mb-[4px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+                          <p className="mb-[4px] text-[14px] font-semibold tracking-[-0.55px] text-label">
                             {CARD_KIND_LABEL[k]}
                           </p>
                           <input
                             value={texts[k]}
                             onChange={(e) => setTexts((t) => ({ ...t, [k]: e.target.value }))}
                             placeholder={KIND_PLACEHOLDER[k]}
-                            className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
+                            className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
                           />
                         </div>
                       ))}
@@ -354,7 +352,7 @@ export default function MarketView({
                       type="button"
                       onClick={submit}
                       disabled={!canSubmit}
-                      className="mt-[12px] w-full cursor-pointer rounded-[10px] bg-main py-[9px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
+                      className="mt-[12px] w-full cursor-pointer rounded-[10px] bg-main py-[9px] text-[15px] font-semibold tracking-[-0.65px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
                     >
                       덱 만들기 {cards.length > 0 && `(카드 ${cards.length}장)`}
                     </button>
@@ -363,7 +361,7 @@ export default function MarketView({
 
                 <div className="chat-scroll mr-[-8px] mt-[12px] flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto pr-[12px]">
                   {deckStore.installed.length === 0 && !composing && (
-                    <p className="py-[12px] text-[13px] leading-[1.6] tracking-[-0.65px] text-label">
+                    <p className="py-[12px] text-[15px] leading-[1.6] tracking-[-0.65px] text-label">
                       아직 장착한 덱이 없어요.
                       <br />
                       오른쪽 마켓에서 검증된 덱을 가져오거나, 직접 만들어보세요.
@@ -383,10 +381,10 @@ export default function MarketView({
                         <div className="flex items-start gap-[10px]">
                           <CategoryBadge category={deck.category} />
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+                            <p className="truncate text-[15px] font-semibold tracking-[-0.65px] text-white">
                               {deck.name}
                             </p>
-                            <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
+                            <p className="mt-[2px] text-[14px] tracking-[-0.55px] text-label">
                               {CATEGORY_LABEL[deck.category]} · by {deck.author} · -
                               {Math.round(deck.saving * 100)}% 절감
                             </p>
@@ -411,7 +409,7 @@ export default function MarketView({
                             <span
                               key={i}
                               title={c.text}
-                              className="max-w-[190px] truncate rounded-[6px] bg-white/[0.06] px-[8px] py-[4px] text-[10px] tracking-[-0.5px] text-white/70"
+                              className="max-w-[190px] truncate rounded-[6px] bg-white/[0.06] px-[8px] py-[4px] text-[13px] tracking-[-0.5px] text-white/70"
                             >
                               {CARD_KIND_LABEL[c.kind]} · {c.text}
                             </span>
@@ -423,7 +421,7 @@ export default function MarketView({
                             <button
                               type="button"
                               onClick={() => onToggleShare(deck.id)}
-                              className={`cursor-pointer rounded-full px-[10px] py-[4px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+                              className={`cursor-pointer rounded-full px-[10px] py-[4px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
                                 deck.shared
                                   ? "bg-main/25 text-main"
                                   : "bg-white/[0.06] text-label hover:bg-white/[0.12]"
@@ -435,7 +433,7 @@ export default function MarketView({
                           <button
                             type="button"
                             onClick={() => requestRemoveDeck(deck.id)}
-                            className="ml-auto cursor-pointer text-[11px] tracking-[-0.55px] text-label transition-colors hover:text-white"
+                            className="ml-auto cursor-pointer text-[14px] tracking-[-0.55px] text-label transition-colors hover:text-white"
                           >
                             제거
                           </button>
@@ -451,8 +449,8 @@ export default function MarketView({
           <Card className="flex flex-col" delay={240}>
             <div className="flex shrink-0 items-center justify-between">
               <div>
-                <p className="text-[15px] font-medium tracking-[-0.75px] text-white">덱 공유하기</p>
-                <p className="mt-[2px] text-[11px] tracking-[-0.55px] text-label">
+                <p className="text-[17px] font-medium tracking-[-0.75px] text-white">덱 공유하기</p>
+                <p className="mt-[2px] text-[14px] tracking-[-0.55px] text-label">
                   가져간 유저가 절감에 성공하면 창작자에게 크레딧이 분배돼요
                 </p>
               </div>
@@ -461,7 +459,7 @@ export default function MarketView({
                 onClick={() => setComposing((v) => !v)}
                 aria-label="새 덱 만들기"
                 title="새 덱 만들기"
-                className={`flex size-[28px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[16px] font-semibold transition-colors ${
+                className={`flex size-[28px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[18px] font-semibold transition-colors ${
                   composing
                     ? "border-main bg-main text-white"
                     : "border-stroke text-label hover:border-main hover:text-white"
@@ -476,7 +474,7 @@ export default function MarketView({
               <button
                 type="button"
                 onClick={() => setMarketFilter("all")}
-                className={`shrink-0 cursor-pointer rounded-full px-[11px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] transition-colors ${
+                className={`shrink-0 cursor-pointer rounded-full px-[11px] py-[5px] text-[15px] font-semibold tracking-[-0.6px] transition-colors ${
                   marketFilter === "all" ? "bg-main text-white" : "text-label hover:bg-white/10"
                 }`}
               >
@@ -487,7 +485,7 @@ export default function MarketView({
                   key={c.key}
                   type="button"
                   onClick={() => setMarketFilter(c.key)}
-                  className={`flex shrink-0 cursor-pointer items-center gap-[5px] rounded-full px-[11px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] transition-colors ${
+                  className={`flex shrink-0 cursor-pointer items-center gap-[5px] rounded-full px-[11px] py-[5px] text-[15px] font-semibold tracking-[-0.6px] transition-colors ${
                     marketFilter === c.key ? "text-white" : "text-label hover:bg-white/10"
                   }`}
                   style={marketFilter === c.key ? { backgroundColor: c.color } : undefined}
@@ -500,7 +498,7 @@ export default function MarketView({
 
             <div className="chat-scroll mr-[-8px] mt-[12px] grid min-h-0 flex-1 grid-cols-2 content-start gap-[12px] overflow-y-auto pr-[12px]">
               {marketList.length === 0 && (
-                <p className="col-span-2 py-[12px] text-[13px] tracking-[-0.65px] text-label">
+                <p className="col-span-2 py-[12px] text-[15px] tracking-[-0.65px] text-label">
                   이 카테고리에는 아직 덱이 없어요.
                 </p>
               )}
@@ -509,13 +507,13 @@ export default function MarketView({
                 return (
                   <div
                     key={deck.id}
-                    className="flex h-[168px] flex-col rounded-[14px] border border-stroke bg-white/[0.02] p-[18px]"
+                    className="flex h-[212px] flex-col rounded-[14px] border border-stroke bg-white/[0.02] p-[18px]"
                   >
                     <CategoryBadge category={deck.category} size={32} />
-                    <p className="mt-[14px] truncate text-[15px] font-semibold tracking-[-0.75px] text-white">
+                    <p className="mt-[14px] shrink-0 truncate text-[17px] font-semibold leading-[1.5] tracking-[-0.75px] text-white">
                       {deck.name}
                     </p>
-                    <p className="mt-[6px] line-clamp-2 text-[12px] leading-[1.55] tracking-[-0.6px] text-white/60">
+                    <p className="mt-[6px] line-clamp-2 shrink-0 text-[15px] leading-[1.55] tracking-[-0.6px] text-white/60">
                       {deck.description || "설명이 없는 덱이에요."}
                     </p>
 
@@ -524,7 +522,7 @@ export default function MarketView({
                         type="button"
                         onClick={() => onSnapDeck(deck)}
                         disabled={owned}
-                        className="cursor-pointer rounded-full bg-main px-[14px] py-[6px] text-[12px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-label"
+                        className="cursor-pointer rounded-full bg-main px-[14px] py-[6px] text-[15px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:bg-white/[0.08] disabled:text-label"
                       >
                         {owned ? "보유 중" : "Snap"}
                       </button>
@@ -538,8 +536,8 @@ export default function MarketView({
 
         {/* 프롬프트 도우미 — 페이지 레벨 섹션 헤더. 아래 두 카드(기본 도우미 편집 / 팁 공유)를 함께 아우른다 */}
         <div className="fade-up mt-[4px] shrink-0">
-          <h2 className="text-[20px] font-semibold tracking-[-1px] text-white">프롬프트 도우미</h2>
-          <p className="mt-[4px] text-[13px] tracking-[-0.65px] text-label">
+          <h2 className="text-[22px] font-semibold tracking-[-1px] text-white">프롬프트 도우미</h2>
+          <p className="mt-[4px] text-[15px] tracking-[-0.65px] text-label">
             동그라미를 눌러 기본 도우미를 편집하거나, +를 눌러 나만의 도우미를 만들어보세요
           </p>
         </div>
@@ -554,7 +552,7 @@ export default function MarketView({
                 <button
                   type="button"
                   onClick={resetHelperForm}
-                  className="cursor-pointer rounded-full border border-main px-[12px] py-[5px] text-[12px] font-semibold tracking-[-0.6px] text-main transition-colors hover:bg-main hover:text-white"
+                  className="cursor-pointer rounded-full border border-main px-[12px] py-[5px] text-[15px] font-semibold tracking-[-0.6px] text-main transition-colors hover:bg-main hover:text-white"
                 >
                   닫기
                 </button>
@@ -567,23 +565,23 @@ export default function MarketView({
                   value={helperName}
                   onChange={(e) => setHelperName(e.target.value)}
                   placeholder="도우미 이름 (예: 회의록 정리)"
-                  className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
+                  className="w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
                 />
                 <textarea
                   value={helperDirective}
                   onChange={(e) => setHelperDirective(e.target.value)}
                   placeholder="프롬프트에 이어붙일 지시문 (예: 발언자별로 정리하고 마지막에 액션 아이템을 표로 뽑아줘.)"
                   rows={2}
-                  className="mt-[8px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
+                  className="mt-[8px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] leading-[1.5] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
                 />
                 <div className="mt-[8px] flex items-center gap-[6px]">
-                  <span className="text-[11px] tracking-[-0.55px] text-label">예상 절감율</span>
+                  <span className="text-[14px] tracking-[-0.55px] text-label">예상 절감율</span>
                   {HELPER_SAVING_PRESETS.map((p) => (
                     <button
                       key={p}
                       type="button"
                       onClick={() => setHelperSaving(p)}
-                      className={`cursor-pointer rounded-full px-[10px] py-[4px] text-[11px] font-semibold tracking-[-0.55px] transition-colors ${
+                      className={`cursor-pointer rounded-full px-[10px] py-[4px] text-[14px] font-semibold tracking-[-0.55px] transition-colors ${
                         helperSaving === p ? "bg-main text-white" : "bg-white/[0.06] text-label"
                       }`}
                     >
@@ -595,7 +593,7 @@ export default function MarketView({
                   type="button"
                   onClick={submitHelper}
                   disabled={!canSubmitHelper}
-                  className="mt-[10px] w-full cursor-pointer rounded-[10px] bg-main py-[9px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
+                  className="mt-[10px] w-full cursor-pointer rounded-[10px] bg-main py-[9px] text-[15px] font-semibold tracking-[-0.65px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   {editingHelperId ? "수정 완료" : "도우미 만들기"}
                 </button>
@@ -614,7 +612,7 @@ export default function MarketView({
                         setExpandedCategory(selected ? null : cat.key);
                         resetOptionForm();
                       }}
-                      className={`shrink-0 cursor-pointer rounded-full border px-[18px] py-[10px] text-[13px] font-semibold tracking-[-0.65px] transition-colors ${
+                      className={`shrink-0 cursor-pointer rounded-full border px-[18px] py-[10px] text-[15px] font-semibold tracking-[-0.65px] transition-colors ${
                         selected
                           ? "border-main bg-main text-white"
                           : "border-stroke bg-white/[0.03] text-label hover:border-main/60 hover:text-white"
@@ -633,7 +631,7 @@ export default function MarketView({
                   }}
                   aria-label="새 프롬프트 도우미 만들기"
                   title="새 프롬프트 도우미 만들기"
-                  className={`flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-dashed px-[16px] py-[10px] text-[16px] font-semibold transition-colors ${
+                  className={`flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-dashed px-[16px] py-[10px] text-[18px] font-semibold transition-colors ${
                     helperComposing
                       ? "border-main bg-main text-white"
                       : "border-stroke text-label hover:border-main hover:text-white"
@@ -648,14 +646,13 @@ export default function MarketView({
                   const cat = allHelperCategories.find((c) => c.key === expandedCategory);
                   if (!cat) return null;
                   const on = visibleCategories.has(cat.key);
-                  const builtIns = builtInLabels(cat.key);
                   return (
                     <div
                       className="fade-up rounded-[14px] border border-stroke bg-white/[0.02] p-[18px]"
                       style={{ animationDuration: "0.2s" }}
                     >
                       <div className="flex items-center justify-between">
-                        <p className="text-[18px] font-semibold tracking-[-0.9px] text-white">
+                        <p className="text-[20px] font-semibold tracking-[-0.9px] text-white">
                           {cat.label}
                         </p>
                         <button
@@ -675,64 +672,68 @@ export default function MarketView({
 
                       <div className="mt-[14px] flex flex-col gap-[10px]">
                         {cat.options.map((opt) => {
-                          const isBuiltIn = builtIns.has(opt.label);
+                          const optOn = opt.enabled !== false;
                           return (
                             <div
                               key={opt.label}
-                              className="rounded-[10px] bg-white/[0.04] px-[16px] py-[14px]"
+                              className={`rounded-[10px] bg-white/[0.04] px-[16px] py-[14px] transition-opacity duration-200 ${
+                                optOn ? "" : "opacity-45"
+                              }`}
                             >
                               <div className="flex items-center justify-between gap-[10px]">
-                                <p className="min-w-0 flex-1 truncate text-[14px] font-semibold tracking-[-0.7px] text-white">
+                                <p className="min-w-0 flex-1 truncate text-[16px] font-semibold tracking-[-0.7px] text-white">
                                   {opt.label}
                                 </p>
                                 <button
                                   type="button"
-                                  onClick={() => onRemoveBuiltinOption(cat.key, opt.label, isBuiltIn)}
-                                  aria-label="옵션 끄기"
-                                  title="옵션 끄기"
-                                  className="flex h-[22px] w-[40px] shrink-0 cursor-pointer items-center rounded-full bg-main px-[3px] transition-colors duration-200"
+                                  onClick={() => onToggleHelperOption(cat.key, opt.label)}
+                                  aria-label={optOn ? "옵션 끄기" : "옵션 켜기"}
+                                  title={optOn ? "옵션 끄기" : "옵션 켜기"}
+                                  className={`flex h-[22px] w-[40px] shrink-0 cursor-pointer items-center rounded-full px-[3px] transition-colors duration-200 ${
+                                    optOn ? "bg-main" : "bg-white/20"
+                                  }`}
                                 >
                                   <span
                                     className="size-[16px] rounded-full bg-white transition-transform duration-200"
-                                    style={{ transform: "translateX(18px)" }}
+                                    style={{ transform: optOn ? "translateX(18px)" : "translateX(0)" }}
                                   />
                                 </button>
                               </div>
-                              <p className="mt-[6px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white/60">
+                              <p className="mt-[6px] text-[15px] leading-[1.5] tracking-[-0.6px] text-white/60">
                                 {opt.directive}
                               </p>
                             </div>
                           );
                         })}
                         {cat.options.length === 0 && (
-                          <p className="text-[11px] tracking-[-0.55px] text-label">
-                            옵션이 모두 제거됐어요. 아래에서 새로 추가해보세요.
+                          <p className="text-[14px] tracking-[-0.55px] text-label">
+                            아직 옵션이 없어요. 아래에서 새로 추가해보세요.
                           </p>
                         )}
                       </div>
 
                       {/* 이 카테고리에 옵션 추가 */}
                       <div className="mt-[14px] rounded-[10px] bg-white/[0.03] p-[14px]">
-                        <p className="text-[13px] font-semibold tracking-[-0.65px] text-white">옵션 추가</p>
+                        <p className="text-[15px] font-semibold tracking-[-0.65px] text-white">옵션 추가</p>
                         <input
                           value={optLabel}
                           onChange={(e) => setOptLabel(e.target.value)}
                           placeholder="옵션이름 (예: 개조식 요약)"
-                          className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
+                          className="mt-[8px] w-full rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/35 focus:outline-none"
                         />
                         <textarea
                           value={optDirective}
                           onChange={(e) => setOptDirective(e.target.value)}
                           placeholder="지시문 작성"
                           rows={2}
-                          className="mt-[6px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[11px] leading-[1.5] tracking-[-0.55px] text-white placeholder:text-white/30 focus:outline-none"
+                          className="mt-[6px] w-full resize-none rounded-[8px] bg-white/[0.06] px-[10px] py-[8px] text-[14px] leading-[1.5] tracking-[-0.55px] text-white placeholder:text-white/30 focus:outline-none"
                         />
                         <div className="mt-[10px] flex justify-end">
                           <button
                             type="button"
                             onClick={() => submitOption(cat.key)}
                             disabled={!optLabel.trim() || !optDirective.trim()}
-                            className="cursor-pointer rounded-full bg-main px-[18px] py-[8px] text-[12px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
+                            className="cursor-pointer rounded-full bg-main px-[18px] py-[8px] text-[15px] font-semibold tracking-[-0.6px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-35"
                           >
                             추가하기
                           </button>
@@ -742,11 +743,11 @@ export default function MarketView({
                   );
                 })()}
 
-              <p className="mt-[6px] px-[2px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+              <p className="mt-[6px] px-[2px] text-[14px] font-semibold tracking-[-0.55px] text-label">
                 나만의 도우미
               </p>
               {customHelperStore.items.length === 0 && !helperComposing && (
-                <p className="py-[4px] text-[13px] leading-[1.6] tracking-[-0.65px] text-label">
+                <p className="py-[4px] text-[15px] leading-[1.6] tracking-[-0.65px] text-label">
                   아직 만든 프롬프트 도우미가 없어요. 자주 쓰는 지시문을 도우미로 등록해보세요.
                 </p>
               )}
@@ -761,14 +762,14 @@ export default function MarketView({
                   >
                     <div className="flex items-start gap-[10px]">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-semibold tracking-[-0.65px] text-white">
+                        <p className="truncate text-[15px] font-semibold tracking-[-0.65px] text-white">
                           {helper.name}
                         </p>
-                        <p className="mt-[2px] truncate text-[11px] tracking-[-0.55px] text-label">
+                        <p className="mt-[2px] truncate text-[14px] tracking-[-0.55px] text-label">
                           {helper.directive}
                         </p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-main/20 px-[8px] py-[3px] text-[11px] font-semibold tracking-[-0.55px] text-main">
+                      <span className="shrink-0 rounded-full bg-main/20 px-[8px] py-[3px] text-[14px] font-semibold tracking-[-0.55px] text-main">
                         -{Math.round(helper.saving * 100)}%
                       </span>
                       <button
@@ -789,14 +790,14 @@ export default function MarketView({
                       <button
                         type="button"
                         onClick={() => startEditHelper(helper)}
-                        className="cursor-pointer text-[11px] tracking-[-0.55px] text-label transition-colors hover:text-white"
+                        className="cursor-pointer text-[14px] tracking-[-0.55px] text-label transition-colors hover:text-white"
                       >
                         수정
                       </button>
                       <button
                         type="button"
                         onClick={() => onRemoveCustomHelper(helper.id)}
-                        className="ml-auto cursor-pointer text-[11px] tracking-[-0.55px] text-label transition-colors hover:text-white"
+                        className="ml-auto cursor-pointer text-[14px] tracking-[-0.55px] text-label transition-colors hover:text-white"
                       >
                         제거
                       </button>
@@ -810,10 +811,10 @@ export default function MarketView({
           {/* 프롬프트 팁 & 링크 공유 — 사람들이 여기저기서 찾은 꿀팁이나 링크를 나누는 게시판.
               프롬프트 도우미 편집 카드와 마찬가지로 내부 스크롤 없이 내용에 맞춰 늘어난다 */}
           <Card className="flex flex-col" delay={60}>
-            <p className="text-[15px] font-medium tracking-[-0.75px] text-white">
+            <p className="text-[17px] font-medium tracking-[-0.75px] text-white">
               프롬프트 팁 & 링크 공유
             </p>
-            <p className="mt-[4px] text-[11px] tracking-[-0.55px] text-label">
+            <p className="mt-[4px] text-[14px] tracking-[-0.55px] text-label">
               다른 곳에서 발견한 꿀팁이나 링크를 여기서 같이 나눠보세요
             </p>
 
@@ -824,21 +825,21 @@ export default function MarketView({
                   onChange={(e) => setTipText(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submitTip()}
                   placeholder="나만의 프롬프트 팁을 공유해보세요..."
-                  className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[9px] text-[13px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
+                  className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[9px] text-[15px] tracking-[-0.65px] text-white placeholder:text-white/35 focus:outline-none"
                 />
                 <input
                   value={tipUrl}
                   onChange={(e) => setTipUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submitTip()}
                   placeholder="관련 링크 (선택)"
-                  className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[8px] text-[12px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
+                  className="w-full rounded-[10px] bg-white/[0.05] px-[12px] py-[8px] text-[15px] tracking-[-0.6px] text-white placeholder:text-white/30 focus:outline-none"
                 />
               </div>
               <button
                 type="button"
                 onClick={submitTip}
                 disabled={!tipText.trim()}
-                className="shrink-0 cursor-pointer self-start rounded-full bg-main px-[16px] py-[9px] text-[13px] font-semibold tracking-[-0.65px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40"
+                className="shrink-0 cursor-pointer self-start rounded-full bg-main px-[16px] py-[9px] text-[15px] font-semibold tracking-[-0.65px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 공유
               </button>
@@ -848,14 +849,14 @@ export default function MarketView({
               {tipFeed.map((tip) => (
                 <div key={tip.id} className="rounded-[10px] bg-white/[0.03] px-[12px] py-[9px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-semibold tracking-[-0.6px] text-white">
-                      💡 {tip.author}
+                    <span className="text-[15px] font-semibold tracking-[-0.6px] text-white">
+                      {tip.author}
                     </span>
-                    <span className="text-[10px] tracking-[-0.5px] text-label">
+                    <span className="text-[13px] tracking-[-0.5px] text-label">
                       {tipTimeAgo(tip.createdAt)}
                     </span>
                   </div>
-                  <p className="mt-[4px] text-[12px] leading-[1.5] tracking-[-0.6px] text-white/80">
+                  <p className="mt-[4px] text-[15px] leading-[1.5] tracking-[-0.6px] text-white/80">
                     {tip.text}
                   </p>
                   {tip.url && (
@@ -863,9 +864,10 @@ export default function MarketView({
                       href={tip.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-[4px] block truncate text-[11px] tracking-[-0.55px] text-main hover:underline"
+                      className="mt-[4px] flex items-center gap-[6px] text-[14px] tracking-[-0.55px] text-main hover:underline"
                     >
-                      🔗 {tip.url}
+                      <span className="shrink-0">🔗</span>
+                      <span className="truncate">{tip.url}</span>
                     </a>
                   )}
                 </div>

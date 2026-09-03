@@ -107,6 +107,9 @@ export interface HelperOption {
   label: string;
   saving: number; // 예상 절감율 (0~1)
   directive: string; // 프롬프트에 이어붙는 지시문
+  /** 프롬프트 도우미 편집 화면에서 껐는지 — 꺼도 목록에서 사라지지 않고 다시 켤 수 있다.
+   * 정적 HELPER_CATEGORIES에는 없고, applyHelperOverrides가 붙여준다(없으면 켜진 것으로 간주) */
+  enabled?: boolean;
 }
 
 export interface HelperCategory {

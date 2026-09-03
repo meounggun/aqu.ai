@@ -52,12 +52,12 @@ export default function MobileChat({ app }: { app: AquState }) {
       <div ref={scrollRef} className="chat-scroll flex-1 overflow-y-auto px-[18px] pt-[16px]">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center pt-[64px]">
-            <h1 className="text-center text-[24px] font-semibold leading-[1.3] tracking-[-1.2px] text-white">
+            <h1 className="text-center text-[26px] font-semibold leading-[1.3] tracking-[-1.2px] text-white">
               짧고 명확한 질문은
               <br />
               AI의 물 사용량을 줄일 수 있습니다
             </h1>
-            <p className="mt-[10px] text-center text-[13px] tracking-[-0.65px] text-[#bbb]">
+            <p className="mt-[10px] text-center text-[15px] tracking-[-0.65px] text-[#bbb]">
               프롬프트 도우미로 효율적인 대화를 시작해보세요
             </p>
             <div className="mt-[20px] size-[240px]">
@@ -65,11 +65,11 @@ export default function MobileChat({ app }: { app: AquState }) {
             </div>
             {/* 컵 영상 프레임 하단에 여백이 들어 있어 음수 마진으로 시간 배지를 끌어당긴다 */}
             <div className="relative z-10 mt-[-56px] flex items-center gap-[8px] rounded-full border border-label bg-bg px-[14px] py-[6px]">
-              <span className="text-[12px] tracking-[-0.6px] text-label">
+              <span className="text-[15px] tracking-[-0.6px] text-label">
                 현재 시간 {stageTime(stage)}
               </span>
             </div>
-            <p className="relative z-10 mt-[8px] text-[11px] tracking-[-0.55px] text-label">
+            <p className="relative z-10 mt-[8px] text-[14px] tracking-[-0.55px] text-label">
               물의 하루가 지나면 사용이 중지됩니다.
             </p>
           </div>
@@ -81,13 +81,13 @@ export default function MobileChat({ app }: { app: AquState }) {
                   key={msg.id}
                   className="fade-up max-w-[85%] self-end rounded-[15px] bg-main px-[15px] py-[10px]"
                 >
-                  <p className="whitespace-pre-wrap text-[14px] leading-[1.5] tracking-[-0.7px] text-white/95">
+                  <p className="whitespace-pre-wrap text-[16px] leading-[1.5] tracking-[-0.7px] text-white/95">
                     {msg.text}
                   </p>
                 </div>
               ) : (
                 <div key={msg.id} className="fade-up flex flex-col gap-[12px]">
-                  <p className="whitespace-pre-wrap text-[14px] leading-[1.55] tracking-[-0.7px] text-white/90">
+                  <p className="whitespace-pre-wrap text-[16px] leading-[1.55] tracking-[-0.7px] text-white/90">
                     {msg.text}
                   </p>
                   <div className="flex flex-wrap items-center gap-[10px]">
@@ -100,13 +100,13 @@ export default function MobileChat({ app }: { app: AquState }) {
                     <button
                       type="button"
                       onClick={() => downloadCard({ text: msg.text })}
-                      className="rounded-full border border-stroke px-[11px] py-[5px] text-[11px] tracking-[-0.55px] text-white/80"
+                      className="rounded-full border border-stroke px-[11px] py-[5px] text-[14px] tracking-[-0.55px] text-white/80"
                     >
                       🖼️ 카드 내보내기
                     </button>
                   </div>
                   {msg.deckNames && msg.deckNames.length > 0 && (
-                    <p className="text-[11px] tracking-[-0.55px] text-label">
+                    <p className="text-[14px] tracking-[-0.55px] text-label">
                       덱 {msg.deckNames.join(" · ")} · 절약{" "}
                       <span className="font-semibold text-main">
                         {(msg.savedMl ?? 0).toLocaleString()}mL
@@ -124,7 +124,7 @@ export default function MobileChat({ app }: { app: AquState }) {
               </div>
             )}
             {exhausted && !typing && (
-              <p className="pt-[4px] text-[13px] tracking-[-0.65px] text-label">
+              <p className="pt-[4px] text-[15px] tracking-[-0.65px] text-label">
                 오늘 쓸 수 있는 냉각수를 모두 사용하였습니다.
               </p>
             )}
@@ -135,7 +135,7 @@ export default function MobileChat({ app }: { app: AquState }) {
       {/* ---------- 하단 입력 영역 ---------- */}
       <div className="shrink-0 border-t border-sidebar-stroke bg-bg px-[16px] pb-[14px] pt-[12px]">
         {/* 통계 스트립 */}
-        <div className="mb-[10px] flex items-center justify-between text-[12px] tracking-[-0.6px]">
+        <div className="mb-[10px] flex items-center justify-between text-[15px] tracking-[-0.6px]">
           <span className="text-label">
             실시간 <span className="font-semibold text-white">{exhausted ? 0 : liveUsage}</span>ml
             {savingPercent > 0 && !exhausted && (
@@ -151,7 +151,7 @@ export default function MobileChat({ app }: { app: AquState }) {
         {/* 장착된 커스텀 덱 + 나만의 프롬프트 도우미 (PRD §8-1-1) — 탭하면 즉시 해제 */}
         {(activeDecks.length > 0 || activeCustomHelpers.length > 0) && (
           <div className="chat-scroll-x -mx-[16px] mb-[8px] flex items-center gap-[6px] overflow-x-auto px-[16px]">
-            <span className="shrink-0 text-[11px] font-semibold tracking-[-0.55px] text-main">
+            <span className="shrink-0 text-[14px] font-semibold tracking-[-0.55px] text-main">
               -{deckSavingPercent}%
             </span>
             {activeDecks.map((deck) => (
@@ -159,7 +159,7 @@ export default function MobileChat({ app }: { app: AquState }) {
                 key={deck.id}
                 type="button"
                 onClick={() => toggleDeck(deck.id)}
-                className="flex h-[26px] shrink-0 items-center gap-[5px] rounded-full border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                className="flex h-[26px] shrink-0 items-center gap-[5px] rounded-full border border-main/60 bg-main/15 px-[10px] text-[15px] tracking-[-0.6px] text-white"
               >
                 {deck.name}
                 <span className="text-white/60">×</span>
@@ -170,7 +170,7 @@ export default function MobileChat({ app }: { app: AquState }) {
                 key={helper.id}
                 type="button"
                 onClick={() => toggleCustomHelper(helper.id)}
-                className="flex h-[26px] shrink-0 items-center gap-[5px] rounded-full border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                className="flex h-[26px] shrink-0 items-center gap-[5px] rounded-full border border-main/60 bg-main/15 px-[10px] text-[15px] tracking-[-0.6px] text-white"
               >
                 {helper.name}
                 <span className="text-white/60">×</span>
@@ -188,7 +188,7 @@ export default function MobileChat({ app }: { app: AquState }) {
                 key={cat.key}
                 type="button"
                 onClick={() => setSheetKey(cat.key)}
-                className={`flex h-[30px] shrink-0 items-center gap-[4px] rounded-full border px-[13px] text-[13px] tracking-[-0.65px] transition-colors ${
+                className={`flex h-[30px] shrink-0 items-center gap-[4px] rounded-full border px-[13px] text-[15px] tracking-[-0.65px] transition-colors ${
                   active
                     ? "border-main bg-main/25 text-white"
                     : "border-stroke text-white/80"
@@ -213,7 +213,7 @@ export default function MobileChat({ app }: { app: AquState }) {
                 key={s.category.key}
                 type="button"
                 onClick={() => removeHelperOption(s.category.key)}
-                className="flex h-[26px] shrink-0 items-center gap-[6px] rounded-[8px] bg-main/25 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                className="flex h-[26px] shrink-0 items-center gap-[6px] rounded-[8px] bg-main/25 px-[10px] text-[15px] tracking-[-0.6px] text-white"
               >
                 {s.category.label} · {s.option.label}
                 <span className="font-semibold text-main">-{Math.round(s.option.saving * 100)}%</span>
@@ -238,7 +238,7 @@ export default function MobileChat({ app }: { app: AquState }) {
             disabled={exhausted}
             rows={1}
             placeholder={exhausted ? "냉각수를 모두 사용하였습니다" : "무엇이든 물어보세요"}
-            className="max-h-[92px] min-h-[24px] flex-1 resize-none bg-transparent py-[3px] text-[15px] leading-[1.4] tracking-[-0.75px] text-white placeholder:text-white/60 disabled:cursor-not-allowed"
+            className="max-h-[92px] min-h-[24px] flex-1 resize-none bg-transparent py-[3px] text-[17px] leading-[1.4] tracking-[-0.75px] text-white placeholder:text-white/60 disabled:cursor-not-allowed"
           />
           <button
             type="button"
@@ -267,11 +267,11 @@ export default function MobileChat({ app }: { app: AquState }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto mb-[14px] h-[4px] w-[40px] rounded-full bg-white/20" />
-            <p className="mb-[14px] text-[15px] font-semibold tracking-[-0.75px] text-white">
+            <p className="mb-[14px] text-[17px] font-semibold tracking-[-0.75px] text-white">
               {sheetCat.label}
             </p>
             <div className="flex flex-col gap-[8px]">
-              {sheetCat.options.map((opt, i) => {
+              {sheetCat.options.filter((opt) => opt.enabled !== false).map((opt, i) => {
                 const active = selected.some(
                   (s) => s.category.key === sheetCat.key && s.option.label === opt.label,
                 );
@@ -288,8 +288,8 @@ export default function MobileChat({ app }: { app: AquState }) {
                     }`}
                     style={{ animationDuration: "0.22s", animationDelay: `${i * 45}ms` }}
                   >
-                    <span className="text-[14px] tracking-[-0.7px] text-white">{opt.label}</span>
-                    <span className="text-[13px] font-semibold text-main">
+                    <span className="text-[16px] tracking-[-0.7px] text-white">{opt.label}</span>
+                    <span className="text-[15px] font-semibold text-main">
                       -{Math.round(opt.saving * 100)}%
                     </span>
                   </button>

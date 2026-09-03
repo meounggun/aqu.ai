@@ -25,7 +25,7 @@ function ScrollHint({ onClick }: { onClick: () => void }) {
       aria-label="다음"
       className="absolute bottom-[20px] left-1/2 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-[4px] opacity-80"
     >
-      <span className="text-[13px] tracking-[-0.6px] text-label-2">Scroll</span>
+      <span className="text-[15px] tracking-[-0.6px] text-label-2">Scroll</span>
       <span className="animate-bounce">
         <CaretDown className="size-[20px]" />
       </span>
@@ -92,7 +92,7 @@ function MiniWaterCycle() {
                 라벨 위치가 아이콘과 겹친다 — 고정 크기 박스를 기준으로 라벨을 아이콘 바로 아래 붙인다 */}
             <div className="relative flex h-[60px] w-[60px] items-center justify-center">
               <div className="scale-[0.5]">{n.icon}</div>
-              <span className="absolute left-1/2 top-full mt-[4px] -translate-x-1/2 whitespace-nowrap text-[10px] tracking-[-0.5px] text-white">
+              <span className="absolute left-1/2 top-full mt-[4px] -translate-x-1/2 whitespace-nowrap text-[13px] tracking-[-0.5px] text-white">
                 {n.key}
               </span>
             </div>
@@ -173,9 +173,9 @@ export default function MobileOnboarding({
               AI
             </text>
           </svg>
-          <span className="mt-[6px] text-[14px] tracking-[-0.7px] text-label">click here!</span>
+          <span className="mt-[6px] text-[16px] tracking-[-0.7px] text-label">click here!</span>
         </button>
-        <p className="ob-intro-text mt-[40px] text-[16px] leading-[1.6] tracking-[-0.8px] text-label-2">
+        <p className="ob-intro-text mt-[40px] text-[18px] leading-[1.6] tracking-[-0.8px] text-label-2">
           일상의 편리함이 되어준 인공지능은 보이지 않는 곳에서 수자원을 위협하고 있습니다.
         </p>
       </section>
@@ -185,7 +185,7 @@ export default function MobileOnboarding({
         <h2 className="ob-reveal text-[30px] font-bold tracking-[-1.5px]">
           <span className="text-main">AI</span> <span className="text-white/90">USE WATER</span>
         </h2>
-        <p className="ob-reveal ob-d1 mt-[16px] text-[14px] leading-[1.6] tracking-[-0.7px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[16px] text-[16px] leading-[1.6] tracking-[-0.7px] text-white/90">
           AI데이터센터는 장비 부식을 막기 위해 한정된 담수만 고집하며, 챗봇이 답변할 때마다 막대한 열을
           식히기 위해 많은 담수를 냉각수로 증발시킵니다.
         </p>
@@ -202,7 +202,7 @@ export default function MobileOnboarding({
             <HeadCircuitIcon />
           </div>
         </div>
-        <p className="ob-reveal ob-d1 mt-[16px] text-[16px] leading-[1.7] tracking-[-0.8px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[16px] text-[18px] leading-[1.7] tracking-[-0.8px] text-white/90">
           빠른 발전 속에서 우리는 <span className="text-[#75a7ff]">어떤 태도</span>로 마주해야 할까요?
           <br />
           우리가 던지는 <span className="text-[#75a7ff]">무심한 질문들</span>은 결국{" "}
@@ -218,7 +218,7 @@ export default function MobileOnboarding({
           <br />
           LESS ENERGY
         </h2>
-        <p className="ob-reveal ob-d1 mt-[16px] text-[14px] leading-[1.6] tracking-[-0.7px] text-white/90">
+        <p className="ob-reveal ob-d1 mt-[16px] text-[16px] leading-[1.6] tracking-[-0.7px] text-white/90">
           정제된 대화 방식은 더 빠르게 목적을 얻게 하고, 적은 소모로 자연의 시간 가속을 늦춰 메말라가는
           담수를 보호합니다.
         </p>
@@ -227,7 +227,7 @@ export default function MobileOnboarding({
         <div className="mt-[32px] flex items-start justify-center gap-[26px]">
           {/* BEFORE */}
           <div className="flex flex-col items-center gap-[10px]">
-            <span className="text-[12px] tracking-[-0.6px] text-label-2">BEFORE</span>
+            <span className="text-[15px] tracking-[-0.6px] text-label-2">BEFORE</span>
             <div className="flex h-[200px] w-[128px] flex-col gap-[8px] overflow-hidden rounded-[12px] bg-stroke p-[12px]">
               <span className="ob-bubble h-[16px] w-[62px] self-end rounded-[6px] bg-main" style={{ animationDelay: "0ms" }} />
               <span className="ob-bubble h-[40px] w-[80px] rounded-[6px] bg-label" style={{ animationDelay: "110ms" }} />
@@ -239,7 +239,7 @@ export default function MobileOnboarding({
           </div>
           {/* AFTER */}
           <div className="flex flex-col items-center gap-[10px]">
-            <span className="text-[12px] tracking-[-0.6px] text-label-2">AFTER</span>
+            <span className="text-[15px] tracking-[-0.6px] text-label-2">AFTER</span>
             <div className="flex h-[110px] w-[128px] flex-col gap-[10px] overflow-hidden rounded-[12px] bg-stroke p-[12px]">
               <span className="ob-bubble h-[26px] w-[62px] self-end rounded-[6px] bg-main" style={{ animationDelay: "0ms" }} />
               <span className="ob-bubble h-[42px] w-[80px] rounded-[6px] bg-label" style={{ animationDelay: "110ms" }} />
@@ -251,7 +251,7 @@ export default function MobileOnboarding({
 
       {/* 5. CTA */}
       <section className={section}>
-        <p className="ob-reveal text-[20px] font-normal leading-[1.7] tracking-[-1px] text-white/90">
+        <p className="ob-reveal text-[22px] font-normal leading-[1.7] tracking-[-1px] text-white/90">
           당신의 작은 움직임 하나가 고갈되어 가는 수자원의 시간을 늦추는 위대한 힘이 됩니다.
           <br />
           함께 디지털 연산을 제어하는 한 걸음에 동참해 주세요.
@@ -260,7 +260,7 @@ export default function MobileOnboarding({
           <button
             type="button"
             onClick={onFinish}
-            className="ob-cta flex h-[50px] cursor-pointer items-center gap-[10px] rounded-full border-2 border-white pl-[22px] pr-[24px] text-[17px] font-medium tracking-[-0.85px] text-white transition-colors active:bg-white active:text-bg"
+            className="ob-cta flex h-[50px] cursor-pointer items-center gap-[10px] rounded-full border-2 border-white pl-[22px] pr-[24px] text-[19px] font-medium tracking-[-0.85px] text-white transition-colors active:bg-white active:text-bg"
           >
             함께하러 가기
             <ArrowRightIcon className="size-[22px]" />

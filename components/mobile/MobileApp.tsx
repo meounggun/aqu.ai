@@ -47,7 +47,7 @@ export default function MobileApp({ app }: { app: AquState }) {
     toggleCategoryVisibility,
     effectiveHelperCategories,
     addBuiltinHelperOption,
-    removeBuiltinHelperOption,
+    toggleHelperOptionEnabled,
   } = app;
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -123,7 +123,7 @@ export default function MobileApp({ app }: { app: AquState }) {
               onToggleCategory={toggleCategoryVisibility}
               allHelperCategories={effectiveHelperCategories}
               onAddBuiltinOption={addBuiltinHelperOption}
-              onRemoveBuiltinOption={removeBuiltinHelperOption}
+              onToggleHelperOption={toggleHelperOptionEnabled}
             />
           </div>
         )}
@@ -166,7 +166,7 @@ export default function MobileApp({ app }: { app: AquState }) {
                     <span className="flex size-[26px] shrink-0 items-center justify-center">
                       <img src={item.icon} alt="" className={item.iconClass} />
                     </span>
-                    <span className="text-[15px] tracking-[-0.75px] text-white/90">{item.label}</span>
+                    <span className="text-[17px] tracking-[-0.75px] text-white/90">{item.label}</span>
                   </button>
                 );
               })}
@@ -174,12 +174,12 @@ export default function MobileApp({ app }: { app: AquState }) {
 
             {/* 최근 항목 — 새 채팅을 누르면 이전 대화가 여기 쌓인다 */}
             <div className="mt-[14px] flex min-h-0 flex-1 flex-col border-t border-white/[0.08] pt-[14px]">
-              <p className="mb-[6px] px-[6px] text-[11px] font-semibold tracking-[-0.55px] text-label">
+              <p className="mb-[6px] px-[6px] text-[14px] font-semibold tracking-[-0.55px] text-label">
                 최근 항목
               </p>
               <div className="chat-scroll flex min-h-0 flex-1 flex-col gap-[2px] overflow-y-auto pb-[8px]">
                 {chatSessions.length === 0 && (
-                  <p className="px-[6px] text-[12px] leading-[1.6] tracking-[-0.6px] text-label/70">
+                  <p className="px-[6px] text-[15px] leading-[1.6] tracking-[-0.6px] text-label/70">
                     새 채팅을 시작하면 여기에 대화가 저장돼요.
                   </p>
                 )}
@@ -194,7 +194,7 @@ export default function MobileApp({ app }: { app: AquState }) {
                         setDrawerOpen(false);
                         loadChatSession(s.id);
                       }}
-                      className="min-w-0 flex-1 truncate text-left text-[14px] tracking-[-0.7px] text-white/85"
+                      className="min-w-0 flex-1 truncate text-left text-[16px] tracking-[-0.7px] text-white/85"
                     >
                       {s.title}
                     </button>
@@ -202,7 +202,7 @@ export default function MobileApp({ app }: { app: AquState }) {
                       type="button"
                       onClick={() => deleteChatSession(s.id)}
                       aria-label="대화 삭제"
-                      className="shrink-0 text-[14px] leading-none text-label"
+                      className="shrink-0 text-[16px] leading-none text-label"
                     >
                       ×
                     </button>

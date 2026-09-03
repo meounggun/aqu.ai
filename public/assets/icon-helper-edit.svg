@@ -1,22 +1,21 @@
-<svg overflow="visible" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- 말풍선 (프롬프트 도우미) -->
-  <rect x="1" y="1" width="13" height="10" rx="2.2" stroke="white" stroke-width="1.4"/>
-  <path d="M4 11L4 14L7.2 11" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="4.5" cy="6" r="0.95" fill="white"/>
-  <circle cx="7.5" cy="6" r="0.95" fill="white"/>
-  <circle cx="10.5" cy="6" r="0.95" fill="white"/>
-
-  <!-- 톱니바퀴 배지 (편집) — 말풍선 모서리에 살짝 겹쳐 붙는다 -->
-  <circle cx="16.5" cy="14" r="5" fill="#1b1d1f"/>
-  <g>
-    <line x1="16.5" y1="9.7" x2="16.5" y2="10.8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="16.5" y1="17.2" x2="16.5" y2="18.3" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="12.2" y1="14" x2="13.3" y2="14" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="19.7" y1="14" x2="20.8" y2="14" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="13.54" y1="11.04" x2="14.3" y2="11.8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="18.7" y1="16.2" x2="19.46" y2="16.96" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="19.46" y1="11.04" x2="18.7" y2="11.8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="14.3" y1="16.2" x2="13.54" y2="16.96" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-    <circle cx="16.5" cy="14" r="2.1" stroke="white" stroke-width="1.2"/>
+<!-- 프롬프트 도우미 편집 (덱 편집) — Figma 1098:1342 내보내기 자산을 그대로 합성.
+     말풍선 위에 톱니바퀴가 왼쪽 아래로 겹치고, 가운데 원은 배경색(#1B1D1F)으로 뚫어 링처럼 보이게 한다. -->
+<svg overflow="visible" viewBox="0 0 18.7395 13.6104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 말풍선 + 점 2개 (Group 724) -->
+  <g transform="translate(4.285 0)">
+    <path d="M0.75 10.0869V1.00909C0.75 0.865999 0.865999 0.75 1.00909 0.75H13.4454C13.5885 0.75 13.7045 0.865999 13.7045 1.00909V12.5992C13.7045 12.8301 13.4255 12.9457 13.2622 12.7824L10.9016 10.4218C10.853 10.3732 10.7871 10.346 10.7184 10.346H1.00909C0.865999 10.346 0.75 10.23 0.75 10.0869Z" fill="#1B1D1F" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M5.06886 4.2047V5.6441" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M8.9069 4.2047V5.6441" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
   </g>
+
+  <!-- 톱니바퀴 살 (Group 725) — 원본 회전값 -157.62° 유지 -->
+  <g transform="rotate(-157.62 4.596 8.951) translate(0 4.355)">
+    <path d="M4.59684 0.75L4.59684 8.44213" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M8.44213 4.59654L0.75 4.59654" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7.31618 1.87668L1.87702 7.31584" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7.31545 7.31588L1.8763 1.87672" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- 톱니바퀴 가운데 원 (Ellipse 3530) -->
+  <circle cx="4.596" cy="8.941" r="2.13455" fill="#1B1D1F" stroke="white" stroke-width="1.5"/>
 </svg>

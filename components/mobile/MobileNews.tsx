@@ -42,12 +42,12 @@ export default function MobileNews() {
 
   return (
     <div className="flex flex-col px-[16px] py-[18px]">
-      <h2 className="text-center text-[22px] font-bold leading-[1.3] tracking-[-1.1px] text-white">
+      <h2 className="text-center text-[24px] font-bold leading-[1.3] tracking-[-1.1px] text-white">
         시민단체가 바라본
         <br />
         AI데이터센터의 환경오염
       </h2>
-      <p className="mt-[8px] text-center text-[12px] tracking-[-0.6px] text-label">
+      <p className="mt-[8px] text-center text-[15px] tracking-[-0.6px] text-label">
         오늘 우리가 마주해야할 이슈들을 확인해보세요.
       </p>
 
@@ -72,10 +72,10 @@ export default function MobileNews() {
           className="absolute inset-0 size-full object-cover transition-transform duration-300 group-active:scale-105"
         />
         <div className="absolute inset-0 bg-black/50" />
-        <p className="relative text-center text-[16px] tracking-[-0.8px] text-white/80 [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
+        <p className="relative text-center text-[18px] tracking-[-0.8px] text-white/80 [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
           {article.source}
         </p>
-        <p className="relative mt-[14px] w-[75%] whitespace-pre-line text-center text-[18px] font-bold leading-[1.5] tracking-[-0.9px] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
+        <p className="relative mt-[14px] w-[75%] whitespace-pre-line text-center text-[20px] font-bold leading-[1.5] tracking-[-0.9px] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
           {article.title}
         </p>
       </a>

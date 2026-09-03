@@ -69,10 +69,10 @@ function SideCard({ article }: { article: Article }) {
         className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-black/50" />
-      <p className="relative whitespace-nowrap text-center text-[24px] tracking-[-1.2px] text-white/60">
+      <p className="relative whitespace-nowrap text-center text-[26px] tracking-[-1.2px] text-white/60">
         {article.source}
       </p>
-      <p className="relative mt-[20px] w-[328px] whitespace-pre-line text-center text-[24px] font-bold leading-[1.5] tracking-[-1.2px] text-white/60">
+      <p className="relative mt-[20px] w-[328px] whitespace-pre-line text-center text-[26px] font-bold leading-[1.5] tracking-[-1.2px] text-white/60">
         {article.title}
       </p>
     </a>
@@ -148,7 +148,7 @@ export default function NewsView() {
       <h2 className="absolute left-1/2 top-[195px] w-[862px] -translate-x-1/2 text-center text-[47px] font-bold leading-[1.2] tracking-[-2.35px] text-white">
         시민단체가 바라본 AI데이터센터의 환경오염
       </h2>
-      <p className="absolute left-1/2 top-[281px] -translate-x-1/2 whitespace-nowrap text-[15px] tracking-[-0.75px] text-label">
+      <p className="absolute left-1/2 top-[281px] -translate-x-1/2 whitespace-nowrap text-[17px] tracking-[-0.75px] text-label">
         오늘 우리가 마주해야할 이슈들을 확인해보세요.
       </p>
 

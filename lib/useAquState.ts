@@ -44,7 +44,7 @@ import {
   addHelperOption as addHelperOptionIn,
   applyHelperOverrides,
   loadHelperOverrides,
-  removeHelperOption as removeBuiltinOptionIn,
+  toggleHelperOption as toggleBuiltinOptionIn,
 } from "@/lib/helper-overrides-store";
 import {
   type ChatHistoryStore,
@@ -90,7 +90,7 @@ export function useAquState() {
   // 기본 도우미(요약/번역/코드 등) 내부 옵션에 사용자가 추가/삭제한 내용
   const [helperOverrides, setHelperOverrides] = useState<HelperOverrideStore>({
     added: {},
-    removed: {},
+    disabled: {},
   });
 
   const idRef = useRef(0);
@@ -264,7 +264,7 @@ export function useAquState() {
     });
   }, []);
 
-  /* ---------- 기본 도우미(요약/번역/코드 등) 내부 옵션 추가/삭제 ---------- */
+  /* ---------- 기본 도우미(요약/번역/코드 등) 내부 옵션 추가 / 켜고 끄기 ---------- */
 
   const addBuiltinHelperOption = useCallback(
     (categoryKey: string, option: HelperOption) => {
@@ -273,16 +273,13 @@ export function useAquState() {
     [],
   );
 
-  const removeBuiltinHelperOption = useCallback(
-    (categoryKey: string, optionLabel: string, isBuiltIn: boolean) => {
-      setHelperOverrides((s) => removeBuiltinOptionIn(s, categoryKey, optionLabel, isBuiltIn));
-      // 지우려는 옵션이 지금 채팅 바에서 선택돼 있었다면 선택도 함께 풀어준다
-      setSelected((sel) =>
-        sel.filter((s) => !(s.category.key === categoryKey && s.option.label === optionLabel)),
-      );
-    },
-    [],
-  );
+  /** 옵션을 껐다 켰다 — 목록에서 지우지 않는다. 끄는 순간 채팅 바에서 선택돼 있었다면 선택만 풀어준다 */
+  const toggleHelperOptionEnabled = useCallback((categoryKey: string, optionLabel: string) => {
+    setHelperOverrides((s) => toggleBuiltinOptionIn(s, categoryKey, optionLabel));
+    setSelected((sel) =>
+      sel.filter((s) => !(s.category.key === categoryKey && s.option.label === optionLabel)),
+    );
+  }, []);
 
   /* ---------- 커스텀 덱 / 마켓 (PRD §8) ---------- */
 
@@ -364,7 +361,7 @@ export function useAquState() {
     // 기본 도우미 내부 옵션 편집
     effectiveHelperCategories,
     addBuiltinHelperOption,
-    removeBuiltinHelperOption,
+    toggleHelperOptionEnabled,
     // 프롬프트 워크스페이스 확장
     deckStore,
     activeDecks,

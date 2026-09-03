@@ -42,12 +42,12 @@ export default function MobileSponsor() {
 
   return (
     <div className="flex flex-col px-[16px] py-[18px]">
-      <h2 className="text-center text-[22px] font-bold leading-[1.3] tracking-[-1.1px] text-white">
+      <h2 className="text-center text-[24px] font-bold leading-[1.3] tracking-[-1.1px] text-white">
         소중한 한 모금을
         <br />
         전해주세요
       </h2>
-      <p className="mt-[8px] text-center text-[12px] leading-[1.5] tracking-[-0.6px] text-label">
+      <p className="mt-[8px] text-center text-[15px] leading-[1.5] tracking-[-0.6px] text-label">
         수자원 고갈과 환경 변화로 기본권을 위협받는 이웃들에게
         <br />
         깨끗한 물과 안전한 내일을 위해
@@ -76,10 +76,10 @@ export default function MobileSponsor() {
         />
         {/* 밝은 사진 위에서도 좌상단 텍스트가 읽히도록 하는 대각선 스크림 */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/20 to-transparent" />
-        <p className="relative text-[22px] font-semibold tracking-[-0.66px] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
+        <p className="relative text-[24px] font-semibold tracking-[-0.66px] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
           {sponsor.name}
         </p>
-        <p className="relative w-[68%] break-keep text-[15px] font-medium leading-[1.4] tracking-[-0.45px] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
+        <p className="relative w-[68%] break-keep text-[17px] font-medium leading-[1.4] tracking-[-0.45px] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.7)]">
           {sponsor.description}
         </p>
       </a>

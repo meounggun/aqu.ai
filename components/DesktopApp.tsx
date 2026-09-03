@@ -65,7 +65,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
     toggleCategoryVisibility,
     effectiveHelperCategories,
     addBuiltinHelperOption,
-    removeBuiltinHelperOption,
+    toggleHelperOptionEnabled,
     deckStore,
     activeDecks,
     toggleDeck,
@@ -196,7 +196,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                 onToggleCategory={toggleCategoryVisibility}
                 allHelperCategories={effectiveHelperCategories}
                 onAddBuiltinOption={addBuiltinHelperOption}
-                onRemoveBuiltinOption={removeBuiltinHelperOption}
+                onToggleHelperOption={toggleHelperOptionEnabled}
               />
             )}
             {view === "about" && <OnboardingView onFinish={() => setView("chat")} />}
@@ -214,7 +214,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                       AI의 물 사용량을 줄일 수 있습니다
                     </h1>
                     <p
-                      className="absolute top-[285px] text-[16px] tracking-[-0.8px] text-[#bbb] transition-[left] duration-300"
+                      className="absolute top-[285px] text-[18px] tracking-[-0.8px] text-[#bbb] transition-[left] duration-300"
                       style={{ left: panelOpen ? 240 : 169 }}
                     >
                       프롬프트 도우미로 효율적인 대화를 시작해보세요
@@ -231,7 +231,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                           key={msg.id}
                           className="fade-up max-w-[580px] self-end rounded-[17px] bg-main px-[19px] py-[12px]"
                         >
-                          <p className="whitespace-pre-wrap text-[16px] leading-[1.5] tracking-[-0.75px] text-white/90">
+                          <p className="whitespace-pre-wrap text-[18px] leading-[1.5] tracking-[-0.75px] text-white/90">
                             {msg.text}
                           </p>
                         </div>
@@ -240,7 +240,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                           key={msg.id}
                           className="fade-up flex w-[770px] flex-col gap-[18px] pl-[16px]"
                         >
-                          <p className="whitespace-pre-wrap text-[15px] leading-[1.5] tracking-[-0.75px] text-white/90">
+                          <p className="whitespace-pre-wrap text-[17px] leading-[1.5] tracking-[-0.75px] text-white/90">
                             {msg.text}
                           </p>
                           <div className="flex items-center gap-[14px]">
@@ -253,7 +253,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                             <button
                               type="button"
                               onClick={() => downloadCard({ text: msg.text })}
-                              className="flex cursor-pointer items-center gap-[6px] rounded-full border border-stroke px-[12px] py-[5px] text-[12px] tracking-[-0.6px] text-white/80 transition-colors hover:border-main hover:text-white"
+                              className="flex cursor-pointer items-center gap-[6px] rounded-full border border-stroke px-[12px] py-[5px] text-[15px] tracking-[-0.6px] text-white/80 transition-colors hover:border-main hover:text-white"
                             >
                               🖼️ 카드 내보내기
                             </button>
@@ -266,12 +266,12 @@ export default function DesktopApp({ app }: { app: AquState }) {
                                   setTimeout(() => setCopied(null), 1600);
                                 }
                               }}
-                              className="cursor-pointer text-[12px] tracking-[-0.6px] text-label transition-colors hover:text-white"
+                              className="cursor-pointer text-[15px] tracking-[-0.6px] text-label transition-colors hover:text-white"
                             >
                               {copied === msg.id ? "복사됨!" : "이미지 복사"}
                             </button>
                             {msg.deckNames && msg.deckNames.length > 0 && (
-                              <span className="text-[11px] tracking-[-0.55px] text-label">
+                              <span className="text-[14px] tracking-[-0.55px] text-label">
                                 덱 {msg.deckNames.join(" · ")} · 절약{" "}
                                 <span className="font-semibold text-main">
                                   {(msg.savedMl ?? 0).toLocaleString()}mL
@@ -290,7 +290,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                       </div>
                     )}
                     {exhausted && !typing && (
-                      <p className="pl-[16px] pt-[8px] text-[15px] tracking-[-0.75px] text-label">
+                      <p className="pl-[16px] pt-[8px] text-[17px] tracking-[-0.75px] text-label">
                         오늘 쓸 수 있는 냉각수를 모두 사용하였습니다.
                       </p>
                     )}
@@ -304,11 +304,11 @@ export default function DesktopApp({ app }: { app: AquState }) {
 
                 {/* 현재 시간 배지 */}
                 <div className="absolute left-[1369px] top-[204px] flex h-[31px] w-[172px] items-center justify-center rounded-[17px] border border-label">
-                  <span className="text-[14px] tracking-[-0.7px] text-label">
+                  <span className="text-[16px] tracking-[-0.7px] text-label">
                     현재 시간 {stageTime(stage)}
                   </span>
                 </div>
-                <p className="absolute left-[1348px] top-[251px] text-[14px] tracking-[-0.7px] text-label">
+                <p className="absolute left-[1348px] top-[251px] text-[16px] tracking-[-0.7px] text-label">
                   물의 하루가 지나면 사용이 중지됩니다.
                 </p>
 
@@ -341,7 +341,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                         ? "오늘 쓸 수 있는 냉각수를 모두 사용하였습니다"
                         : "무엇이든 물어보세요"
                     }
-                    className="absolute left-[21px] top-[18px] h-[58px] w-[760px] resize-none bg-transparent text-[16px] leading-[1.5] tracking-[-0.8px] text-white placeholder:text-white/69 disabled:cursor-not-allowed"
+                    className="absolute left-[21px] top-[18px] h-[58px] w-[760px] resize-none bg-transparent text-[18px] leading-[1.5] tracking-[-0.8px] text-white placeholder:text-white/69 disabled:cursor-not-allowed"
                   />
                   <div className="absolute bottom-[13px] left-[21px] right-[21px] flex h-[33px] items-center gap-[10px]">
                     <img
@@ -359,7 +359,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                             key={deck.id}
                             type="button"
                             onClick={() => toggleDeck(deck.id)}
-                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] border border-main/60 bg-main/15 px-[10px] text-[15px] tracking-[-0.6px] text-white"
                             title="클릭하여 덱 해제"
                           >
                             {deck.name}
@@ -375,7 +375,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                             key={helper.id}
                             type="button"
                             onClick={() => toggleCustomHelper(helper.id)}
-                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] border border-main/60 bg-main/15 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] border border-main/60 bg-main/15 px-[10px] text-[15px] tracking-[-0.6px] text-white"
                             title="클릭하여 해제"
                           >
                             {helper.name}
@@ -390,7 +390,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                             key={s.category.key}
                             type="button"
                             onClick={() => removeHelperOption(s.category.key)}
-                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] bg-main/25 px-[10px] text-[12px] tracking-[-0.6px] text-white"
+                            className="flex h-[24px] shrink-0 cursor-pointer items-center gap-[6px] rounded-[8px] bg-main/25 px-[10px] text-[15px] tracking-[-0.6px] text-white"
                             title="클릭하여 해제"
                           >
                             {s.category.label} · {s.option.label}
