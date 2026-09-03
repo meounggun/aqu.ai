@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import SendCupVideo from "@/components/SendCupVideo";
 import { stageTime, DAILY_LIMIT } from "@/lib/water";
-import { downloadCard } from "@/lib/card-export";
+import { downloadCardAsPdf } from "@/lib/card-export";
 import type { AquState } from "@/lib/useAquState";
 
 export default function MobileChat({ app }: { app: AquState }) {
@@ -96,13 +96,13 @@ export default function MobileChat({ app }: { app: AquState }) {
                       alt="응답 액션"
                       className="h-[14px] w-[92px] opacity-80"
                     />
-                    {/* 결과물 이미지 카드 내보내기 (PRD §8-1-3) — AI 답변 텍스트만 담는다 */}
+                    {/* 결과물 PDF 내보내기 (PRD §8-1-3) — AI 답변 텍스트만 담은 카드를 PDF 한 장으로 저장한다 */}
                     <button
                       type="button"
-                      onClick={() => downloadCard({ text: msg.text })}
+                      onClick={() => downloadCardAsPdf({ text: msg.text })}
                       className="rounded-full border border-stroke px-[11px] py-[5px] text-[14px] tracking-[-0.55px] text-white/80"
                     >
-                      🖼️ 카드 내보내기
+                      PDF 내보내기
                     </button>
                   </div>
                   {msg.deckNames && msg.deckNames.length > 0 && (

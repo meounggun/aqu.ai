@@ -90,10 +90,10 @@ export function renderCard(payload: CardPayload): HTMLCanvasElement {
   return canvas;
 }
 
-function fileName() {
+function fileName(ext: string) {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
-  return `aqu-ai-card-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.png`;
+  return `aqu-ai-card-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.${ext}`;
 }
 
 /** PNG로 즉시 다운로드 */
@@ -102,8 +102,20 @@ export function downloadCard(payload: CardPayload) {
   const url = canvas.toDataURL("image/png");
   const a = document.createElement("a");
   a.href = url;
-  a.download = fileName();
+  a.download = fileName("png");
   a.click();
+}
+
+/** 카드를 PDF 한 장으로 즉시 다운로드 — 캔버스를 그대로 이미지로 삽입해 디자인은 PNG 버전과 동일하다 */
+export async function downloadCardAsPdf(payload: CardPayload) {
+  const canvas = renderCard(payload);
+  // px(96dpi) → pt(72dpi) 변환해 실제 인쇄 크기가 화면 비율과 맞도록 페이지 크기를 캔버스에 맞춘다
+  const w = canvas.width * 0.75;
+  const h = canvas.height * 0.75;
+  const { jsPDF } = await import("jspdf");
+  const pdf = new jsPDF({ orientation: w > h ? "landscape" : "portrait", unit: "pt", format: [w, h] });
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, w, h);
+  pdf.save(fileName("pdf"));
 }
 
 /** 클립보드로 복사 — 지원하지 않는 브라우저에서는 false */

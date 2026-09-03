@@ -17,7 +17,7 @@ import MarketView from "@/components/MarketView";
 import OnboardingView from "@/components/OnboardingView";
 import LandingView from "@/components/LandingView";
 import { stageTime } from "@/lib/water";
-import { copyCard, downloadCard } from "@/lib/card-export";
+import { copyCard, downloadCardAsPdf } from "@/lib/card-export";
 import type { AquState } from "@/lib/useAquState";
 
 /** 1920×1080 캔버스를 뷰포트 너비에 반응형으로 맞춘다(항상 너비를 채우고 세로 중앙 정렬). */
@@ -249,13 +249,13 @@ export default function DesktopApp({ app }: { app: AquState }) {
                               alt="응답 액션"
                               className="h-[15px] w-[98px] opacity-80"
                             />
-                            {/* 결과물 이미지 카드 내보내기 (PRD §8-1-3) — AI 답변 텍스트만 담는다 */}
+                            {/* 결과물 PDF 내보내기 (PRD §8-1-3) — AI 답변 텍스트만 담은 카드를 PDF 한 장으로 저장한다 */}
                             <button
                               type="button"
-                              onClick={() => downloadCard({ text: msg.text })}
-                              className="flex cursor-pointer items-center gap-[6px] rounded-full border border-stroke px-[12px] py-[5px] text-[15px] tracking-[-0.6px] text-white/80 transition-colors hover:border-main hover:text-white"
+                              onClick={() => downloadCardAsPdf({ text: msg.text })}
+                              className="cursor-pointer rounded-full border border-stroke px-[12px] py-[5px] text-[15px] tracking-[-0.6px] text-white/80 transition-colors hover:border-main hover:text-white"
                             >
-                              🖼️ 카드 내보내기
+                              PDF 내보내기
                             </button>
                             <button
                               type="button"
