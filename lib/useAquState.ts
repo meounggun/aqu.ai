@@ -168,20 +168,28 @@ export function useAquState() {
     setTyping(true);
     setSendTick((t) => t + 1);
 
-    setTimeout(() => {
+    // 실제 OpenAI 응답을 받아온다. 키가 아직 없거나 요청이 실패하면
+    // 기존 데모용 가짜 응답으로 조용히 대체해 화면이 멈추지 않게 한다
+    (async () => {
+      let text: string;
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: fullPrompt }),
+        });
+        const data = (await res.json()) as { text?: string; error?: string };
+        if (!res.ok || !data.text) throw new Error(data.error ?? "응답 실패");
+        text = data.text;
+      } catch {
+        text = generateResponse(fullPrompt, usage, options);
+      }
       setMessages((m) => [
         ...m,
-        {
-          id: ++idRef.current,
-          role: "ai",
-          text: generateResponse(fullPrompt, usage, options),
-          usedMl: usage,
-          savedMl,
-          deckNames,
-        },
+        { id: ++idRef.current, role: "ai", text, usedMl: usage, savedMl, deckNames },
       ]);
       setTyping(false);
-    }, 1100);
+    })();
   }, [
     input,
     exhausted,

@@ -171,7 +171,7 @@ function BoardVisual() {
   ];
 
   return (
-    <div className="flex items-center gap-[58px]">
+    <div className="flex items-end gap-[58px]">
       {/* 왼쪽 — 커스텀 덱 패널 */}
       <div className="w-[340px] shrink-0 rounded-[18px] bg-gray-box p-[18px] text-left">
         <div className="flex items-center justify-between">

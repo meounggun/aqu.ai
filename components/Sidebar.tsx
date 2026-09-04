@@ -209,8 +209,8 @@ export default function Sidebar({
               <button
                 type="button"
                 onClick={onOpenDeckSettings}
-                aria-label="덱 마켓에서 설정"
-                title="덱 마켓에서 설정"
+                aria-label="덱 편집에서 설정"
+                title="덱 편집에서 설정"
                 className="flex size-[22px] cursor-pointer items-center justify-center rounded-[7px] text-label transition-colors hover:bg-white/10 hover:text-white"
               >
                 <GearIcon className="size-[14px]" />
@@ -221,7 +221,7 @@ export default function Sidebar({
                 <p className="px-[2px] pb-[4px] text-[14px] leading-[1.6] tracking-[-0.55px] text-label/80">
                   아직 덱이 없어요.
                   <br />
-                  설정 버튼을 눌러 덱 마켓에서 가져오거나 만들어보세요.
+                  설정 버튼을 눌러 다른 사람이 공유한 덱을 가져오거나 만들어보세요.
                 </p>
               ) : (
                 <div className="chat-scroll flex max-h-[190px] flex-col gap-[6px] overflow-y-auto pr-[4px]">
