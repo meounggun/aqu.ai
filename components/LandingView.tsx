@@ -412,8 +412,8 @@ export default function LandingView({
           만들어보세요
         </h1>
         <p className="ob-reveal ob-d2 mt-[30px] max-w-[880px] text-[22px] leading-[1.6] tracking-[-1px] text-white/80">
-          매번 재입력하지 마세요. 내 작업 스타일에 맞춘 프롬프트 도우미를 통해 단 한 번의 대화로
-          정밀한 답변이 완성됩니다.
+          매번 재입력하지 마세요. 내 작업 스타일에 맞춘 프롬프트 도우미를 통해
+          <br />단 한 번의 대화로 정밀한 답변이 완성됩니다.
         </p>
         <div className="ob-reveal ob-d3 mt-[44px]">
           <button
