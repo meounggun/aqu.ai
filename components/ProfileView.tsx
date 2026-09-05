@@ -13,7 +13,6 @@ import {
   availableYears,
   dateKey,
   getDay,
-  historyList,
   lastDays,
   monthTotal,
   totals,
@@ -157,7 +156,6 @@ export default function ProfileView({ store }: { store: UsageStore }) {
   ];
   while (cells.length < 42) cells.push(null);
 
-  const history = historyList(store);
   const selected = getDay(store, selectedKey);
   const isSelectedToday = selectedKey === todayKey;
 
@@ -166,14 +164,14 @@ export default function ProfileView({ store }: { store: UsageStore }) {
   const remainingPercent = Math.round((remaining / DAILY_LIMIT) * 100);
 
   return (
-    <div className="absolute left-[140px] top-[60px] flex h-[960px] w-[1640px] flex-col p-[24px]">
+    <div className="absolute left-[140px] top-[60px] flex h-[960px] w-[1640px] flex-col justify-center p-[24px]">
       <h2 className="fade-up shrink-0 text-[20px] font-semibold tracking-[-0.9px] text-white">
         MY PROFILE
       </h2>
 
-      <div className="mt-[16px] flex min-h-0 flex-1 flex-col gap-[16px]">
-        {/* 상단 행 — 프로필 카드와 게이지 카드를 같은 그리드 행에 두어 높이를 서로 맞춘다 */}
-        <div className="grid shrink-0 grid-cols-[280px_1fr] gap-[16px]">
+      {/* 좌측(프로필+통계)은 세로로 꽉 채우고, 우측은 얇은 사용량 바 + 달력/그래프 */}
+      <div className="mt-[16px] grid h-[680px] shrink-0 grid-cols-[280px_1fr] gap-[16px]">
+        <div className="flex min-h-0 flex-col gap-[16px]">
           <Card className="flex flex-col items-center justify-center gap-[12px]" delay={0}>
             <div className="relative">
               <button
@@ -216,52 +214,10 @@ export default function ProfileView({ store }: { store: UsageStore }) {
             </div>
           </Card>
 
-          {/* 선택한 날짜에 남은 냉각수량 게이지 — 크게 강조, 날짜 선택 시 부드럽게 갱신 */}
-          <Card delay={60}>
-            <div key={selectedKey} className="fade-up">
-              <div className="flex items-center justify-between">
-                <p className="text-[18px] font-medium tracking-[-0.8px] text-white">
-                  {isSelectedToday ? "오늘 남은 냉각수량" : `${formatDateLabel(selectedKey)} 남은 냉각수량`}
-                </p>
-                <p className="text-[15px] text-label">
-                  일일 한도 {DAILY_LIMIT.toLocaleString()}ml
-                </p>
-              </div>
-              <div className="mt-[16px] flex items-end gap-[8px]">
-                <span className="text-[52px] font-bold leading-none tracking-[-2px] text-white">
-                  {remaining.toLocaleString()}
-                </span>
-                <span className="pb-[6px] text-[20px] tracking-[-0.9px] text-label">ml 남음</span>
-                <span className="ml-auto pb-[8px] text-[17px] font-semibold tracking-[-0.75px] text-main">
-                  {remainingPercent}%
-                </span>
-              </div>
-              <div className="relative mt-[16px] h-[12px] w-[65%] rounded-full bg-[#3a3d40]">
-                <div
-                  className="absolute left-0 top-0 h-full rounded-full bg-main transition-[width] duration-500"
-                  style={{ width: `${remainingPercent}%` }}
-                />
-                <div
-                  className="absolute top-1/2 size-[20px] -translate-y-1/2 rounded-full border-[4px] border-main bg-white transition-[left] duration-500"
-                  style={{ left: `calc(${remainingPercent}% - 10px)` }}
-                />
-              </div>
-              <p className="mt-[12px] text-[15px] tracking-[-0.65px] text-label">
-                {isSelectedToday
-                  ? "오늘 하루 더 쓸 수 있는 냉각수량이에요"
-                  : `채팅 ${selected.chats}회 · 프롬프트 도우미 ${selected.helperUses}회`}
-              </p>
-            </div>
-          </Card>
-        </div>
-
-        {/* 하단 행 */}
-        <div className="grid min-h-0 flex-1 grid-cols-[280px_1fr] gap-[16px]">
-          {/* ---------- 좌측 ---------- */}
-          <div className="flex min-h-0 flex-col gap-[16px]">
-            <Card className="flex flex-col gap-[16px]" delay={120}>
+          {/* 누적 통계 — 좌측 열 남은 높이를 채우고 항목을 고르게 편다 */}
+          <Card className="flex min-h-0 flex-1 flex-col gap-[16px]" delay={120}>
               {/* 연도 필터 — 전체 또는 특정 연도의 누적치만 모아보기 */}
-              <div className="chat-scroll-x -mx-[4px] flex gap-[6px] overflow-x-auto px-[4px]">
+              <div className="chat-scroll-x -mx-[4px] flex shrink-0 gap-[6px] overflow-x-auto px-[4px]">
                 <button
                   type="button"
                   onClick={() => setStatsYear("all")}
@@ -284,6 +240,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                   </button>
                 ))}
               </div>
+              <div className="flex min-h-0 flex-1 flex-col justify-evenly">
               {[
                 { label: "누적 사용량", value: `${sum.used.toLocaleString()} ml`, highlight: true },
                 { label: "비워낸 컵", value: `${sum.cupsEmptied} 개` },
@@ -301,52 +258,43 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                   </span>
                 </div>
               ))}
-            </Card>
-
-            {/* 날짜별 사용 기록 — 클릭해서 날짜 선택 가능, 선택된 날짜는 달력과 연동 */}
-            <Card className="flex min-h-0 flex-1 flex-col" delay={180}>
-              <p className="shrink-0 text-[17px] font-medium tracking-[-0.75px] text-white">
-                날짜별 사용 기록
-              </p>
-              <div className="chat-scroll mt-[16px] mr-[-8px] flex min-h-0 flex-1 flex-col gap-[4px] overflow-y-auto pr-[20px]">
-                {history.length === 0 && (
-                  <p className="py-[8px] text-[15px] text-label">아직 사용 기록이 없어요</p>
-                )}
-                {history.map((d) => {
-                  const isSelected = d.key === selectedKey;
-                  return (
-                    <button
-                      key={d.key}
-                      type="button"
-                      onClick={() => setSelectedKey(d.key)}
-                      className={`flex cursor-pointer items-center justify-between rounded-[10px] py-[9px] pl-[10px] pr-[4px] text-left transition-colors duration-200 ${
-                        isSelected ? "bg-main/20 ring-1 ring-inset ring-main" : "hover:bg-white/[0.06]"
-                      }`}
-                    >
-                      <div>
-                        <p className="text-[15px] tracking-[-0.65px] text-white/90">
-                          {formatDateLabel(d.key)}
-                        </p>
-                        <p className="mt-[2px] text-[14px] tracking-[-0.55px] text-label">
-                          채팅 {d.chats}회 · 도우미 {d.helperUses}회
-                        </p>
-                      </div>
-                      <span
-                        className={`text-[16px] font-semibold tracking-[-0.7px] ${
-                          isSelected ? "text-white" : "text-main"
-                        }`}
-                      >
-                        {d.used.toLocaleString()}ml
-                      </span>
-                    </button>
-                  );
-                })}
               </div>
             </Card>
+
           </div>
 
           {/* ---------- 우측 ---------- */}
           <div className="flex min-h-0 flex-col gap-[16px]">
+            {/* 일일 냉각수 게이지 — 제목 / 남은양·한도 / 가로 바 / 캡션만 담은 얇은 카드 */}
+            <Card className="shrink-0" delay={60}>
+              <div key={selectedKey} className="fade-up">
+                <div className="flex items-baseline justify-between">
+                  <p className="text-[18px] font-medium tracking-[-0.8px] text-white">
+                    {isSelectedToday ? "오늘 남은 냉각수량" : `${formatDateLabel(selectedKey)} 남은 냉각수량`}
+                  </p>
+                  <p className="text-[17px] tracking-[-0.75px] text-label">
+                    <span className="font-semibold text-main">{remaining.toLocaleString()}</span>
+                    /{DAILY_LIMIT.toLocaleString()}ml
+                  </p>
+                </div>
+                <div className="relative mt-[12px] h-[10px] w-full rounded-full bg-[#3a3d40]">
+                  <div
+                    className="absolute left-0 top-0 h-full rounded-full bg-main transition-[width] duration-500"
+                    style={{ width: `${remainingPercent}%` }}
+                  />
+                  <div
+                    className="absolute top-1/2 size-[18px] -translate-y-1/2 rounded-full border-[4px] border-main bg-white transition-[left] duration-500"
+                    style={{ left: `calc(${remainingPercent}% - 9px)` }}
+                  />
+                </div>
+                <p className="mt-[10px] text-[15px] tracking-[-0.65px] text-label">
+                  {isSelectedToday
+                    ? "오늘 하루 더 쓸 수 있는 냉각수량이에요"
+                    : `채팅 ${selected.chats}회 · 프롬프트 도우미 ${selected.helperUses}회`}
+                </p>
+              </div>
+            </Card>
+
             <div className="grid min-h-0 flex-1 grid-cols-2 gap-[16px]">
               {/* 월 달력 — 연도/월을 각각 따로 선택할 수 있다 */}
               <Card className="flex flex-col" delay={180}>
@@ -450,8 +398,8 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                     </span>
                   ))}
                 </div>
-                {/* 요일 라벨과 실제 날짜 사이 간격을 넉넉히 띄워 날짜 줄이 더 아래에서 시작하도록 */}
-                <div className="mt-[20px] grid grid-cols-7 gap-y-[0px] text-center">
+                {/* 카드 남은 높이를 주(週) 행들이 균등하게 나눠 갖게 해 아래쪽이 비어 보이지 않도록 한다 */}
+                <div className="mt-[14px] grid flex-1 auto-rows-fr grid-cols-7 text-center">
                   {cells.map((day, i) => {
                     if (day === null) return <span key={`e${i}`} />;
                     const key = dateKey(new Date(viewYear, viewMonth, day));
@@ -463,7 +411,7 @@ export default function ProfileView({ store }: { store: UsageStore }) {
                         key={key}
                         type="button"
                         onClick={() => setSelectedKey(key)}
-                        className="flex cursor-pointer flex-col items-center gap-[2px]"
+                        className="flex cursor-pointer flex-col items-center justify-center gap-[2px]"
                       >
                         <span
                           className={`flex size-[26px] items-center justify-center rounded-full text-[15px] transition-all duration-150 hover:scale-110 ${
@@ -528,7 +476,6 @@ export default function ProfileView({ store }: { store: UsageStore }) {
               </Card>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
