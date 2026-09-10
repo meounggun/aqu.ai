@@ -21,6 +21,11 @@ import { copyCard, downloadCardAsPdf } from "@/lib/card-export";
 import type { AquState } from "@/lib/useAquState";
 
 /** 1920×1080 캔버스를 뷰포트 너비에 반응형으로 맞춘다(항상 너비를 채우고 세로 중앙 정렬). */
+/** 확대 배율 상한 — 초고해상도(2496px 이상)에서 UI가 과하게 커지는 것을 막는다.
+    상한에 걸리면 캔버스는 화면 가운데 놓이고 양옆은 같은 배경색(--bg)으로 이어져 티가 나지 않는다.
+    반대로 좁은 창에서는 하한을 두지 않는다 — 계속 줄어들어야 내용이 잘리지 않는다. */
+const MAX_CANVAS_SCALE = 1.3;
+
 function useCanvasScale() {
   const [scale, setScale] = useState(1);
   useEffect(() => {
@@ -28,7 +33,8 @@ function useCanvasScale() {
       const w = window.innerWidth;
       const h = window.innerHeight;
       // 세로가 긴 화면이면 전체가 보이도록 축소, 아니면 너비를 꽉 채운다
-      setScale(w / h < 1 ? Math.min(w / 1920, h / 1080) : w / 1920);
+      const fit = w / h < 1 ? Math.min(w / 1920, h / 1080) : w / 1920;
+      setScale(Math.min(fit, MAX_CANVAS_SCALE));
     };
     update();
     window.addEventListener("resize", update);
