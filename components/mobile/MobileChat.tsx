@@ -150,7 +150,7 @@ export default function MobileChat({ app }: { app: AquState }) {
 
         {/* 장착된 커스텀 덱 + 나만의 프롬프트 도우미 (PRD §8-1-1) — 탭하면 즉시 해제 */}
         {(activeDecks.length > 0 || activeCustomHelpers.length > 0) && (
-          <div className="chat-scroll-x -mx-[16px] mb-[8px] flex items-center gap-[6px] overflow-x-auto px-[16px]">
+          <div className="chat-scroll-x -mx-[16px] mb-[2px] flex items-center gap-[6px] overflow-x-auto px-[16px] pb-[6px]">
             <span className="shrink-0 text-[14px] font-semibold tracking-[-0.55px] text-main">
               -{deckSavingPercent}%
             </span>
@@ -207,7 +207,7 @@ export default function MobileChat({ app }: { app: AquState }) {
 
         {/* 선택된 태그 (가로 스크롤) */}
         {selected.length > 0 && (
-          <div className="chat-scroll-x -mx-[16px] mb-[10px] flex gap-[6px] overflow-x-auto px-[16px]">
+          <div className="chat-scroll-x -mx-[16px] mb-[4px] flex gap-[6px] overflow-x-auto px-[16px] pb-[6px]">
             {selected.map((s) => (
               <button
                 key={s.category.key}

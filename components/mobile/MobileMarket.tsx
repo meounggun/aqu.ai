@@ -398,7 +398,7 @@ export default function MobileMarket({
         </div>
 
         {/* 카테고리별 검색 */}
-        <div className="chat-scroll-x -mx-[4px] mt-[10px] flex gap-[6px] overflow-x-auto px-[4px]">
+        <div className="chat-scroll-x -mx-[4px] mt-[10px] flex gap-[6px] overflow-x-auto px-[4px] pb-[6px]">
           <button
             type="button"
             onClick={() => setMarketFilter("all")}
@@ -521,7 +521,7 @@ export default function MobileMarket({
         )}
 
         <div className="mt-[12px] flex flex-col gap-[10px]">
-          <div className="chat-scroll-x -mx-[4px] flex gap-[10px] overflow-x-auto px-[4px]">
+          <div className="chat-scroll-x -mx-[4px] flex gap-[10px] overflow-x-auto px-[4px] pb-[6px]">
             {allHelperCategories.map((cat) => {
               const selected = expandedCategory === cat.key;
               return (

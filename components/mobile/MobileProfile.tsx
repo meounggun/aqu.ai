@@ -169,7 +169,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
       </Card>
 
       {/* 연도 필터 */}
-      <div className="chat-scroll-x flex gap-[6px] overflow-x-auto">
+      <div className="chat-scroll-x flex gap-[6px] overflow-x-auto pb-[6px]">
         <button
           type="button"
           onClick={() => setStatsYear("all")}
