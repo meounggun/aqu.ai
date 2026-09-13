@@ -32,8 +32,10 @@ function useCanvasScale() {
     const update = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      // 세로가 긴 화면이면 전체가 보이도록 축소, 아니면 너비를 꽉 채운다
-      const fit = w / h < 1 ? Math.min(w / 1920, h / 1080) : w / 1920;
+      // 가로/세로 중 더 빡빡한 쪽에 맞춰 축소해야 어느 비율의 창에서도
+      // 캔버스 전체가 스크롤 없이 한 화면에 들어온다 (너비만 보면 브라우저 창처럼
+      // 넓고 낮은 화면에서 아래쪽이 뷰포트 밖으로 잘려나간다)
+      const fit = Math.min(w / 1920, h / 1080);
       setScale(Math.min(fit, MAX_CANVAS_SCALE));
     };
     update();
