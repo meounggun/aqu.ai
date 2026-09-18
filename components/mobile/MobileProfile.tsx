@@ -114,7 +114,7 @@ export default function MobileProfile({ store }: { store: UsageStore }) {
   const diffPercent =
     yesterdayUsed > 0 ? Math.round(Math.abs(1 - todayUsed / yesterdayUsed) * 100) : 0;
   const lessThanYesterday = todayUsed <= yesterdayUsed;
-  const bottles = Math.max(1, Math.round(monthTotal(store, new Date(viewYear, viewMonth, 1)) / 2000));
+  const bottles = Math.max(1, Math.round(monthTotal(store, new Date(viewYear, viewMonth, 1)) / DAILY_LIMIT));
 
   const first = new Date(viewYear, viewMonth, 1);
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();

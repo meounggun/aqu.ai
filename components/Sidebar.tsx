@@ -10,7 +10,15 @@ import { HELPER_CATEGORIES } from "@/lib/water";
 import { CARD_KIND_LABEL, CATEGORY_COLOR, CATEGORY_LABEL, type Deck } from "@/lib/deck-store";
 import type { ChatSession } from "@/lib/chat-history-store";
 
-export type AppView = "landing" | "chat" | "about" | "news" | "sponsor" | "profile" | "market";
+export type AppView =
+  | "landing"
+  | "chat"
+  | "about"
+  | "news"
+  | "sponsor"
+  | "profile"
+  | "market"
+  | "exhibit";
 
 /* Figma 패널의 2열×4행 고정 배치: [요약,톤] [코드,검토] [번역,표] [예시,쉽게] */
 const PANEL_ORDER = ["summary", "tone", "code", "review", "translate", "table", "example", "easy"];
@@ -336,11 +344,22 @@ export default function Sidebar({
           iconClassName="w-[17px]"
         />
       </div>
+      <div className="absolute left-[10px] transition-[top] duration-200" style={{ top: 302 + pushDown }}>
+        <RailButton
+          src="/assets/icon-exhibit.svg"
+          alt="전시 체험"
+          label="전시 체험"
+          expanded={sidebarOpen}
+          onClick={() => onNavigate("exhibit")}
+          active={view === "exhibit"}
+          iconClassName="w-[15px]"
+        />
+      </div>
       {/* 최근 항목 — 새 채팅을 누르면 이전 대화가 여기 쌓인다. 사이드바가 펼쳐졌을 때만 보인다 */}
       {sidebarOpen && (
         <div
           className="absolute left-[10px] right-[10px] flex flex-col transition-[top] duration-200"
-          style={{ top: 335 + pushDown, bottom: 70 }}
+          style={{ top: 381 + pushDown, bottom: 70 }}
           onClick={(e) => e.stopPropagation()}
         >
           <p className="mb-[8px] px-[8px] text-[14px] font-semibold tracking-[-0.55px] text-label opacity-65">

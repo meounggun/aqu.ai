@@ -1,6 +1,20 @@
 /** AQU.AI 물 사용량 계산 & 냉각수 단계 로직 (PRD §2) */
 
-export const DAILY_LIMIT = 2000; // 하루 사용 가능한 냉각수 (mL)
+/* 소비 기준은 전시 체험에 맞춰 통일했다 — 글자당 단가와 12단계 표를 채팅·전시가 함께 쓴다.
+   예전 1.2mL 기준에서는 한 문장을 보내도 컵이 1~2%밖에 안 줄어 단계가 거의 안 바뀌었다.
+
+   다른 건 '컵의 크기'뿐이다. 채팅은 문장을 주고받으니 하루치(2000mL),
+   전시는 단어 하나씩 적어보는 자리라 한 컵(100mL)을 쓴다. 단가가 같으니 줄어드는
+   속도의 기준은 동일하고, 그릇만 용도에 맞게 다르다. */
+
+/** 글자당 소비량 (mL) — 채팅·전시 공통 기준 */
+export const ML_PER_CHAR = 6;
+
+/** 채팅 하루 한도 (mL) */
+export const DAILY_LIMIT = 2000;
+
+/** 전시 체험 한 컵 (mL) — 단어 몇 개면 비워지도록 작게 잡는다 */
+export const EXHIBIT_LIMIT = 100;
 
 /* ---------- 실시간 물 사용량 계산 ---------- */
 
@@ -23,12 +37,12 @@ export interface UsageBreakdown {
   flags: UsageFlag[];
 }
 
-/** 글자 수 × 1.2mL + 상황별 가산 (모호 +40%, 단발 단어 +40%, 분량 과다 +70%, 도배 +100%) */
+/** 글자 수 × ML_PER_CHAR + 상황별 가산 (모호 +40%, 단발 단어 +40%, 분량 과다 +70%, 도배 +100%) */
 export function calcUsage(raw: string): UsageBreakdown {
   const text = raw.trim();
   if (!text) return { base: 0, multiplier: 1, total: 0, flags: [] };
 
-  const base = text.length * 1.2;
+  const base = text.length * ML_PER_CHAR;
   let multiplier = 1;
   const flags: UsageFlag[] = [];
 
@@ -54,14 +68,17 @@ export function calcUsage(raw: string): UsageBreakdown {
 
 /* ---------- 12단계 냉각수 테이블 (PRD §5-1) ---------- */
 
-// 단계 임계값: remaining >= threshold[i] 이면 단계 i+1
-const STAGE_THRESHOLDS = [2000, 1800, 1600, 1400, 1200, 1000, 900, 700, 500, 300, 200, 100];
+/* 단계 임계값을 절대 mL이 아니라 '남은 비율'로 둔다 — 컵 크기가 달라도(채팅 2000mL,
+   전시 100mL) 같은 표 하나로 12단계를 나눌 수 있다.
+   값은 기존 2000mL 기준표(2000·1800·…·100)와 같은 비율이다. */
+const STAGE_RATIOS = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.45, 0.35, 0.25, 0.15, 0.1, 0.05];
 
-/** 잔여량(mL) → 1~12단계, 소진 시 13(사용 중지) */
-export function getStage(remaining: number): number {
+/** 잔여량(mL) → 1~12단계, 소진 시 13(사용 중지). limit을 주면 그 컵 기준으로 나눈다 */
+export function getStage(remaining: number, limit: number = DAILY_LIMIT): number {
   if (remaining <= 0) return 13;
-  for (let i = 0; i < STAGE_THRESHOLDS.length; i++) {
-    if (remaining >= STAGE_THRESHOLDS[i]) return i + 1;
+  const left = remaining / limit;
+  for (let i = 0; i < STAGE_RATIOS.length; i++) {
+    if (left >= STAGE_RATIOS[i]) return i + 1;
   }
   return 12;
 }

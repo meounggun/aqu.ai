@@ -144,8 +144,8 @@ export default function ProfileView({ store }: { store: UsageStore }) {
     yesterdayUsed > 0 ? Math.round(Math.abs(1 - todayUsed / yesterdayUsed) * 100) : 0;
   const lessThanYesterday = todayUsed <= yesterdayUsed;
 
-  // 보고 있는 달의 사용량 → 2L 생수병 환산 (기획서 문구)
-  const bottles = Math.max(1, Math.round(monthTotal(store, new Date(viewYear, viewMonth, 1)) / 2000));
+  // 보고 있는 달의 사용량 → 2L 생수병 환산 (기획서 문구). 하루 한도가 곧 2L라 DAILY_LIMIT을 쓴다
+  const bottles = Math.max(1, Math.round(monthTotal(store, new Date(viewYear, viewMonth, 1)) / DAILY_LIMIT));
 
   // 달력 그리드 — 몇 주짜리 달이든(5주/6주) 카드 높이가 흔들리지 않도록 항상 6주(42칸)로 고정한다
   const first = new Date(viewYear, viewMonth, 1);

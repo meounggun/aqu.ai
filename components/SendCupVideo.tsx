@@ -7,13 +7,25 @@ import { useCallback, useEffect, useRef } from "react";
    12단계 냉각수 기준(lib/water.ts STAGE_THRESHOLDS)을 넘어설 때마다 다음 구간 영상으로 넘어간다.
    질문을 계속해도 단계가 그대로면 재생하지 않고, 기준선을 넘은 순간에만 한 번 재생한다.
 
-   STAGE_VIDEOS에 영상을 더 넣으면 자동으로 더 잘게 나뉜다 (지금은 4개라 3단계씩 묶인다). */
+   STAGE_VIDEOS에 영상을 더 넣으면 자동으로 더 잘게 나뉜다 (9개라 대략 1~2단계씩 묶인다). */
 const STAGE_VIDEOS = [
   "/assets/cup/1.mp4",
   "/assets/cup/2.mp4",
   "/assets/cup/3.mp4",
   "/assets/cup/4.mp4",
+  "/assets/cup/5.mp4",
+  "/assets/cup/6.mp4",
+  "/assets/cup/7.mp4",
+  "/assets/cup/8.mp4",
+  "/assets/cup/9.mp4",
 ];
+
+/** 내용이 실제로 끝나는 시점(초) — 끝에 빈 프레임이 붙어 있는 영상만 적어둔다.
+    3.mp4는 4.1초부터 끝(5.04초)까지 프레임이 완전히 비어 있어서, 그대로 끝까지 재생하면
+    마지막 프레임에 멈추는 순간 컵이 통째로 사라진다. 여기 적힌 시점에서 멈춰 세운다. */
+const PLAYABLE_END: Record<string, number> = {
+  "/assets/cup/3.mp4": 4,
+};
 
 /** 12단계를 영상 개수만큼 균등하게 나눠 매핑 (소진 13단계는 마지막 영상) */
 const STAGE_COUNT = 12;
@@ -59,6 +71,14 @@ export default function SendCupVideo({ stage }: { stage: number }) {
     if (rafRef.current !== null) return;
     const tick = () => {
       const v = videoRef.current;
+      const stop = PLAYABLE_END[src];
+      // 빈 프레임 구간에 들어서기 전에 멈춘다 — 그리지 않고 빠져나가야 한 프레임도 깜빡이지 않는다
+      if (v && stop !== undefined && v.currentTime >= stop) {
+        v.pause();
+        v.currentTime = stop; // seeked 이벤트가 마지막 성한 프레임을 다시 그려준다
+        rafRef.current = null;
+        return;
+      }
       drawFrame();
       if (v && !v.paused && !v.ended) {
         rafRef.current = requestAnimationFrame(tick);
@@ -67,7 +87,7 @@ export default function SendCupVideo({ stage }: { stage: number }) {
       }
     };
     rafRef.current = requestAnimationFrame(tick);
-  }, [drawFrame]);
+  }, [drawFrame, src]);
 
   const playFromStart = useCallback(() => {
     const v = videoRef.current;

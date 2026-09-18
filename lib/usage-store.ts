@@ -1,5 +1,7 @@
 /** 사용 기록 저장소 — 플로우차트 [기본 세팅] 및 프로필 통계용 (localStorage) */
 
+import { DAILY_LIMIT } from "./water";
+
 export interface DayRecord {
   used: number; // 그날 사용한 냉각수 (mL)
   chats: number; // 보낸 질문 수
@@ -28,15 +30,17 @@ export function loadStore(): UsageStore {
     /* 손상된 데이터는 초기화 */
   }
   // 첫 방문: 지난 6일을 데모 데이터로 시드 (기획서 그래프 수치)
+  // 하루 한도 대비 비율로 적어둬서 DAILY_LIMIT을 바꿔도 그래프 모양이 그대로 유지된다
   const seed: UsageStore = { history: {} };
-  const demo = [400, 820, 430, 700, 500, 1180];
-  demo.forEach((used, i) => {
+  const demo = [0.2, 0.41, 0.215, 0.35, 0.25, 0.59];
+  demo.forEach((ratio, i) => {
+    const used = Math.round(ratio * DAILY_LIMIT);
     const d = new Date();
     d.setDate(d.getDate() - (demo.length - i));
     seed.history[dateKey(d)] = {
       used,
-      chats: Math.round(used / 55),
-      helperUses: Math.round(used / 80),
+      chats: Math.max(1, Math.round(used / (DAILY_LIMIT / 36))),
+      helperUses: Math.max(1, Math.round(used / (DAILY_LIMIT / 25))),
     };
   });
   saveStore(seed);
@@ -88,7 +92,7 @@ export function totals(store: UsageStore, year?: number) {
     used,
     chats,
     helperUses,
-    cupsEmptied: Math.floor(used / 2000), // 비워낸 컵 (2,000mL 기준)
+    cupsEmptied: Math.floor(used / DAILY_LIMIT), // 비워낸 컵 (한 컵 = 하루 한도)
   };
 }
 

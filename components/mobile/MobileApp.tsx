@@ -13,12 +13,14 @@ import MobileProfile from "./MobileProfile";
 import MobileNews from "./MobileNews";
 import MobileSponsor from "./MobileSponsor";
 import MobileMarket from "./MobileMarket";
+import MobileExhibit from "./MobileExhibit";
 
 const NAV: { key: AppView; label: string; icon: string; iconClass: string; action?: "newChat" }[] = [
   { key: "chat", label: "새 채팅", icon: "/assets/icon-newchat.svg", iconClass: "size-[18px]", action: "newChat" },
   { key: "market", label: "프롬프트 도우미 편집", icon: "/assets/icon-helper-edit.svg", iconClass: "w-[20px]" },
   { key: "about", label: "우리에 대하여", icon: "/assets/icon-about.svg", iconClass: "size-[30px]" },
   { key: "sponsor", label: "도움", icon: "/assets/icon-sponsor.svg", iconClass: "w-[18px]" },
+  { key: "exhibit", label: "전시 체험", icon: "/assets/icon-exhibit.svg", iconClass: "w-[16px]" },
   { key: "profile", label: "프로필", icon: "/assets/icon-profile.svg", iconClass: "w-[17px]" },
 ];
 
@@ -97,6 +99,11 @@ export default function MobileApp({ app }: { app: AquState }) {
         {view === "sponsor" && (
           <div className="chat-scroll h-full overflow-y-auto">
             <MobileSponsor />
+          </div>
+        )}
+        {view === "exhibit" && (
+          <div className="chat-scroll h-full overflow-y-auto">
+            <MobileExhibit />
           </div>
         )}
         {view === "profile" && (

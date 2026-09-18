@@ -13,6 +13,7 @@ import PromptHelper from "@/components/PromptHelper";
 import ProfileView from "@/components/ProfileView";
 import NewsView from "@/components/NewsView";
 import SponsorView from "@/components/SponsorView";
+import ExhibitView from "@/components/ExhibitView";
 import MarketView from "@/components/MarketView";
 import OnboardingView from "@/components/OnboardingView";
 import LandingView from "@/components/LandingView";
@@ -185,6 +186,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
             {view === "profile" && <ProfileView store={store} />}
             {view === "news" && <NewsView />}
             {view === "sponsor" && <SponsorView />}
+            {view === "exhibit" && <ExhibitView />}
             {view === "market" && (
               <MarketView
                 deckStore={deckStore}
