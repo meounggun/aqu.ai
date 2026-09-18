@@ -173,7 +173,8 @@ export default function ExhibitView() {
           <button
             type="button"
             onClick={x.start}
-            className="h-[60px] w-[180px] shrink-0 cursor-pointer rounded-[73px] border-4 border-main text-[22px] font-light tracking-[-0.66px] text-white transition-colors hover:bg-main/20"
+            // 다음 화면 입력창(게이지 62 + 간격 14 아래, 높이 64)과 세로 가운데가 같도록 78px 내린다
+            className="mt-[78px] h-[60px] w-[180px] shrink-0 cursor-pointer rounded-[73px] border-4 border-main text-[22px] font-light tracking-[-0.66px] text-white transition-colors hover:bg-main/20"
           >
             시작하기
           </button>
