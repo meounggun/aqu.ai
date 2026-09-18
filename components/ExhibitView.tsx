@@ -96,21 +96,24 @@ export function useExhibit() {
    컵 영상(정사각 CUP_SIZE) 안에서 실제 컵 몸통은 세로 25.2%~70%에 있고,
    그림자는 단계에 따라 돌면서 최대 89.6%까지 내려온다.
    컵 몸통 위아래에 같은 간격(CUP_GAP)을 줘서 제목과 게이지 사이 정가운데에 두고,
-   CUP_GAP은 가장 긴 그림자(5·7.mp4)가 들어가고도 게이지까지 40px 남도록 잡았다.
-   전체 높이: 제목 104 + 컵 자리(278 + 162×2) + 하단 220 = 926 ≤ 960 */
-const CUP_SIZE = 620;
-const CUP_BODY_TOP = Math.round(CUP_SIZE * 0.252); // 156
-const CUP_BODY_BOTTOM = Math.round(CUP_SIZE * 0.7); // 434
-const CUP_GAP = Math.round(CUP_SIZE * (0.896 - 0.7)) + 40; // 162 — 그림자(89.6%) + 여유 40px
+   CUP_GAP은 가장 긴 그림자(5·7.mp4)가 들어가고도 게이지까지 24px 남도록 잡았다.
+
+   간격은 두 가지로만 쓴다 — 큰 간격(제목↔컵, 컵↔게이지 = CUP_GAP)과
+   작은 간격(제목↔보조문구, 게이지↔입력창 = SMALL_GAP).
+   전체 높이: 제목 84 + 컵 자리(260 + 138×2) + 하단 144 = 764 */
+const CUP_SIZE = 580;
+const CUP_BODY_TOP = Math.round(CUP_SIZE * 0.252); // 146
+const CUP_BODY_BOTTOM = Math.round(CUP_SIZE * 0.7); // 406
+const CUP_GAP = Math.round(CUP_SIZE * (0.896 - 0.7)) + 24; // 138 — 그림자(89.6%) + 여유 24px
 
 /** 세 화면 공통 제목 영역 — 제목·보조문구의 크기와 위치가 항상 같다 */
 function Header({ title, sub, animKey }: { title: React.ReactNode; sub: React.ReactNode; animKey?: string }) {
   return (
-    <div className="relative z-10 flex h-[104px] shrink-0 flex-col items-center">
-      <h2 key={`t-${animKey}`} className="fade-up text-center text-[44px] font-light leading-[1.3] tracking-[-1.3px] text-white">
+    <div className="relative z-10 flex h-[84px] shrink-0 flex-col items-center">
+      <h2 key={`t-${animKey}`} className="fade-up text-center text-[36px] font-light leading-[1.3] tracking-[-1.1px] text-white">
         {title}
       </h2>
-      <p key={`s-${animKey}`} className="fade-up mt-[14px] text-[19px] tracking-[-0.75px] text-label">
+      <p key={`s-${animKey}`} className="fade-up mt-[14px] text-[17px] tracking-[-0.7px] text-label">
         {sub}
       </p>
     </div>
@@ -165,27 +168,27 @@ export default function ExhibitView() {
       </div>
 
       {/* 하단 영역 — 높이 고정. 인트로는 시작하기, 입력은 게이지+입력창, 결과는 게이지+버튼 */}
-      <div className="relative z-10 flex h-[220px] w-[900px] shrink-0 flex-col items-center">
+      <div className="relative z-10 flex h-[144px] w-[800px] shrink-0 flex-col items-center">
         {x.phase === "intro" ? (
           <button
             type="button"
             onClick={x.start}
-            className="h-[68px] w-[200px] shrink-0 cursor-pointer rounded-[73px] border-4 border-main text-[24px] font-light tracking-[-0.72px] text-white transition-colors hover:bg-main/20"
+            className="h-[60px] w-[180px] shrink-0 cursor-pointer rounded-[73px] border-4 border-main text-[22px] font-light tracking-[-0.66px] text-white transition-colors hover:bg-main/20"
           >
             시작하기
           </button>
         ) : (
           <>
             {/* 남은 물 — 보내기 전에는 그대로, 결과에서 한 번에 줄어든다 */}
-            <div className="flex w-full flex-col gap-[12px]">
+            <div className="flex w-full flex-col gap-[10px]">
               <div className="flex items-end justify-between">
-                <span className="text-[17px] tracking-[-0.7px] text-label">남은 물</span>
-                <span className="text-[17px] tracking-[-0.7px] text-label">
-                  <span className="text-[48px] font-semibold leading-none text-white">{x.remaining}</span> /{" "}
+                <span className="text-[16px] tracking-[-0.65px] text-label">남은 물</span>
+                <span className="text-[16px] tracking-[-0.65px] text-label">
+                  <span className="text-[40px] font-semibold leading-none text-white">{x.remaining}</span> /{" "}
                   {EXHIBIT_LIMIT}mL
                 </span>
               </div>
-              <div className="h-[14px] w-full overflow-hidden rounded-full bg-white/10">
+              <div className="h-[12px] w-full overflow-hidden rounded-full bg-white/10">
                 <div
                   className="h-full rounded-full bg-main transition-[width] duration-700 ease-out"
                   style={{ width: `${(x.remaining / EXHIBIT_LIMIT) * 100}%` }}
@@ -194,12 +197,12 @@ export default function ExhibitView() {
             </div>
 
             {showResult ? (
-              <div className="mt-[28px] flex gap-[14px]">
+              <div className="mt-[14px] flex gap-[12px]">
                 {!x.empty && (
                   <button
                     type="button"
                     onClick={x.more}
-                    className="h-[60px] w-[190px] cursor-pointer rounded-[73px] border-4 border-main text-[20px] font-light tracking-[-0.6px] text-white transition-colors hover:bg-main/20"
+                    className="h-[54px] w-[170px] cursor-pointer rounded-[73px] border-4 border-main text-[18px] font-light tracking-[-0.55px] text-white transition-colors hover:bg-main/20"
                   >
                     단어 더 적기
                   </button>
@@ -207,7 +210,7 @@ export default function ExhibitView() {
                 <button
                   type="button"
                   onClick={x.restart}
-                  className={`h-[60px] w-[190px] cursor-pointer rounded-[73px] text-[20px] font-light tracking-[-0.6px] text-white transition-colors ${
+                  className={`h-[54px] w-[170px] cursor-pointer rounded-[73px] text-[18px] font-light tracking-[-0.55px] text-white transition-colors ${
                     x.empty ? "border-4 border-main hover:bg-main/20" : "border-2 border-stroke hover:border-white/60"
                   }`}
                 >
@@ -217,7 +220,7 @@ export default function ExhibitView() {
             ) : (
               <>
                 {/* 입력 — Figma 1131:1407의 하단 바(625×49, r12)를 캔버스 비율에 맞춰 키운 것 */}
-                <div className="mt-[22px] flex h-[74px] w-full items-center gap-[14px] rounded-[16px] bg-gray-box px-[24px]">
+                <div className="mt-[14px] flex h-[64px] w-full items-center gap-[12px] rounded-[14px] bg-gray-box px-[22px]">
                   <input
                     value={x.input}
                     autoFocus
@@ -229,7 +232,7 @@ export default function ExhibitView() {
                       }
                     }}
                     placeholder="단어를 입력해보세요"
-                    className="min-w-0 flex-1 bg-transparent text-[20px] tracking-[-0.8px] text-white placeholder:text-white/50 focus:outline-none"
+                    className="min-w-0 flex-1 bg-transparent text-[18px] tracking-[-0.7px] text-white placeholder:text-white/50 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -237,7 +240,7 @@ export default function ExhibitView() {
                     disabled={!x.input.trim()}
                     aria-label="보내기"
                     title="보내기"
-                    className="flex size-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full bg-main transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex size-[38px] shrink-0 cursor-pointer items-center justify-center rounded-full bg-main transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <svg width="14" height="15" viewBox="0 0 14 15" fill="none">
                       <path
@@ -250,11 +253,12 @@ export default function ExhibitView() {
                     </svg>
                   </button>
                 </div>
+                {/* 자리를 차지하지 않게 입력창 아래에 띄운다 — 있을 때와 없을 때 레이아웃이 같아야 해서 */}
                 {x.sends > 0 && (
                   <button
                     type="button"
                     onClick={x.restart}
-                    className="mt-[18px] cursor-pointer text-[16px] tracking-[-0.65px] text-label underline-offset-4 transition-colors hover:text-white hover:underline"
+                    className="absolute left-1/2 top-full mt-[14px] -translate-x-1/2 cursor-pointer text-[16px] tracking-[-0.65px] text-label underline-offset-4 transition-colors hover:text-white hover:underline"
                   >
                     처음으로
                   </button>
