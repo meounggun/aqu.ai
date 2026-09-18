@@ -7,18 +7,8 @@ import { useCallback, useEffect, useRef } from "react";
    12단계 냉각수 기준(lib/water.ts STAGE_THRESHOLDS)을 넘어설 때마다 다음 구간 영상으로 넘어간다.
    질문을 계속해도 단계가 그대로면 재생하지 않고, 기준선을 넘은 순간에만 한 번 재생한다.
 
-   STAGE_VIDEOS에 영상을 더 넣으면 자동으로 더 잘게 나뉜다 (9개라 대략 1~2단계씩 묶인다). */
-const STAGE_VIDEOS = [
-  "/assets/cup/1.mp4",
-  "/assets/cup/2.mp4",
-  "/assets/cup/3.mp4",
-  "/assets/cup/4.mp4",
-  "/assets/cup/5.mp4",
-  "/assets/cup/6.mp4",
-  "/assets/cup/7.mp4",
-  "/assets/cup/8.mp4",
-  "/assets/cup/9.mp4",
-];
+   영상이 12개라 12단계와 1:1로 대응한다 (n단계 → n.mp4, 소진 13단계는 마지막 영상). */
+const STAGE_VIDEOS = Array.from({ length: 12 }, (_, i) => `/assets/cup/${i + 1}.mp4`);
 
 /** 내용이 실제로 끝나는 시점(초) — 끝에 빈 프레임이 붙어 있는 영상만 적어둔다.
     3.mp4는 4.1초부터 끝(5.04초)까지 프레임이 완전히 비어 있어서, 그대로 끝까지 재생하면
@@ -26,6 +16,14 @@ const STAGE_VIDEOS = [
 const PLAYABLE_END: Record<string, number> = {
   "/assets/cup/3.mp4": 4,
 };
+
+/** 배경이 사이트 배경색(#1b1d1f)이 아니라 검정(#000)으로 렌더된 영상.
+    그대로 그리면 컵 주변에 검은 사각형이 드러나므로, 그릴 때 배경색을 먼저 깔고
+    영상을 lighten(채널별 최댓값)으로 얹어 검정만 배경색으로 바꾼다.
+    배경색보다 밝은 컵·물·그림자는 원본 그대로 남는다.
+    원본을 #1b1d1f 배경으로 다시 뽑으면 이 목록에서 빼면 된다. */
+const BLACK_BG_VIDEOS = new Set(["/assets/cup/10.mp4"]);
+const BG = "#1b1d1f";
 
 /** 12단계를 영상 개수만큼 균등하게 나눠 매핑 (소진 13단계는 마지막 영상) */
 const STAGE_COUNT = 12;
@@ -62,9 +60,17 @@ export default function SendCupVideo({ stage }: { stage: number }) {
     if (!v || !c || v.readyState < 2) return;
     const ctx = c.getContext("2d");
     if (!ctx) return;
+    if (BLACK_BG_VIDEOS.has(src)) {
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.globalCompositeOperation = "lighten";
+      ctx.drawImage(v, 0, 0, c.width, c.height);
+      ctx.globalCompositeOperation = "source-over";
+      return;
+    }
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.drawImage(v, 0, 0, c.width, c.height);
-  }, []);
+  }, [src]);
 
   // 재생 중에만 매 프레임 그린다 (멈춰 있을 땐 마지막으로 그린 화면이 그대로 남는다)
   const startLoop = useCallback(() => {
