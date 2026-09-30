@@ -10,15 +10,7 @@ import { HELPER_CATEGORIES } from "@/lib/water";
 import { CARD_KIND_LABEL, CATEGORY_COLOR, CATEGORY_LABEL, type Deck } from "@/lib/deck-store";
 import type { ChatSession } from "@/lib/chat-history-store";
 
-export type AppView =
-  | "landing"
-  | "chat"
-  | "about"
-  | "news"
-  | "sponsor"
-  | "profile"
-  | "market"
-  | "exhibit";
+export type AppView = "landing" | "chat" | "about" | "news" | "sponsor" | "market" | "exhibit";
 
 /* Figma 패널의 2열×4행 고정 배치: [요약,톤] [코드,검토] [번역,표] [예시,쉽게] */
 const PANEL_ORDER = ["summary", "tone", "code", "review", "translate", "table", "example", "easy"];
@@ -359,7 +351,7 @@ export default function Sidebar({
       {sidebarOpen && (
         <div
           className="absolute left-[10px] right-[10px] flex flex-col transition-[top] duration-200"
-          style={{ top: 381 + pushDown, bottom: 70 }}
+          style={{ top: 381 + pushDown, bottom: 15 }}
           onClick={(e) => e.stopPropagation()}
         >
           <p className="mb-[8px] px-[8px] text-[14px] font-semibold tracking-[-0.55px] text-label opacity-65">
@@ -399,17 +391,6 @@ export default function Sidebar({
         </div>
       )}
 
-      <div className="absolute bottom-[15px] left-[10px]">
-        <RailButton
-          src="/assets/icon-profile.svg"
-          alt="프로필"
-          label="프로필"
-          expanded={sidebarOpen}
-          onClick={() => onNavigate("profile")}
-          active={view === "profile"}
-          iconClassName="w-[16px]"
-        />
-      </div>
     </aside>
   );
 }

@@ -10,7 +10,6 @@ import Sidebar from "@/components/Sidebar";
 import SendCupVideo from "@/components/SendCupVideo";
 import StatsBar from "@/components/StatsBar";
 import PromptHelper from "@/components/PromptHelper";
-import ProfileView from "@/components/ProfileView";
 import NewsView from "@/components/NewsView";
 import SponsorView from "@/components/SponsorView";
 import ExhibitView from "@/components/ExhibitView";
@@ -59,7 +58,6 @@ export default function DesktopApp({ app }: { app: AquState }) {
     selected,
     visibleCategories,
     typing,
-    store,
     breakdown,
     liveUsage,
     savingPercent,
@@ -183,7 +181,6 @@ export default function DesktopApp({ app }: { app: AquState }) {
               transform: sidebarOpen ? "translateX(120px)" : "none",
             }}
           >
-            {view === "profile" && <ProfileView store={store} />}
             {view === "news" && <NewsView />}
             {view === "sponsor" && <SponsorView />}
             {view === "exhibit" && <ExhibitView />}

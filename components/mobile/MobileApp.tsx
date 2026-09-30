@@ -9,7 +9,6 @@ import type { AquState, AppView } from "@/lib/useAquState";
 import MobileOnboarding from "./MobileOnboarding";
 import MobileLanding from "./MobileLanding";
 import MobileChat from "./MobileChat";
-import MobileProfile from "./MobileProfile";
 import MobileNews from "./MobileNews";
 import MobileSponsor from "./MobileSponsor";
 import MobileMarket from "./MobileMarket";
@@ -21,14 +20,12 @@ const NAV: { key: AppView; label: string; icon: string; iconClass: string; actio
   { key: "about", label: "우리에 대하여", icon: "/assets/icon-about.svg", iconClass: "size-[30px]" },
   { key: "sponsor", label: "도움", icon: "/assets/icon-sponsor.svg", iconClass: "w-[18px]" },
   { key: "exhibit", label: "전시 체험", icon: "/assets/icon-exhibit.svg", iconClass: "w-[16px]" },
-  { key: "profile", label: "프로필", icon: "/assets/icon-profile.svg", iconClass: "w-[17px]" },
 ];
 
 export default function MobileApp({ app }: { app: AquState }) {
   const {
     view,
     setView,
-    store,
     enterApp,
     newChat,
     chatSessions,
@@ -104,11 +101,6 @@ export default function MobileApp({ app }: { app: AquState }) {
         {view === "exhibit" && (
           <div className="chat-scroll h-full overflow-y-auto">
             <MobileExhibit />
-          </div>
-        )}
-        {view === "profile" && (
-          <div className="chat-scroll h-full overflow-y-auto">
-            <MobileProfile store={store} />
           </div>
         )}
         {view === "market" && (
