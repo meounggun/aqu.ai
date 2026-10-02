@@ -27,7 +27,7 @@ import type { AquState } from "@/lib/useAquState";
 const MAX_CANVAS_SCALE = 1.3;
 
 function useCanvasScale() {
-  const [scale, setScale] = useState(1);
+  const [size, setSize] = useState({ scale: 1, viewportH: 1080 });
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
@@ -36,13 +36,13 @@ function useCanvasScale() {
       // 캔버스 전체가 스크롤 없이 한 화면에 들어온다 (너비만 보면 브라우저 창처럼
       // 넓고 낮은 화면에서 아래쪽이 뷰포트 밖으로 잘려나간다)
       const fit = Math.min(w / 1920, h / 1080);
-      setScale(Math.min(fit, MAX_CANVAS_SCALE));
+      setSize({ scale: Math.min(fit, MAX_CANVAS_SCALE), viewportH: h });
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
-  return scale;
+  return size;
 }
 
 export default function DesktopApp({ app }: { app: AquState }) {
@@ -88,7 +88,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
     toggleCustomHelper,
   } = app;
 
-  const scale = useCanvasScale();
+  const { scale, viewportH } = useCanvasScale();
   const scaledW = 1920 * scale;
   const scaledH = 1080 * scale;
 
@@ -117,7 +117,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
   // 랜딩은 사이드바 없이 전체 화면으로 — 접속할 때마다 항상 먼저 보인다
   if (view === "landing") {
     return (
-      <main className="grid min-h-[100dvh] w-full items-center justify-items-start overflow-x-hidden bg-bg">
+      <main className="grid min-h-[100dvh] w-full place-items-center overflow-x-hidden bg-bg">
         <div
           className="app-enter relative overflow-hidden bg-bg"
           style={{ width: scaledW, height: scaledH }}
@@ -133,8 +133,52 @@ export default function DesktopApp({ app }: { app: AquState }) {
     );
   }
 
+  // 바깥을 누르면 열려 있던 드롭다운·패널·펼친 사이드바를 닫는다
+  const closeOverlays = () => {
+    if (helperOpen) setHelperOpen(null);
+    if (panelOpen) setPanelOpen(false);
+    if (sidebarOpen) setSidebarOpen(false);
+  };
+
+  /* 화면 비율이 16:9가 아니면 캔버스 둘레에 여백이 생긴다(넓은 창은 좌우, 4:3 아이패드는 위아래).
+     사이드바를 캔버스 안에 두면 그 여백만큼 같이 떠버리므로, 사이드바만 캔버스 밖으로 빼서
+     화면 진짜 왼쪽 끝에 붙이고 높이도 화면 전체를 채운다.
+     캔버스는 가운데 정렬 — 캔버스 왼쪽 60px은 사이드바 자리로 비워 둔 영역이라,
+     캔버스를 가운데 두면 그 오른쪽 내용 영역(60~1920)이 사이드바 오른쪽 공간의 정가운데에 온다. */
   return (
-    <main className="grid min-h-[100dvh] w-full items-center justify-items-start overflow-x-hidden bg-bg">
+    <main className="grid min-h-[100dvh] w-full place-items-center overflow-x-hidden bg-bg">
+      <div
+        className="fixed left-0 top-0 z-30 origin-top-left"
+        style={{ height: viewportH / scale, transform: `scale(${scale})` }}
+        onClick={closeOverlays}
+      >
+        <Sidebar
+          view={view}
+          onNavigate={(v) => {
+            setView(v);
+            setPanelOpen(false);
+          }}
+          onNewChat={newChat}
+          panelOpen={panelOpen}
+          onTogglePanel={() => setPanelOpen((v) => !v)}
+          visibleCategories={visibleCategories}
+          onToggleCategory={toggleCategoryVisibility}
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen((v) => !v)}
+          decks={deckStore.installed}
+          activeDeckIds={deckStore.activeIds}
+          onToggleDeck={toggleDeck}
+          onOpenDeckSettings={() => {
+            setView("market");
+            setPanelOpen(false);
+            setDeckNudge((n) => n + 1);
+          }}
+          sessions={chatSessions}
+          onLoadSession={loadChatSession}
+          onDeleteSession={deleteChatSession}
+        />
+      </div>
+
       <div
         className="app-enter relative overflow-hidden bg-bg"
         style={{ width: scaledW, height: scaledH }}
@@ -142,38 +186,8 @@ export default function DesktopApp({ app }: { app: AquState }) {
         <div
           className="absolute left-0 top-0 h-[1080px] w-[1920px] origin-top-left"
           style={{ transform: `scale(${scale})` }}
-          onClick={() => {
-            if (helperOpen) setHelperOpen(null);
-            if (panelOpen) setPanelOpen(false);
-            if (sidebarOpen) setSidebarOpen(false);
-          }}
+          onClick={closeOverlays}
         >
-          <Sidebar
-            view={view}
-            onNavigate={(v) => {
-              setView(v);
-              setPanelOpen(false);
-            }}
-            onNewChat={newChat}
-            panelOpen={panelOpen}
-            onTogglePanel={() => setPanelOpen((v) => !v)}
-            visibleCategories={visibleCategories}
-            onToggleCategory={toggleCategoryVisibility}
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={() => setSidebarOpen((v) => !v)}
-            decks={deckStore.installed}
-            activeDeckIds={deckStore.activeIds}
-            onToggleDeck={toggleDeck}
-            onOpenDeckSettings={() => {
-              setView("market");
-              setPanelOpen(false);
-              setDeckNudge((n) => n + 1);
-            }}
-            sessions={chatSessions}
-            onLoadSession={loadChatSession}
-            onDeleteSession={deleteChatSession}
-          />
-
           {/* 사이드바가 열리면 메인 콘텐츠가 가려지지 않도록 오른쪽으로 살짝 밀려난다 */}
           <div
             className="transition-transform duration-300"
@@ -209,7 +223,11 @@ export default function DesktopApp({ app }: { app: AquState }) {
             {view === "about" && <OnboardingView onFinish={() => setView("chat")} />}
 
             {view === "chat" && (
-              <>
+              /* 채팅 화면 내용은 가로 169~1715, 세로 141~1010(제목 ~ 입력창 아래)에 있다.
+                 그 가운데(942, 575)가 사이드바 오른쪽 내용 영역(가로 60~1920, 세로 0~1080)의
+                 가운데(990, 540)에서 오른쪽으로 48 모자라고 아래로 36 내려가 있어서,
+                 화면 전체를 통째로 옮겨 정가운데에 맞춘다. */
+              <div className="absolute inset-0 translate-x-[48px] -translate-y-[36px]">
                 {/* ---------- 채팅 / 히어로 영역 ---------- */}
                 {messages.length === 0 ? (
                   <>
@@ -442,8 +460,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
                   flags={exhausted ? [] : breakdown.flags}
                   savingPercent={exhausted ? 0 : savingPercent}
                 />
-
-              </>
+              </div>
             )}
           </div>
         </div>

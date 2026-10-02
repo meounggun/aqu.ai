@@ -150,10 +150,8 @@ export default function ExhibitView() {
   }
 
   return (
-    /* 사이드바 바로 옆(left-169)에서 시작 — 채팅 화면과 같은 기준.
-       전에는 캔버스 전체(1920px) 한가운데에 맞춰서, 내용물(최대 800px)이 좁다 보니
-       사이드바와 제목 사이에 쓸데없이 큰 빈 공간이 생겼었다. */
-    <div className="absolute left-[169px] top-[60px] flex h-[960px] w-[900px] flex-col items-center justify-center">
+    /* 사이드바 오른쪽 내용 영역(60~1920) 정가운데 — 뉴스·도움 화면과 같은 기준 */
+    <div className="absolute left-[60px] top-[60px] flex h-[960px] w-[1860px] flex-col items-center justify-center">
       <Header title={title} sub={sub} animKey={`${x.phase}-${x.sends}`} />
 
       {/* 컵 자리 — 캔버스의 빈 여백을 음수 마진으로 당겨, 몸통 위아래 간격이 정확히 CUP_GAP이 되게 한다.
