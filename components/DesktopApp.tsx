@@ -117,7 +117,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
   // 랜딩은 사이드바 없이 전체 화면으로 — 접속할 때마다 항상 먼저 보인다
   if (view === "landing") {
     return (
-      <main className="grid min-h-[100dvh] w-full place-items-center overflow-x-hidden bg-bg">
+      <main className="grid min-h-[100dvh] w-full items-center justify-items-start overflow-x-hidden bg-bg">
         <div
           className="app-enter relative overflow-hidden bg-bg"
           style={{ width: scaledW, height: scaledH }}
@@ -134,7 +134,7 @@ export default function DesktopApp({ app }: { app: AquState }) {
   }
 
   return (
-    <main className="grid min-h-[100dvh] w-full place-items-center overflow-x-hidden bg-bg">
+    <main className="grid min-h-[100dvh] w-full items-center justify-items-start overflow-x-hidden bg-bg">
       <div
         className="app-enter relative overflow-hidden bg-bg"
         style={{ width: scaledW, height: scaledH }}
